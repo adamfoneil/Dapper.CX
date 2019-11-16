@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.TinyCrud.Base", "Dap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dapper.TinyCrud.SqlServer", "Dapper.TinyCrud.SqlServer\Dapper.TinyCrud.SqlServer.csproj", "{F80BC70A-1EFD-467A-87C1-615706EA5D18}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{86ADF60D-DBE8-4F6C-9809-C3A5A91FCED1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F80BC70A-1EFD-467A-87C1-615706EA5D18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F80BC70A-1EFD-467A-87C1-615706EA5D18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F80BC70A-1EFD-467A-87C1-615706EA5D18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86ADF60D-DBE8-4F6C-9809-C3A5A91FCED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86ADF60D-DBE8-4F6C-9809-C3A5A91FCED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86ADF60D-DBE8-4F6C-9809-C3A5A91FCED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86ADF60D-DBE8-4F6C-9809-C3A5A91FCED1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
