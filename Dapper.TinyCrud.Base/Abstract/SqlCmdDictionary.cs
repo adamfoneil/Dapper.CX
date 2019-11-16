@@ -15,7 +15,12 @@ namespace Dapper.TinyCrud.Abstract
         protected abstract string SelectIdentityCommand { get; }
         protected abstract char StartDelimiter { get; }
         protected abstract char EndDelimiter { get; }
-        protected abstract Dictionary<Type, string> TypeMappings { get; }
+
+        /// <summary>
+        /// Types supported by this SqlCmdDictionary,
+        /// do not include nullable versions since they are derived automatically
+        /// </summary>
+        protected abstract Type[] SupportedTypes { get; }
 
         public abstract IDbCommand GetInsertCommand(IDbConnection connection);
         public abstract IDbCommand GetUpdateCommand(IDbConnection connection);
@@ -25,14 +30,16 @@ namespace Dapper.TinyCrud.Abstract
         public bool IdentityInsert { get; set; }
         public string FormattedTableName() => ApplyDelimiter(TableName);
                 
-        protected static Dictionary<string, object> FromObject(Type[] supportedTypes, object @object, params string[] keyColumns)
+        protected void Initialize(object @object, params string[] keyColumns)
         {
             var result = new Dictionary<string, object>();
             var properties = @object.GetType().GetProperties();
 
+            var allSupportedTypes = SupportedTypes.Concat(ToNullable(SupportedTypes));
+
             bool isMapped(PropertyInfo pi) 
             {
-                if (!supportedTypes.Contains(pi.PropertyType)) return false;
+                if (!allSupportedTypes.Contains(pi.PropertyType)) return false;
 
                 var attr = pi.GetCustomAttribute<NotMappedAttribute>();
                 if (attr != null) return false;
@@ -43,12 +50,15 @@ namespace Dapper.TinyCrud.Abstract
             foreach (PropertyInfo pi in properties.Where(pi => isMapped(pi)))
             {
                 string columnName = GetColumnName(pi, keyColumns);
-                result.Add(columnName, pi.GetValue(@object));
-            }
-
-            return result;
+                Add(columnName, pi.GetValue(@object));
+            }     
         }
-        
+
+        private static IEnumerable<Type> ToNullable(Type[] types)
+        {
+            return types.Select(t => t.MakeGenericType(typeof(Nullable<>), t));
+        }
+
         private static string GetColumnName(PropertyInfo propertyInfo, string[] keyColumns)
         {
             string result = propertyInfo.Name;
@@ -221,7 +231,7 @@ namespace Dapper.TinyCrud.Abstract
         {
             foreach (DataColumn col in dataRow.Table.Columns)
             {
-                if (ContainsKey(col.ColumnName) || ContainsKey("#" + col.ColumnName))
+                if (ContainsKey(col.ColumnName) || ContainsKey(KeyColumnPrefix + col.ColumnName))
                 {
                     this[col.ColumnName] = (!dataRow.IsNull(col)) ? dataRow[col] : null;
                 }

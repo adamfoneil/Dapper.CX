@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.TinyCrud.Base", "Dapper.TinyCrud.Base\Dapper.TinyCrud.Base.csproj", "{4BCF5CF0-C0C3-47C8-8AC3-697BAB69C127}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dapper.TinyCrud.SqlServer", "Dapper.TinyCrud.SqlServer\Dapper.TinyCrud.SqlServer.csproj", "{F80BC70A-1EFD-467A-87C1-615706EA5D18}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4BCF5CF0-C0C3-47C8-8AC3-697BAB69C127}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BCF5CF0-C0C3-47C8-8AC3-697BAB69C127}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BCF5CF0-C0C3-47C8-8AC3-697BAB69C127}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F80BC70A-1EFD-467A-87C1-615706EA5D18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F80BC70A-1EFD-467A-87C1-615706EA5D18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F80BC70A-1EFD-467A-87C1-615706EA5D18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F80BC70A-1EFD-467A-87C1-615706EA5D18}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
