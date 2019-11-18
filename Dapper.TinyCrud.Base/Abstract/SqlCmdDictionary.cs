@@ -38,6 +38,8 @@ namespace Dapper.TinyCrud.Abstract
             var type = @object.GetType();
             var properties = type.GetProperties();
 
+            if (!keyColumns?.Any() ?? true) keyColumns = GetKeyColumns(properties);
+
             var identityProp = GetIdentityProperty(type, properties);
             IdentityColumn = identityProp.Name;
             IdentityValue = identityProp.GetValue(@object);
@@ -60,6 +62,11 @@ namespace Dapper.TinyCrud.Abstract
                 string columnName = GetColumnName(pi, keyColumns);
                 Add(columnName, pi.GetValue(@object));
             }     
+        }
+
+        private string[] GetKeyColumns(PropertyInfo[] properties)
+        {
+            throw new NotImplementedException();
         }
 
         private string GetTableName(Type type)
@@ -157,7 +164,7 @@ namespace Dapper.TinyCrud.Abstract
             return dp;
         }
 
-        public async Task<TIdentity> SaveAsync<TIdentity>(IDbConnection connection, Action<SqlCmdDictionary> onInsert = null, Action<SqlCmdDictionary> onUpdate = null)
+        public async Task<TIdentity> SaveAsync<TIdentity>(IDbConnection connection, Func<object, TIdentity> identityConvert, Action<SqlCmdDictionary> onInsert = null, Action<SqlCmdDictionary> onUpdate = null)
         {            
             if (IdentityValue.Equals(default(TIdentity)))
             {
@@ -168,7 +175,7 @@ namespace Dapper.TinyCrud.Abstract
             {
                 onUpdate?.Invoke(this);
                 await UpdateAsync(connection);
-                return IdentityValue;
+                return identityConvert.Invoke(IdentityValue);
             }
         }
 
@@ -212,6 +219,7 @@ namespace Dapper.TinyCrud.Abstract
             if (!keyColumns.Any()) throw new InvalidOperationException("MergeAsync method requires explicit key columns--one or more columns prefixed with '#'.");
 
             TIdentity id = await FindIdentityFromKeyValuesAsync<TIdentity>(connection, keyColumns);
+            IdentityValue = id;
             if (id.Equals(default(TIdentity)))
             {
                 onInsert?.Invoke(this);
@@ -220,7 +228,7 @@ namespace Dapper.TinyCrud.Abstract
             else
             {
                 onUpdate?.Invoke(this);
-                await UpdateAsync(connection, id);
+                await UpdateAsync(connection);
             }
 
             return id;
