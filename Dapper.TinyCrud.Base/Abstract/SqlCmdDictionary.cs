@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dapper.TinyCrud.Base.Attributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
@@ -11,6 +12,7 @@ namespace Dapper.TinyCrud.Abstract
     public abstract class SqlCmdDictionary : Dictionary<string, object>
     {
         private const string KeyColumnPrefix = "#";
+        public const string DefaultIdentityProperty = "Id";
 
         protected abstract string SelectIdentityCommand { get; }
         protected abstract char StartDelimiter { get; }
@@ -28,13 +30,19 @@ namespace Dapper.TinyCrud.Abstract
         public string TableName { get; set; }
         public string IdentityColumn { get; set; }
         public bool IdentityInsert { get; set; }
+        public object IdentityValue { get; set; }
         public string FormattedTableName() => ApplyDelimiter(TableName);
                 
         protected void Initialize(object @object, params string[] keyColumns)
         {
-            var result = new Dictionary<string, object>();
-            var properties = @object.GetType().GetProperties();
+            var type = @object.GetType();
+            var properties = type.GetProperties();
 
+            var identityProp = GetIdentityProperty(type, properties);
+            IdentityColumn = identityProp.Name;
+            IdentityValue = identityProp.GetValue(@object);
+            TableName = GetTableName(type);
+            
             var allSupportedTypes = SupportedTypes.Concat(ToNullable(SupportedTypes));
 
             bool isMapped(PropertyInfo pi) 
@@ -52,6 +60,32 @@ namespace Dapper.TinyCrud.Abstract
                 string columnName = GetColumnName(pi, keyColumns);
                 Add(columnName, pi.GetValue(@object));
             }     
+        }
+
+        private string GetTableName(Type type)
+        {
+            string result = type.Name;
+
+            var attr = type.GetCustomAttribute<TableAttribute>();
+            if (attr != null)
+            {
+                result = attr.Name;
+                if (!string.IsNullOrEmpty(attr.Schema)) result = attr.Schema + "." + attr.Name;
+            }
+
+            return result;
+        }
+
+        private PropertyInfo GetIdentityProperty(Type type, PropertyInfo[] properties)
+        {
+            var attr = type.GetCustomAttribute<IdentityAttribute>();
+
+            var propertyDictionary = properties.ToDictionary(pi => pi.Name);            
+
+            return
+                (attr != null && propertyDictionary.ContainsKey(attr.ColumnName)) ? propertyDictionary[attr.ColumnName] :
+                (propertyDictionary.ContainsKey(DefaultIdentityProperty)) ? propertyDictionary[DefaultIdentityProperty] :
+                throw new Exception($"Couldn't determine identity property of type {type.Name}");
         }
 
         private static IEnumerable<Type> ToNullable(Type[] types)
@@ -123,6 +157,21 @@ namespace Dapper.TinyCrud.Abstract
             return dp;
         }
 
+        public async Task<TIdentity> SaveAsync<TIdentity>(IDbConnection connection, Action<SqlCmdDictionary> onInsert = null, Action<SqlCmdDictionary> onUpdate = null)
+        {            
+            if (IdentityValue.Equals(default(TIdentity)))
+            {
+                onInsert?.Invoke(this);
+                return await InsertAsync<TIdentity>(connection);
+            }
+            else
+            {
+                onUpdate?.Invoke(this);
+                await UpdateAsync(connection);
+                return IdentityValue;
+            }
+        }
+
         public async Task<TIdentity> InsertAsync<TIdentity>(IDbConnection connection)
         {
             return await ExecuteInsertAsync<TIdentity>(connection);
@@ -149,11 +198,11 @@ namespace Dapper.TinyCrud.Abstract
             }
         }
 
-        public async Task UpdateAsync<TIdentity>(IDbConnection connection, TIdentity identity)
+        public async Task UpdateAsync(IDbConnection connection)
         {
             string sql = GetUpdateStatement();
             var dp = GetParameters();
-            dp.Add(IdentityColumn, identity);
+            dp.Add(IdentityColumn, IdentityValue);
             await connection.ExecuteAsync(sql, dp);
         }
 
@@ -237,6 +286,5 @@ namespace Dapper.TinyCrud.Abstract
                 }
             }
         }
-
     }
 }

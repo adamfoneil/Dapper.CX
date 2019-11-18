@@ -6,6 +6,15 @@ namespace Dapper.TinyCrud.SqlServer
 {
     public class SqlServerCmd : SqlCmdDictionary
     {
+        public SqlServerCmd()
+        {
+        }
+
+        public SqlServerCmd(object @object)
+        {
+            Initialize(@object);
+        }
+
         protected override string SelectIdentityCommand => "SELECT SCOPE_IDENTITY()";
 
         protected override char StartDelimiter => '[';
@@ -23,7 +32,6 @@ namespace Dapper.TinyCrud.SqlServer
             typeof(double),
             typeof(float)
         };
-            
 
         public override IDbCommand GetInsertCommand(IDbConnection connection)
         {
