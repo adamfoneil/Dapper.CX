@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dapper.TinyCrud.Abstract
 {
-    public abstract class SqlCmdDictionary : Dictionary<string, object>
+    public abstract class SqlCmdDictionary<TIdentity> : Dictionary<string, object>
     {
         private const string KeyColumnPrefix = "#";
         public const string DefaultIdentityProperty = "Id";
@@ -19,18 +19,20 @@ namespace Dapper.TinyCrud.Abstract
         protected abstract char EndDelimiter { get; }
 
         /// <summary>
-        /// Types supported by this SqlCmdDictionary,
-        /// do not include nullable versions since they are derived automatically
+        /// Types supported by this SqlCmdDictionary when mapping to an object.
+        /// Don't include nullable versions since they are derived automatically
         /// </summary>
         protected abstract Type[] SupportedTypes { get; }
+
+        protected abstract TIdentity ConvertIdentity(object identity);
 
         public abstract IDbCommand GetInsertCommand(IDbConnection connection);
         public abstract IDbCommand GetUpdateCommand(IDbConnection connection);
 
         public string TableName { get; set; }
         public string IdentityColumn { get; set; }
-        public bool IdentityInsert { get; set; }
-        public object IdentityValue { get; set; }
+        public bool IdentityInsert { get; set; }        
+        public TIdentity IdentityValue { get; set; }
         public string FormattedTableName() => ApplyDelimiter(TableName);
                 
         protected void Initialize(object @object, params string[] keyColumns)
@@ -42,9 +44,9 @@ namespace Dapper.TinyCrud.Abstract
 
             var identityProp = GetIdentityProperty(type, properties);
             IdentityColumn = identityProp.Name;
-            IdentityValue = identityProp.GetValue(@object);
             TableName = GetTableName(type);
-            
+            IdentityValue = ConvertIdentity(identityProp.GetValue(@object));
+                        
             var allSupportedTypes = SupportedTypes.Concat(ToNullable(SupportedTypes));
 
             bool isMapped(PropertyInfo pi) 
@@ -164,22 +166,23 @@ namespace Dapper.TinyCrud.Abstract
             return dp;
         }
 
-        public async Task<TIdentity> SaveAsync<TIdentity>(IDbConnection connection, Func<object, TIdentity> identityConvert, Action<SqlCmdDictionary> onInsert = null, Action<SqlCmdDictionary> onUpdate = null)
+        public async Task<TIdentity> SaveAsync(IDbConnection connection, Action<SqlCmdDictionary<TIdentity>> onInsert = null, Action<SqlCmdDictionary<TIdentity>> onUpdate = null)
         {            
             if (IdentityValue.Equals(default(TIdentity)))
             {
                 onInsert?.Invoke(this);
-                return await InsertAsync<TIdentity>(connection);
+                IdentityValue = await InsertAsync(connection);                
             }
             else
             {
                 onUpdate?.Invoke(this);
-                await UpdateAsync(connection);
-                return identityConvert.Invoke(IdentityValue);
+                await UpdateAsync(connection, IdentityValue);                                
             }
+
+            return IdentityValue;
         }
 
-        public async Task<TIdentity> InsertAsync<TIdentity>(IDbConnection connection)
+        public async Task<TIdentity> InsertAsync(IDbConnection connection)
         {
             return await ExecuteInsertAsync<TIdentity>(connection);
         }
@@ -205,36 +208,27 @@ namespace Dapper.TinyCrud.Abstract
             }
         }
 
-        public async Task UpdateAsync(IDbConnection connection)
+        public async Task UpdateAsync(IDbConnection connection, TIdentity identityValue = default)
         {
+            if (!identityValue.Equals(default)) IdentityValue = identityValue;
             string sql = GetUpdateStatement();
             var dp = GetParameters();
             dp.Add(IdentityColumn, IdentityValue);
             await connection.ExecuteAsync(sql, dp);
         }
 
-        public async Task<TIdentity> MergeAsync<TIdentity>(IDbConnection connection, Action<SqlCmdDictionary> onInsert = null, Action<SqlCmdDictionary> onUpdate = null)
+        public async Task<TIdentity> MergeAsync(IDbConnection connection, Action<SqlCmdDictionary<TIdentity>> onInsert = null, Action<SqlCmdDictionary<TIdentity>> onUpdate = null)
         {
             var keyColumns = GetKeyColumnNames();
             if (!keyColumns.Any()) throw new InvalidOperationException("MergeAsync method requires explicit key columns--one or more columns prefixed with '#'.");
 
-            TIdentity id = await FindIdentityFromKeyValuesAsync<TIdentity>(connection, keyColumns);
-            IdentityValue = id;
-            if (id.Equals(default(TIdentity)))
-            {
-                onInsert?.Invoke(this);
-                id = await InsertAsync<TIdentity>(connection);
-            }
-            else
-            {
-                onUpdate?.Invoke(this);
-                await UpdateAsync(connection);
-            }
+            IdentityValue = await FindIdentityFromKeyValuesAsync(connection, keyColumns);            
+            await SaveAsync(connection, onInsert, onUpdate);
 
-            return id;
+            return IdentityValue;
         }
 
-        private async Task<TIdentity> FindIdentityFromKeyValuesAsync<TIdentity>(IDbConnection connection, IEnumerable<string> keyColumns)
+        private async Task<TIdentity> FindIdentityFromKeyValuesAsync(IDbConnection connection, IEnumerable<string> keyColumns)
         {
             string query = $"SELECT {ApplyDelimiter(IdentityColumn)} FROM {ApplyDelimiter(TableName)} WHERE {GetWhereClauseInner(keyColumns)}";
             var dp = new DynamicParameters();
