@@ -34,22 +34,20 @@ namespace Dapper.CX.Abstract
         public bool IdentityInsert { get; set; }        
         public TIdentity IdentityValue { get; set; }
         public string FormattedTableName() => ApplyDelimiter(TableName);
-                
-        protected void Initialize(object @object, params string[] keyColumns)
+
+        private Dictionary<string, PropertyInfo> InitializeFromTypeInner(Type type, string[] keyColumns, out PropertyInfo identityProperty)
         {
-            var type = @object.GetType();
             var properties = type.GetProperties();
 
             if (!keyColumns?.Any() ?? true) keyColumns = GetKeyColumns(properties);
 
-            var identityProp = GetIdentityProperty(type, properties);
-            IdentityColumn = identityProp.Name;
+            identityProperty = GetIdentityProperty(type, properties);
+            IdentityColumn = identityProperty.Name;
             TableName = GetTableName(type);
-            IdentityValue = ConvertIdentity(identityProp.GetValue(@object));
-                        
+
             var allSupportedTypes = SupportedTypes.Concat(ToNullable(SupportedTypes));
 
-            bool isMapped(PropertyInfo pi) 
+            bool isMapped(PropertyInfo pi)
             {
                 if (GetColumnName(pi).Equals(IdentityColumn)) return false;
                 if (!allSupportedTypes.Contains(pi.PropertyType)) return false;
@@ -60,11 +58,27 @@ namespace Dapper.CX.Abstract
                 return true;
             };
 
+            Dictionary<string, PropertyInfo> results = new Dictionary<string, PropertyInfo>();
             foreach (PropertyInfo pi in properties.Where(pi => isMapped(pi)))
             {
                 string columnName = GetColumnName(pi, keyColumns);
-                Add(columnName, pi.GetValue(@object));
-            }     
+                Add(columnName, null);
+                results.Add(columnName, pi);
+            }
+            return results;
+        }
+
+        protected void InitializeFromType(Type type, params string[] keyColumns)
+        {
+            InitializeFromTypeInner(type, keyColumns, out PropertyInfo identityProp);
+        }
+
+        protected void InitializeFromObject(object @object, params string[] keyColumns)
+        {
+            var type = @object.GetType();
+            var properties = InitializeFromTypeInner(type, keyColumns, out PropertyInfo identityProp);
+            IdentityValue = ConvertIdentity(identityProp.GetValue(@object));
+            foreach (var pi in properties) this[pi.Key] = pi.Value.GetValue(@object);            
         }
 
         private string[] GetKeyColumns(PropertyInfo[] properties)

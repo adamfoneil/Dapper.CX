@@ -21,7 +21,7 @@ namespace Dapper.CX.SqlServer.Abstract
 
         public SqlServerCmd(object @object)
         {
-            Initialize(@object);
+            InitializeFromObject(@object);
         }
 
         protected override string SelectIdentityCommand => "SELECT SCOPE_IDENTITY()";

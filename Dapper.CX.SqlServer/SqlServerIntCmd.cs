@@ -16,7 +16,12 @@ namespace Dapper.CX.SqlServer
 
         public SqlServerIntCmd(object @object)
         {
-            Initialize(@object);
+            InitializeFromObject(@object);
+        }
+
+        public SqlServerIntCmd(Type type)
+        {
+            InitializeFromType(type);
         }
 
         public static async Task<SqlServerIntCmd> FromSchemaAsync(IDbConnection connection, string schema, string tableName)
