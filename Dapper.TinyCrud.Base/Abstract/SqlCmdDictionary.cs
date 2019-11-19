@@ -51,6 +51,7 @@ namespace Dapper.TinyCrud.Abstract
 
             bool isMapped(PropertyInfo pi) 
             {
+                if (GetColumnName(pi).Equals(IdentityColumn)) return false;
                 if (!allSupportedTypes.Contains(pi.PropertyType)) return false;
 
                 var attr = pi.GetCustomAttribute<NotMappedAttribute>();
@@ -68,7 +69,11 @@ namespace Dapper.TinyCrud.Abstract
 
         private string[] GetKeyColumns(PropertyInfo[] properties)
         {
-            throw new NotImplementedException();
+            return properties.Where(pi =>
+            {
+                var attr = pi.GetCustomAttribute<PrimaryKeyAttribute>();
+                return (attr != null);
+            }).Select(pi => pi.Name).ToArray();
         }
 
         private string GetTableName(Type type)
@@ -102,12 +107,19 @@ namespace Dapper.TinyCrud.Abstract
             return types.Select(t => t.MakeGenericType(typeof(Nullable<>), t));
         }
 
-        private static string GetColumnName(PropertyInfo propertyInfo, string[] keyColumns)
+        private static string GetColumnName(PropertyInfo propertyInfo)
         {
             string result = propertyInfo.Name;
 
             var attr = propertyInfo.GetCustomAttribute<ColumnAttribute>();
             if (attr != null) result = attr.Name;
+
+            return result;
+        }
+
+        private static string GetColumnName(PropertyInfo propertyInfo, string[] keyColumns)
+        {
+            string result = GetColumnName(propertyInfo);
 
             if (keyColumns.Contains(result)) result = KeyColumnPrefix + result;
             return result;
@@ -199,7 +211,7 @@ namespace Dapper.TinyCrud.Abstract
 
             if (!IdentityInsert)
             {
-                return await connection.QuerySingleAsync<TIdentity>(sql, GetParameters());
+                return await connection.QuerySingleOrDefaultAsync<TIdentity>(sql, GetParameters());
             }
             else
             {
