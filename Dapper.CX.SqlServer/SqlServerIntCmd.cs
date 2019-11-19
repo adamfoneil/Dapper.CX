@@ -8,20 +8,16 @@ namespace Dapper.CX.SqlServer
 {
     public class SqlServerIntCmd : SqlServerCmd<int>
     {
-        public SqlServerIntCmd(string tableName, string identityColumn)
+        public SqlServerIntCmd(string tableName, string identityColumn) : base(tableName, identityColumn)
         {
-            TableName = tableName;
-            IdentityColumn = identityColumn;
         }
 
-        public SqlServerIntCmd(object @object)
+        public SqlServerIntCmd(object @object) : base(@object)
         {
-            InitializeFromObject(@object);
         }
 
-        public SqlServerIntCmd(Type type)
+        public SqlServerIntCmd(Type type) : base(type)
         {
-            InitializeFromType(type);
         }
 
         public static async Task<SqlServerIntCmd> FromSchemaAsync(IDbConnection connection, string schema, string tableName)

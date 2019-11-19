@@ -24,6 +24,11 @@ namespace Dapper.CX.SqlServer.Abstract
             InitializeFromObject(@object);
         }
 
+        public SqlServerCmd(Type type)
+        {
+            InitializeFromType(type);
+        }
+
         protected override string SelectIdentityCommand => "SELECT SCOPE_IDENTITY()";
 
         protected override char StartDelimiter => '[';
