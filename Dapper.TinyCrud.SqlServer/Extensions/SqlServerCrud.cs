@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Threading.Tasks;
 
-namespace Dapper.TinyCrud.SqlServer.Extensions
+namespace Dapper.CX.SqlServer.Extensions
 {
     public static class SqlServerIntIdentity
     {

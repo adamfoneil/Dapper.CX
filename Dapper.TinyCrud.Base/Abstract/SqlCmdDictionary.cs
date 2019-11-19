@@ -1,4 +1,4 @@
-﻿using Dapper.TinyCrud.Base.Attributes;
+﻿using Dapper.CX.Base.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Dapper.TinyCrud.Abstract
+namespace Dapper.CX.Abstract
 {
     public abstract class SqlCmdDictionary<TIdentity> : Dictionary<string, object>
     {

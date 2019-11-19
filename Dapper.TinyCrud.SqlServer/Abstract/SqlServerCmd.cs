@@ -1,11 +1,11 @@
-﻿using Dapper.TinyCrud.Abstract;
+﻿using Dapper.CX.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dapper.TinyCrud.SqlServer.Abstract
+namespace Dapper.CX.SqlServer.Abstract
 {
     public abstract class SqlServerCmd<TIdentity> : SqlCmdDictionary<TIdentity>
     {

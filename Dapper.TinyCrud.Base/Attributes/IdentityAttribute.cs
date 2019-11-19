@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dapper.TinyCrud.Base.Attributes
+namespace Dapper.CX.Base.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class IdentityAttribute : Attribute

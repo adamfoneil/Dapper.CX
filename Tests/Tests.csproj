@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dapper.TinyCrud.Base\Dapper.TinyCrud.Base.csproj" />
+    <ProjectReference Include="..\Dapper.TinyCrud.Base\Dapper.CX.Base.csproj" />
     <ProjectReference Include="..\Dapper.TinyCrud.SqlServer\Dapper.TinyCrud.SqlServer.csproj" />
   </ItemGroup>
 

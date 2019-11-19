@@ -1,10 +1,10 @@
-﻿using Dapper.TinyCrud.SqlServer.Abstract;
+﻿using Dapper.CX.SqlServer.Abstract;
 using System;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dapper.TinyCrud.SqlServer
+namespace Dapper.CX.SqlServer
 {
     public class SqlServerIntCmd : SqlServerCmd<int>
     {

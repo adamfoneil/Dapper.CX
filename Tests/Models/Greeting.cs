@@ -1,4 +1,4 @@
-﻿using Dapper.TinyCrud.Base.Attributes;
+﻿using Dapper.CX.Base.Attributes;
 using System;
 
 namespace Tests.Models

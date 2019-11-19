@@ -1,4 +1,4 @@
-using Dapper.TinyCrud.SqlServer;
+using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Tests.Models;
