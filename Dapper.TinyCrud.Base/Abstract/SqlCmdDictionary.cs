@@ -184,14 +184,14 @@ namespace Dapper.TinyCrud.Abstract
 
         public async Task<TIdentity> InsertAsync(IDbConnection connection)
         {
-            return await ExecuteInsertAsync<TIdentity>(connection);
+            return await ExecuteInsertAsync(connection);
         }
 
         /// <summary>
         /// SQL Server Compact Edition seems to require an explicit transaction when doing an insert and returning the identity value.
         /// This is virtual so that SqlCe can override it with this special behavior.
         /// </summary>
-        protected virtual async Task<TIdentity> ExecuteInsertAsync<TIdentity>(IDbConnection connection)
+        protected virtual async Task<TIdentity> ExecuteInsertAsync(IDbConnection connection)
         {
             string sql = (!IdentityInsert) ?
                 GetInsertStatement() :
@@ -204,7 +204,7 @@ namespace Dapper.TinyCrud.Abstract
             else
             {
                 await connection.ExecuteAsync(sql, GetParameters());
-                return default(TIdentity);
+                return default;
             }
         }
 
@@ -234,6 +234,18 @@ namespace Dapper.TinyCrud.Abstract
             var dp = new DynamicParameters();
             foreach (var col in keyColumns) dp.Add(col, this[KeyColumnPrefix + col]);
             return await connection.QuerySingleOrDefaultAsync<TIdentity>(query, dp);
+        }
+
+        public async Task DeleteAsync(IDbConnection connection, TIdentity identityValue = default)
+        {
+            if (!identityValue.Equals(default)) IdentityValue = identityValue;
+            string sql = GetDeleteStatement();
+            await connection.ExecuteAsync(sql, new { id = IdentityValue });
+        }
+
+        public string GetDeleteStatement()
+        {
+            return $"DELETE {FormattedTableName()} WHERE {ApplyDelimiter(IdentityColumn)}=@id";
         }
 
         public string GetUpdateStatement()

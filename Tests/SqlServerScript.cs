@@ -1,4 +1,5 @@
 using Dapper.TinyCrud.SqlServer;
+using Dapper.TinyCrud.SqlServer.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests
@@ -9,7 +10,7 @@ namespace Tests
         [TestMethod]
         public void EmployeeInsertScript()
         {
-            var cmd = new SqlServerCmd();
+            //var cmd = new SqlServerCmd<int>();
             
         }
     }

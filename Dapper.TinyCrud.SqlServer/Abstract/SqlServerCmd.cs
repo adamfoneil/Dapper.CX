@@ -2,9 +2,9 @@
 using System;
 using System.Data;
 
-namespace Dapper.TinyCrud.SqlServer
+namespace Dapper.TinyCrud.SqlServer.Abstract
 {
-    public class SqlServerCmd : SqlCmdDictionary
+    public abstract class SqlServerCmd<TIdentity> : SqlCmdDictionary<TIdentity>
     {
         public SqlServerCmd()
         {
