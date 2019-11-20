@@ -195,13 +195,33 @@ namespace Dapper.CX.Abstract
             return dp;
         }
 
-        public async Task<bool> FindAsync(IDbConnection connection, TIdentity identityValue)
-        {            
-            var result = await connection.QuerySingleOrDefaultAsync(GetFindStatement(), new { id = identityValue });
+        protected DynamicParameters GetIdentityParam(TIdentity identityValue)
+        {
+            var dp = new DynamicParameters();
+            dp.Add(IdentityColumn, identityValue);
+            return dp;
+        }
+
+        public async Task<TModel> FindAsync<TModel>(IDbConnection connection, TIdentity identityValue)
+        {
+            var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetFindStatement(), GetIdentityParam(identityValue));
             if (result != null)
             {
                 IdentityValue = identityValue;
+                var data = ConvertToDictionary(result);
+                foreach (var kp in data) Add(kp.Key, kp.Value);
+            }
+            return result;
+        }
 
+        public async Task<bool> FindAsync(IDbConnection connection, TIdentity identityValue)
+        {            
+            var result = await connection.QuerySingleOrDefaultAsync(GetFindStatement(), GetIdentityParam(identityValue));
+            if (result != null)
+            {
+                IdentityValue = identityValue;
+                var data = ConvertToDictionary(result);
+                foreach (var kp in data) Add(kp.Key, kp.Value);
                 return true;
             }
 
@@ -346,7 +366,7 @@ namespace Dapper.CX.Abstract
                 )";
         }
 
-        protected string GetFindStatement()
+        public string GetFindStatement()
         {
             return $"SELECT {string.Join(", ", Keys.Select(key => ApplyDelimiter(key)))} FROM {ApplyDelimiter(TableName)} WHERE {ApplyDelimiter(IdentityColumn)}=@{IdentityColumn}";
         }
@@ -363,6 +383,12 @@ namespace Dapper.CX.Abstract
                     this[col.ColumnName] = (!dataRow.IsNull(col)) ? dataRow[col] : null;
                 }
             }
+        }
+
+        private static Dictionary<string, object> ConvertToDictionary(object @object)
+        {
+            var properties = @object.GetType().GetProperties();
+            return properties.ToDictionary(pi => GetColumnName(pi), pi => pi.GetValue(@object));
         }
     }
 }
