@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -47,16 +48,39 @@ namespace Dapper.CX.SqlServer.Abstract
             typeof(float)
         };
 
+        public async Task InitializeFromSchema(IDbConnection connection, string schema, string tableName)
+        {
+            IdentityColumn = await GetIdentityColumnFromSchema(connection, schema, tableName);
+
+            var keyColumns = await GetKeyColumnsFromSchema(connection, schema, tableName);
+            var allColumns = await GetColumnsFromSchema(connection, schema, tableName, keyColumns);
+
+            foreach (var col in keyColumns) Add("#" + col, null);
+            foreach (var col in allColumns.Except(keyColumns)) Add(col, null);
+        }
+
         public override IDbCommand GetInsertCommand(IDbConnection connection)
         {
-            throw new NotImplementedException();
+            var result = new SqlCommand(GetInsertStatement(), connection as SqlConnection);
+            AddParameters(result);
+            return result;
         }
 
         public override IDbCommand GetUpdateCommand(IDbConnection connection)
         {
-            throw new NotImplementedException();
+            var result = new SqlCommand(GetUpdateStatement(), connection as SqlConnection);
+            AddParameters(result);
+            result.Parameters.AddWithValue(IdentityColumn, DBNull.Value);
+            return result;
         }
 
+        private void AddParameters(SqlCommand cmd)
+        {
+            foreach (var keyPair in this)
+            {
+                cmd.Parameters.AddWithValue(ParseColumnName(keyPair.Key), keyPair.Value ?? DBNull.Value);
+            }
+        }
         protected static async Task<string> GetIdentityColumnFromSchema(IDbConnection connection, string schemaName, string tableName)
         {
             return await connection.QuerySingleOrDefaultAsync<string>(

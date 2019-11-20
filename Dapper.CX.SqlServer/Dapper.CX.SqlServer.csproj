@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Dapper.CX.Base\Dapper.CX.Base.csproj" />
   </ItemGroup>
 
