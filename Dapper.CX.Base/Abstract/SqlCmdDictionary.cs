@@ -1,4 +1,6 @@
 ﻿using Dapper.CX.Base.Attributes;
+using Dapper.CX.Base.Enums;
+using Dapper.CX.Base.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -31,9 +33,10 @@ namespace Dapper.CX.Abstract
 
         public string TableName { get; set; }
         public string IdentityColumn { get; set; }
-        public bool IdentityInsert { get; set; }        
+        public bool IdentityInsert { get; set; }
         public TIdentity IdentityValue { get; set; }
         public string FormattedTableName() => ApplyDelimiter(TableName);
+        public SaveAction SaveAction { get; private set; }
 
         private Dictionary<string, PropertyInfo> InitializeFromTypeInner(Type type, string[] keyColumns, out PropertyInfo identityProperty)
         {
@@ -192,9 +195,27 @@ namespace Dapper.CX.Abstract
             return dp;
         }
 
+        public async Task<bool> FindAsync(IDbConnection connection, TIdentity identityValue)
+        {            
+            var result = await connection.QuerySingleOrDefaultAsync(GetFindStatement(), new { id = identityValue });
+            if (result != null)
+            {
+                IdentityValue = identityValue;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsNew()
+        {
+            return IdentityValue.Equals(default(TIdentity));
+        }
+
         public async Task<TIdentity> SaveAsync(IDbConnection connection, Action<SqlCmdDictionary<TIdentity>> onInsert = null, Action<SqlCmdDictionary<TIdentity>> onUpdate = null)
         {            
-            if (IdentityValue.Equals(default(TIdentity)))
+            if (IsNew())
             {
                 onInsert?.Invoke(this);
                 IdentityValue = await InsertAsync(connection);                
@@ -210,7 +231,16 @@ namespace Dapper.CX.Abstract
 
         public async Task<TIdentity> InsertAsync(IDbConnection connection)
         {
-            return await ExecuteInsertAsync(connection);
+            try
+            {
+                var result = await ExecuteInsertAsync(connection);
+                SaveAction = SaveAction.Insert;
+                return result;
+            }
+            catch (Exception exc)
+            {
+                throw new CrudException(this, exc);
+            }
         }
 
         /// <summary>
@@ -236,11 +266,19 @@ namespace Dapper.CX.Abstract
 
         public async Task UpdateAsync(IDbConnection connection, TIdentity identityValue = default)
         {
-            if (!identityValue.Equals(default)) IdentityValue = identityValue;
-            string sql = GetUpdateStatement();
-            var dp = GetParameters();
-            dp.Add(IdentityColumn, IdentityValue);
-            await connection.ExecuteAsync(sql, dp);
+            try
+            {
+                if (!identityValue.Equals(default)) IdentityValue = identityValue;
+                string sql = GetUpdateStatement();
+                var dp = GetParameters();
+                dp.Add(IdentityColumn, IdentityValue);
+                await connection.ExecuteAsync(sql, dp);
+                SaveAction = SaveAction.Update;
+            }
+            catch (Exception exc)
+            {
+                throw new CrudException(this, exc);
+            }
         }
 
         public async Task<TIdentity> MergeAsync(IDbConnection connection, Action<SqlCmdDictionary<TIdentity>> onInsert = null, Action<SqlCmdDictionary<TIdentity>> onUpdate = null)

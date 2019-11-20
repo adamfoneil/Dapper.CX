@@ -1,10 +1,17 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.SqlServer.Extensions
 {
     public static class SqlServerIntCrud
     {
+        public static async Task<TModel> FindAsync<TModel>(this IDbConnection connection, int id)
+        {
+            var cmd = new SqlServerIntCmd(typeof(TModel));
+            return await cmd.FindAsync(connection, id);
+        }
+
         public static async Task<int> InsertAsync<TModel>(this IDbConnection connection, TModel model)
         {
             var cmd = new SqlServerIntCmd(model);

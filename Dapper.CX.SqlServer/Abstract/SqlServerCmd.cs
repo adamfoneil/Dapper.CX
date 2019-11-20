@@ -81,6 +81,7 @@ namespace Dapper.CX.SqlServer.Abstract
                 cmd.Parameters.AddWithValue(ParseColumnName(keyPair.Key), keyPair.Value ?? DBNull.Value);
             }
         }
+
         protected static async Task<string> GetIdentityColumnFromSchema(IDbConnection connection, string schemaName, string tableName)
         {
             return await connection.QuerySingleOrDefaultAsync<string>(
