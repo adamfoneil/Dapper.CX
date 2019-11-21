@@ -16,7 +16,8 @@ namespace Tests
             cmd["CurrentTime"] = DateTime.Now;
 
             string insertCmd = cmd.GetInsertStatement();
-            Assert.IsTrue(insertCmd.Equals(@"INSERT INTO [table1] (
+            Assert.IsTrue(insertCmd.Equals(
+                @"INSERT INTO [table1] (
                     [Greeting], [CurrentTime]
                 ) VALUES (
                     @Greeting, @CurrentTime
@@ -31,7 +32,8 @@ namespace Tests
             cmd["CurrentTime"] = DateTime.Now;
 
             string updateCmd = cmd.GetUpdateStatement();
-            Assert.IsTrue(updateCmd.Equals(@"UPDATE [table1] SET
+            Assert.IsTrue(updateCmd.Equals(
+                @"UPDATE [table1] SET
                     [Greeting]=@Greeting, [CurrentTime]=@CurrentTime
                 WHERE [Id]=@Id"));
         }
@@ -48,7 +50,8 @@ namespace Tests
             var cmd = new SqlServerIntCmd(g);
 
             var insertCmd = cmd.GetInsertStatement();
-            Assert.IsTrue(insertCmd.Equals(@"INSERT INTO [Greeting] (
+            Assert.IsTrue(insertCmd.Equals(
+                @"INSERT INTO [Greeting] (
                     [Message], [CurrentTime]
                 ) VALUES (
                     @Message, @CurrentTime
@@ -65,7 +68,8 @@ namespace Tests
         {
             var cmd = new SqlServerIntCmd(typeof(Employee));
             string insertCmd = cmd.GetInsertStatement();
-            Assert.IsTrue(insertCmd.Equals(@"INSERT INTO [Employee] (
+            Assert.IsTrue(insertCmd.Equals(
+                @"INSERT INTO [Employee] (
                     [FirstName], [LastName], [HireDate], [TermDate], [IsExempt]
                 ) VALUES (
                     @FirstName, @LastName, @HireDate, @TermDate, @IsExempt
@@ -77,7 +81,8 @@ namespace Tests
         {
             var cmd = new SqlServerIntCmd(typeof(Employee));
             string updateCmd = cmd.GetUpdateStatement();
-            Assert.IsTrue(updateCmd.Equals(@"UPDATE [Employee] SET
+            Assert.IsTrue(updateCmd.Equals(
+                @"UPDATE [Employee] SET
                     [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [TermDate]=@TermDate, [IsExempt]=@IsExempt
                 WHERE [Id]=@Id"));
         }
