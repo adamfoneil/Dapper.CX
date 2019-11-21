@@ -78,7 +78,29 @@ namespace Dapper.CX.Abstract
             var type = @object.GetType();
             var properties = InitializeFromTypeInner(type, keyColumns, out PropertyInfo identityProp);
             IdentityValue = ConvertIdentity(identityProp.GetValue(@object));
-            foreach (var pi in properties) this[pi.Key] = pi.Value.GetValue(@object);            
+            foreach (var pi in properties)
+            {
+                var value = pi.Value.GetValue(@object);
+                if (!HasValue(value))
+                {
+                    Remove(pi.Key); // if value isn't set, omit from SQL statement
+                }
+                else
+                {
+                    this[pi.Key] = value;
+                }                
+            }
+        }
+
+        private static bool HasValue(object value)
+        {
+            if (value != null)
+            {
+                if (value.Equals(string.Empty)) return false;
+                return true;
+            }
+
+            return false;
         }
 
         private string[] GetKeyColumns(PropertyInfo[] properties)
@@ -334,7 +356,7 @@ namespace Dapper.CX.Abstract
 
             return
                 $@"UPDATE {ApplyDelimiter(TableName)} SET
-                    {string.Join(", ", Keys.Where(kp => predicate(kp)).Select(col => $"{ApplyDelimiter(col)}=@{ParseColumnName(col)}"))}
+                    {string.Join(", ", KeysWithValues().Where(kp => predicate(kp)).Select(col => $"{ApplyDelimiter(col)}=@{ParseColumnName(col)}"))}
                 WHERE {ApplyDelimiter(IdentityColumn)}=@{IdentityColumn}";
         }
 
@@ -352,10 +374,15 @@ namespace Dapper.CX.Abstract
         {
             return
                 $@"{verb} INTO {ApplyDelimiter(TableName)} (
-                    {string.Join(", ", Keys.Select(s => ApplyDelimiter(s)))}
+                    {string.Join(", ", KeysWithValues().Select(s => ApplyDelimiter(s)))}
                 ) VALUES (
-                    {string.Join(", ", Keys.Select(s => $"@{ParseColumnName(s)}"))}
+                    {string.Join(", ", KeysWithValues().Select(s => $"@{ParseColumnName(s)}"))}
                 )";
+        }
+
+        private IEnumerable<string> KeysWithValues()
+        {
+            return Keys.Where(key => this[key] != null);
         }
 
         public string GetFindStatement()

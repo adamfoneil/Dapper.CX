@@ -64,27 +64,56 @@ namespace Tests
         }
 
         [TestMethod]
-        public void EmployeeInsert()
+        public void EmployeeInsertSqlViaDictionary()
         {
             var cmd = new SqlServerIntCmd(typeof(Employee));
+            cmd["FirstName"] = "nobody";
+            cmd["LastName"] = "whatever";
+            cmd["HireDate"] = DateTime.Today;
+            cmd["IsExempt"] = true;
+
             string insertCmd = cmd.GetInsertStatement();
             Assert.IsTrue(insertCmd.Equals(
                 @"INSERT INTO [Employee] (
-                    [FirstName], [LastName], [HireDate], [TermDate], [IsExempt]
+                    [FirstName], [LastName], [HireDate], [IsExempt]
                 ) VALUES (
-                    @FirstName, @LastName, @HireDate, @TermDate, @IsExempt
+                    @FirstName, @LastName, @HireDate, @IsExempt
                 ); SELECT SCOPE_IDENTITY()"));
         }
 
         [TestMethod]
-        public void EmployeeUpdate()
+        public void EmployeeUpdateSqlViaDictionary()
         {
             var cmd = new SqlServerIntCmd(typeof(Employee));
+            cmd["FirstName"] = "nobody";
+            cmd["LastName"] = "whatever";
+            cmd["HireDate"] = DateTime.Today;
+            cmd["IsExempt"] = true;
+
             string updateCmd = cmd.GetUpdateStatement();
             Assert.IsTrue(updateCmd.Equals(
                 @"UPDATE [Employee] SET
-                    [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [TermDate]=@TermDate, [IsExempt]=@IsExempt
+                    [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [IsExempt]=@IsExempt
                 WHERE [Id]=@Id"));
+        }
+
+        [TestMethod]
+        public void EmployeeInsertViaModel()
+        {
+            var emp = new Employee()
+            {
+                FirstName = "Ludmilla",
+                LastName = "Kravitz"
+            };
+
+            var cmd = new SqlServerIntCmd(emp);
+            string insertCmd = cmd.GetInsertStatement();
+            Assert.IsTrue(insertCmd.Equals(
+                @"INSERT INTO [Employee] (
+                    [FirstName], [LastName], [IsExempt]
+                ) VALUES (
+                    @FirstName, @LastName, @IsExempt
+                ); SELECT SCOPE_IDENTITY()"));
         }
     }
 }
