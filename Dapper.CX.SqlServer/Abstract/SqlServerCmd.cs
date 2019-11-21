@@ -39,13 +39,13 @@ namespace Dapper.CX.SqlServer.Abstract
         protected override Type[] SupportedTypes => new Type[] 
         {
             typeof(string), 
-            typeof(int),
-            typeof(DateTime),
-            typeof(bool),
-            typeof(long),
-            typeof(decimal),
-            typeof(double),
-            typeof(float)
+            typeof(int), typeof(int?),
+            typeof(DateTime), typeof(DateTime?),
+            typeof(bool), typeof(bool?),
+            typeof(long), typeof(long?),
+            typeof(decimal), typeof(decimal?),
+            typeof(double), typeof(double?),
+            typeof(float), typeof(float?)
         };
 
         public async Task InitializeFromSchema(IDbConnection connection, string schema, string tableName)

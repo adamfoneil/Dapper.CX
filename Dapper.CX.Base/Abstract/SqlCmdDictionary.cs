@@ -21,8 +21,7 @@ namespace Dapper.CX.Abstract
         protected abstract char EndDelimiter { get; }
 
         /// <summary>
-        /// Types supported by this SqlCmdDictionary when mapping to an object.
-        /// Don't include nullable versions since they are derived automatically
+        /// All the types the Cmd dictionary supports
         /// </summary>
         protected abstract Type[] SupportedTypes { get; }
 
@@ -46,14 +45,12 @@ namespace Dapper.CX.Abstract
 
             identityProperty = GetIdentityProperty(type, properties);
             IdentityColumn = identityProperty.Name;
-            TableName = GetTableName(type);
-
-            var allSupportedTypes = SupportedTypes.Concat(ToNullable(SupportedTypes));
+            TableName = GetTableName(type);            
 
             bool isMapped(PropertyInfo pi)
             {
                 if (GetColumnName(pi).Equals(IdentityColumn)) return false;
-                if (!allSupportedTypes.Contains(pi.PropertyType)) return false;
+                if (!SupportedTypes.Contains(pi.PropertyType)) return false;
 
                 var attr = pi.GetCustomAttribute<NotMappedAttribute>();
                 if (attr != null) return false;
@@ -117,11 +114,6 @@ namespace Dapper.CX.Abstract
                 (attr != null && propertyDictionary.ContainsKey(attr.ColumnName)) ? propertyDictionary[attr.ColumnName] :
                 (propertyDictionary.ContainsKey(DefaultIdentityProperty)) ? propertyDictionary[DefaultIdentityProperty] :
                 throw new Exception($"Couldn't determine identity property of type {type.Name}");
-        }
-
-        private static IEnumerable<Type> ToNullable(Type[] types)
-        {
-            return types.Select(t => t.MakeGenericType(typeof(Nullable<>), t));
         }
 
         private static string GetColumnName(PropertyInfo propertyInfo)

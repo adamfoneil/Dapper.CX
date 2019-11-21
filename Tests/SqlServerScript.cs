@@ -59,5 +59,27 @@ namespace Tests
                     [Message]=@Message, [CurrentTime]=@CurrentTime
                 WHERE [Id]=@Id"));
         }
+
+        [TestMethod]
+        public void EmployeeInsert()
+        {
+            var cmd = new SqlServerIntCmd(typeof(Employee));
+            string insertCmd = cmd.GetInsertStatement();
+            Assert.IsTrue(insertCmd.Equals(@"INSERT INTO [Employee] (
+                    [FirstName], [LastName], [HireDate], [TermDate], [IsExempt]
+                ) VALUES (
+                    @FirstName, @LastName, @HireDate, @TermDate, @IsExempt
+                ); SELECT SCOPE_IDENTITY()"));
+        }
+
+        [TestMethod]
+        public void EmployeeUpdate()
+        {
+            var cmd = new SqlServerIntCmd(typeof(Employee));
+            string updateCmd = cmd.GetUpdateStatement();
+            Assert.IsTrue(updateCmd.Equals(@"UPDATE [Employee] SET
+                    [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [TermDate]=@TermDate, [IsExempt]=@IsExempt
+                WHERE [Id]=@Id"));
+        }
     }
 }
