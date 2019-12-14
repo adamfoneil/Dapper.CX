@@ -21,8 +21,7 @@ namespace Dapper.CX.Abstract
         protected abstract char EndDelimiter { get; }
 
         /// <summary>
-        /// Types supported by this SqlCmdDictionary when mapping to an object.
-        /// Don't include nullable versions since they are derived automatically
+        /// Types supported by this SqlCmdDictionary when mapping to an object.        
         /// </summary>
         protected abstract Type[] SupportedTypes { get; }
 
@@ -34,7 +33,7 @@ namespace Dapper.CX.Abstract
         public string TableName { get; set; }
         public string IdentityColumn { get; set; }
         public bool IdentityInsert { get; set; }
-        public TIdentity IdentityValue { get; set; }
+        public TIdentity Id { get; set; }
         public string FormattedTableName() => ApplyDelimiter(TableName);
         public SaveAction SaveAction { get; private set; }
 
@@ -80,7 +79,7 @@ namespace Dapper.CX.Abstract
         {
             var type = @object.GetType();
             var properties = InitializeFromTypeInner(type, keyColumns, out PropertyInfo identityProp);
-            IdentityValue = ConvertIdentity(identityProp.GetValue(@object));
+            Id = ConvertIdentity(identityProp.GetValue(@object));
             foreach (var pi in properties) this[pi.Key] = pi.Value.GetValue(@object);            
         }
 
@@ -202,35 +201,38 @@ namespace Dapper.CX.Abstract
             return dp;
         }
 
-        public async Task<TModel> FindAsync<TModel>(IDbConnection connection, TIdentity identityValue)
+        public async Task<TModel> GetAsync<TModel>(IDbConnection connection, TIdentity identityValue)
         {
-            var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetFindStatement(), GetIdentityParam(identityValue));
+            var result = await connection.QuerySingleOrDefaultAsync<TModel>(SqlQuerySingleStatement(), GetIdentityParam(identityValue));
             if (result != null)
             {
-                IdentityValue = identityValue;
-                var data = ConvertToDictionary(result);
-                foreach (var kp in data) Add(kp.Key, kp.Value);
+                FillDictionary(identityValue, result);
             }
             return result;
         }
 
-        public async Task<bool> FindAsync(IDbConnection connection, TIdentity identityValue)
+        public async Task<bool> GetAsync(IDbConnection connection, TIdentity identityValue)
         {            
-            var result = await connection.QuerySingleOrDefaultAsync(GetFindStatement(), GetIdentityParam(identityValue));
+            var result = await connection.QuerySingleOrDefaultAsync(SqlQuerySingleStatement(), GetIdentityParam(identityValue));
             if (result != null)
             {
-                IdentityValue = identityValue;
-                var data = ConvertToDictionary(result);
-                foreach (var kp in data) Add(kp.Key, kp.Value);
+                FillDictionary(identityValue, result);
                 return true;
             }
 
             return false;
         }
 
+        private void FillDictionary(TIdentity identityValue, object result)
+        {
+            Id = identityValue;
+            var data = ConvertToDictionary(result);
+            foreach (var kp in data) Add(kp.Key, kp.Value);
+        }
+
         public bool IsNew()
         {
-            return IdentityValue.Equals(default(TIdentity));
+            return Id.Equals(default(TIdentity));
         }
 
         public async Task<TIdentity> SaveAsync(IDbConnection connection, Action<SqlCmdDictionary<TIdentity>> onInsert = null, Action<SqlCmdDictionary<TIdentity>> onUpdate = null)
@@ -238,15 +240,15 @@ namespace Dapper.CX.Abstract
             if (IsNew())
             {
                 onInsert?.Invoke(this);
-                IdentityValue = await InsertAsync(connection);                
+                Id = await InsertAsync(connection);                
             }
             else
             {
                 onUpdate?.Invoke(this);
-                await UpdateAsync(connection, IdentityValue);                                
+                await UpdateAsync(connection, Id);                                
             }
 
-            return IdentityValue;
+            return Id;
         }
 
         public async Task<TIdentity> InsertAsync(IDbConnection connection)
@@ -263,35 +265,14 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        /// <summary>
-        /// SQL Server Compact Edition seems to require an explicit transaction when doing an insert and returning the identity value.
-        /// This is virtual so that SqlCe can override it with this special behavior.
-        /// </summary>
-        protected virtual async Task<TIdentity> ExecuteInsertAsync(IDbConnection connection)
-        {
-            string sql = (!IdentityInsert) ?
-                GetInsertStatement() :
-                GetInsertStatementBase("INSERT");
-
-            if (!IdentityInsert)
-            {
-                return await connection.QuerySingleOrDefaultAsync<TIdentity>(sql, GetParameters());
-            }
-            else
-            {
-                await connection.ExecuteAsync(sql, GetParameters());
-                return default;
-            }
-        }
-
         public async Task UpdateAsync(IDbConnection connection, TIdentity identityValue = default)
         {
             try
             {
-                if (!identityValue.Equals(default)) IdentityValue = identityValue;
-                string sql = GetUpdateStatement();
+                if (!identityValue.Equals(default)) Id = identityValue;
+                string sql = SqlUpdateStatement();
                 var dp = GetParameters();
-                dp.Add(IdentityColumn, IdentityValue);
+                dp.Add(IdentityColumn, Id);
                 await connection.ExecuteAsync(sql, dp);
                 SaveAction = SaveAction.Update;
             }
@@ -306,15 +287,36 @@ namespace Dapper.CX.Abstract
             var keyColumns = GetKeyColumnNames();
             if (!keyColumns.Any()) throw new InvalidOperationException("MergeAsync method requires explicit key columns--one or more columns prefixed with '#'.");
 
-            IdentityValue = await FindIdentityFromKeyValuesAsync(connection, keyColumns);            
+            Id = await FindIdentityFromKeyValuesAsync(connection, keyColumns);
             await SaveAsync(connection, onInsert, onUpdate);
 
-            return IdentityValue;
+            return Id;
         }
+
+        /// <summary>
+        /// SQL Server Compact Edition seems to require an explicit transaction when doing an insert and returning the identity value.
+        /// This is virtual so that SqlCe can override it with this special behavior.
+        /// </summary>
+        protected virtual async Task<TIdentity> ExecuteInsertAsync(IDbConnection connection)
+        {
+            string sql = (!IdentityInsert) ?
+                SqlInsertStatement() :
+                SqlInsertStatementBase("INSERT");
+
+            if (!IdentityInsert)
+            {
+                return await connection.QuerySingleOrDefaultAsync<TIdentity>(sql, GetParameters());
+            }
+            else
+            {
+                await connection.ExecuteAsync(sql, GetParameters());
+                return default;
+            }
+        }        
 
         private async Task<TIdentity> FindIdentityFromKeyValuesAsync(IDbConnection connection, IEnumerable<string> keyColumns)
         {
-            string query = $"SELECT {ApplyDelimiter(IdentityColumn)} FROM {ApplyDelimiter(TableName)} WHERE {GetWhereClauseInner(keyColumns)}";
+            string query = $"SELECT {ApplyDelimiter(IdentityColumn)} FROM {ApplyDelimiter(TableName)} WHERE {SqlWhereClauseInner(keyColumns)}";
             var dp = new DynamicParameters();
             foreach (var col in keyColumns) dp.Add(col, this[KeyColumnPrefix + col]);
             return await connection.QuerySingleOrDefaultAsync<TIdentity>(query, dp);
@@ -322,17 +324,17 @@ namespace Dapper.CX.Abstract
 
         public async Task DeleteAsync(IDbConnection connection, TIdentity identityValue = default)
         {
-            if (!identityValue.Equals(default)) IdentityValue = identityValue;
-            string sql = GetDeleteStatement();
-            await connection.ExecuteAsync(sql, new { id = IdentityValue });
+            if (!identityValue.Equals(default)) Id = identityValue;
+            string sql = SqlDeleteStatement();
+            await connection.ExecuteAsync(sql, new { id = Id });
         }
 
-        public string GetDeleteStatement()
+        public string SqlDeleteStatement()
         {
             return $"DELETE {FormattedTableName()} WHERE {ApplyDelimiter(IdentityColumn)}=@id";
         }
 
-        public string GetUpdateStatement()
+        public string SqlUpdateStatement()
         {
             // by default, we include all columns in the update
             Func<string, bool> predicate = (key) => true;
@@ -346,17 +348,17 @@ namespace Dapper.CX.Abstract
                 WHERE {ApplyDelimiter(IdentityColumn)}=@{IdentityColumn}";
         }
 
-        private string GetWhereClauseInner(IEnumerable<string> keyColumns)
+        private string SqlWhereClauseInner(IEnumerable<string> keyColumns)
         {
             return string.Join(" AND ", keyColumns.Select(col => $"{ApplyDelimiter(col)}=@{ParseColumnName(col)}"));
         }
 
-        public string GetInsertStatement()
+        public string SqlInsertStatement()
         {
-            return GetInsertStatementBase("INSERT") + "; " + SelectIdentityCommand;
+            return SqlInsertStatementBase("INSERT") + "; " + SelectIdentityCommand;
         }
 
-        protected string GetInsertStatementBase(string verb)
+        protected string SqlInsertStatementBase(string verb)
         {
             return
                 $@"{verb} INTO {ApplyDelimiter(TableName)} (
@@ -366,7 +368,7 @@ namespace Dapper.CX.Abstract
                 )";
         }
 
-        public string GetFindStatement()
+        public string SqlQuerySingleStatement()
         {
             return $"SELECT {string.Join(", ", Keys.Select(key => ApplyDelimiter(key)))} FROM {ApplyDelimiter(TableName)} WHERE {ApplyDelimiter(IdentityColumn)}=@{IdentityColumn}";
         }

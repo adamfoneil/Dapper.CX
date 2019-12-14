@@ -61,14 +61,14 @@ namespace Dapper.CX.SqlServer.Abstract
 
         public override IDbCommand GetInsertCommand(IDbConnection connection)
         {
-            var result = new SqlCommand(GetInsertStatement(), connection as SqlConnection);
+            var result = new SqlCommand(SqlInsertStatement(), connection as SqlConnection);
             AddParameters(result);
             return result;
         }
 
         public override IDbCommand GetUpdateCommand(IDbConnection connection)
         {
-            var result = new SqlCommand(GetUpdateStatement(), connection as SqlConnection);
+            var result = new SqlCommand(SqlUpdateStatement(), connection as SqlConnection);
             AddParameters(result);
             result.Parameters.AddWithValue(IdentityColumn, DBNull.Value);
             return result;

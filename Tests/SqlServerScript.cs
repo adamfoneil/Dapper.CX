@@ -15,7 +15,7 @@ namespace Tests
             cmd["Greeting"] = "Hello, World";
             cmd["CurrentTime"] = DateTime.Now;
 
-            string insertCmd = cmd.GetInsertStatement();
+            string insertCmd = cmd.SqlInsertStatement();
             Assert.IsTrue(insertCmd.Equals(@"INSERT INTO [table1] (
                     [Greeting], [CurrentTime]
                 ) VALUES (
@@ -30,7 +30,7 @@ namespace Tests
             cmd["Greeting"] = "Hello, World";
             cmd["CurrentTime"] = DateTime.Now;
 
-            string updateCmd = cmd.GetUpdateStatement();
+            string updateCmd = cmd.SqlUpdateStatement();
             Assert.IsTrue(updateCmd.Equals(@"UPDATE [table1] SET
                     [Greeting]=@Greeting, [CurrentTime]=@CurrentTime
                 WHERE [Id]=@Id"));
@@ -47,14 +47,14 @@ namespace Tests
 
             var cmd = new SqlServerIntCmd(g);
 
-            var insertCmd = cmd.GetInsertStatement();
+            var insertCmd = cmd.SqlInsertStatement();
             Assert.IsTrue(insertCmd.Equals(@"INSERT INTO [Greeting] (
                     [Message], [CurrentTime]
                 ) VALUES (
                     @Message, @CurrentTime
                 ); SELECT SCOPE_IDENTITY()"));
 
-            var updateCmd = cmd.GetUpdateStatement();
+            var updateCmd = cmd.SqlUpdateStatement();
             Assert.IsTrue(updateCmd.Equals(@"UPDATE [Greeting] SET
                     [Message]=@Message, [CurrentTime]=@CurrentTime
                 WHERE [Id]=@Id"));

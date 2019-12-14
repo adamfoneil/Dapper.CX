@@ -9,7 +9,7 @@ namespace Dapper.CX.SqlServer.Extensions
         public static async Task<TModel> FindAsync<TModel>(this IDbConnection connection, int id)
         {
             var cmd = new SqlServerIntCmd(typeof(TModel));
-            return await cmd.FindAsync<TModel>(connection, id);
+            return await cmd.GetAsync<TModel>(connection, id);
         }
 
         public static async Task<int> InsertAsync<TModel>(this IDbConnection connection, TModel model)
