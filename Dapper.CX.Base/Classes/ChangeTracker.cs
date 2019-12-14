@@ -20,13 +20,13 @@ namespace Dapper.CX.Base.Classes
                 !pi.GetIndexParameters().Any() &&
                 !pi.Name.Equals(identityName)).ToArray();
             _properties = props.ToDictionary(pi => pi.Name);
-            foreach (var pi in props) Add(pi.Name, pi.GetValue(@object));
+            foreach (var pi in props) Add(pi.GetColumnName(), pi.GetValue(@object));
         }
 
         /// <summary>
         /// call this after you've made desired changes to your model class instance to get the names of modified properties
         /// </summary>
-        public string[] GetModifiedProperties()
+        public string[] GetModifiedColumns()
         {
             return _properties
                 .Where(kp => IsModified(kp, _instance))

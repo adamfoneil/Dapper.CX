@@ -125,7 +125,18 @@ namespace Dapper.CX.Base.Abstract
 
         public string GetUpdateStatement<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null)
         {
-            throw new NotImplementedException();
+            var columns = 
+                changeTracker?.GetModifiedColumns() ?? 
+                GetMappedProperties(typeof(TModel), SaveAction.Update).Select(pi => pi.GetColumnName());
+
+            var type = typeof(TModel);
+            string identityCol = type.GetIdentityName();
+
+            return 
+                $@"UPDATE {ApplyDelimiter(type.GetTableName())} SET 
+                    {string.Join(", ", columns.Select(col => $"{ApplyDelimiter(col)}=@{col}"))} 
+                WHERE 
+                    {ApplyDelimiter(identityCol)}=@{identityCol}";
         }
 
         private PropertyInfo[] GetMappedProperties(Type modelType, SaveAction saveAction)
@@ -147,7 +158,7 @@ namespace Dapper.CX.Base.Abstract
 
         public string GetDeleteStatement(Type modelType)
         {                        
-            return $@"DELETE {ApplyDelimiter(modelType.GetTableName())} WHERE {ApplyDelimiter(modelType.IdentityName())}=@id";
+            return $@"DELETE {ApplyDelimiter(modelType.GetTableName())} WHERE {ApplyDelimiter(modelType.GetIdentityName())}=@id";
         }
 
         protected string ApplyDelimiter(string name)

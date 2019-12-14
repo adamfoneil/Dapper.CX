@@ -26,7 +26,7 @@ namespace Dapper.CX.Base.Extensions
 			}
         }
 
-		public static string IdentityName(this Type modelType)
+		public static string GetIdentityName(this Type modelType)
 		{
 			return GetIdentityProperty(modelType).Name;
 		}
