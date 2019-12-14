@@ -1,6 +1,8 @@
 ﻿using Dapper.CX.Base.Attributes;
+using Dapper.CX.Base.Enums;
 using Dapper.CX.Base.Exceptions;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
 namespace Dapper.CX.Base.Extensions
@@ -24,6 +26,11 @@ namespace Dapper.CX.Base.Extensions
 			}
         }
 
+		public static string IdentityName(this Type modelType)
+		{
+			return GetIdentityProperty(modelType).Name;
+		}
+
 		public static bool TryGetIdentityName(this Type modelType, out string propertyName)
 		{
 			try
@@ -37,5 +44,51 @@ namespace Dapper.CX.Base.Extensions
 				return false;
 			}
 		}
-    }
+
+		public static string GetTableName(this Type modelType)
+		{
+			string result = modelType.Name;
+
+			if (modelType.HasAttribute(out TableAttribute attr))
+			{
+				result = attr.Name;
+				if (!string.IsNullOrEmpty(attr.Schema))
+				{
+					result = attr.Schema + "." + result;
+				}
+			}
+
+			return result;
+		}
+
+		public static string GetColumnName(this PropertyInfo propertyInfo)
+		{
+			string result = propertyInfo.Name;
+
+			var attr = propertyInfo.GetCustomAttribute<ColumnAttribute>();
+			if (attr != null) result = attr.Name;
+
+			return result;
+		}
+
+		public static bool IsIdentity(this PropertyInfo propertyInfo)
+		{
+			try
+			{
+				var type = propertyInfo.DeclaringType;
+				return (type.TryGetIdentityName(out string name)) ? name.Equals(propertyInfo.Name) : false;
+			}
+			catch 
+			{
+				return false;
+			}
+		}
+
+		public static bool AllowSaveAction(this PropertyInfo propertyInfo, SaveAction saveAction)
+		{
+			return
+				(propertyInfo.HasAttribute(out SaveActionAttribute attr)) ? attr.SaveAction == saveAction :
+				true;
+		}
+	}
 }
