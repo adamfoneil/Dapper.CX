@@ -155,7 +155,9 @@ namespace Dapper.CX.Abstract
 
         protected string ApplyDelimiter(string name)
         {
-            return string.Join(".", name.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).Select(s => $"{StartDelimiter}{ParseColumnName(s)}{EndDelimiter}"));
+            return string.Join(".", name
+                .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => $"{StartDelimiter}{ParseColumnName(s)}{EndDelimiter}"));
         }
 
         protected IEnumerable<string> GetKeyColumnNames()
