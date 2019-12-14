@@ -1,4 +1,6 @@
-﻿using Dapper.CX.Base.Extensions;
+﻿using Dapper.CX.Base.Enums;
+using Dapper.CX.Base.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -26,10 +28,17 @@ namespace Dapper.CX.Base.Classes
         /// <summary>
         /// call this after you've made desired changes to your model class instance to get the names of modified properties
         /// </summary>
-        public string[] GetModifiedColumns()
+        public string[] GetModifiedColumns(SaveAction? saveAction = null)
         {
+            Func<KeyValuePair<string, PropertyInfo>, bool> filter = (kp) => IsModified(kp, _instance);
+
+            if (saveAction.HasValue)
+            {
+                filter = (kp) => IsModified(kp, _instance) && kp.Value.AllowSaveAction(saveAction.Value);
+            }
+
             return _properties
-                .Where(kp => IsModified(kp, _instance))
+                .Where(kp => filter(kp))
                 .Select(kp => kp.Key)
                 .ToArray();
         }

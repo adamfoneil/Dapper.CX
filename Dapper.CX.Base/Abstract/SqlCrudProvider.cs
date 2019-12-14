@@ -103,12 +103,13 @@ namespace Dapper.CX.Base.Abstract
         #region SQL statements
         public string GetQuerySingleStatement(Type modelType)
         {
-            throw new NotImplementedException();
+            return $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())} WHERE {ApplyDelimiter(modelType.GetIdentityName())}=@id";
         }
 
         public string GetQuerySingleWhereStatement(Type modelType, object criteria)
         {
-            throw new NotImplementedException();
+            var properties = criteria.GetType().GetProperties().Select(pi => pi.Name);
+            return $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())} WHERE {string.Join(" AND ", properties.Select(name => ApplyDelimiter(name) + "=@" + name))}";
         }
 
         public string GetInsertStatement(Type modelType)
@@ -126,7 +127,7 @@ namespace Dapper.CX.Base.Abstract
         public string GetUpdateStatement<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null)
         {
             var columns = 
-                changeTracker?.GetModifiedColumns() ?? 
+                changeTracker?.GetModifiedColumns(SaveAction.Update) ?? 
                 GetMappedProperties(typeof(TModel), SaveAction.Update).Select(pi => pi.GetColumnName());
 
             var type = typeof(TModel);
