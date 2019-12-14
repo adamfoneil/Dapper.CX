@@ -2,6 +2,7 @@
 {
     public enum SaveAction
     {
+        None,
         Insert,
         Update
     }

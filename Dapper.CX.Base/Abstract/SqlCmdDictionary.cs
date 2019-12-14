@@ -111,7 +111,7 @@ namespace Dapper.CX.Abstract
             var propertyDictionary = properties.ToDictionary(pi => pi.Name);            
 
             return
-                (attr != null && propertyDictionary.ContainsKey(attr.ColumnName)) ? propertyDictionary[attr.ColumnName] :
+                (attr != null && propertyDictionary.ContainsKey(attr.PropertyName)) ? propertyDictionary[attr.PropertyName] :
                 (propertyDictionary.ContainsKey(DefaultIdentityProperty)) ? propertyDictionary[DefaultIdentityProperty] :
                 throw new Exception($"Couldn't determine identity property of type {type.Name}");
         }
