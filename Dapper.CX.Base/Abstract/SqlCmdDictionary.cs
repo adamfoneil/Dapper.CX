@@ -337,7 +337,7 @@ namespace Dapper.CX.Abstract
 
             return
                 $@"UPDATE {ApplyDelimiter(TableName)} SET
-                    {string.Join(", ", KeysWithValues().Where(kp => predicate(kp)).Select(col => $"{ApplyDelimiter(col)}=@{ParseColumnName(col)}"))}
+                    {string.Join(", ", Keys.Where(kp => predicate(kp)).Select(col => $"{ApplyDelimiter(col)}=@{ParseColumnName(col)}"))}
                 WHERE {ApplyDelimiter(IdentityColumn)}=@{IdentityColumn}";
         }
 
@@ -355,9 +355,9 @@ namespace Dapper.CX.Abstract
         {
             return
                 $@"{verb} INTO {ApplyDelimiter(TableName)} (
-                    {string.Join(", ", KeysWithValues().Select(s => ApplyDelimiter(s)))}
+                    {string.Join(", ", Keys.Select(s => ApplyDelimiter(s)))}
                 ) VALUES (
-                    {string.Join(", ", KeysWithValues().Select(s => $"@{ParseColumnName(s)}"))}
+                    {string.Join(", ", Keys.Select(s => $"@{ParseColumnName(s)}"))}
                 )";
         }
 

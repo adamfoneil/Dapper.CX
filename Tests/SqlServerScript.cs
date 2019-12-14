@@ -69,12 +69,12 @@ namespace Tests
             cmd["HireDate"] = DateTime.Today;
             cmd["IsExempt"] = true;
 
-            string insertCmd = cmd.GetInsertStatement();
+            string insertCmd = cmd.SqlInsertStatement();
             Assert.IsTrue(insertCmd.Equals(
                 @"INSERT INTO [Employee] (
-                    [FirstName], [LastName], [HireDate], [IsExempt]
+                    [FirstName], [LastName], [HireDate], [TermDate], [IsExempt]
                 ) VALUES (
-                    @FirstName, @LastName, @HireDate, @IsExempt
+                    @FirstName, @LastName, @HireDate, @TermDate, @IsExempt
                 ); SELECT SCOPE_IDENTITY()"));
         }
 
@@ -87,10 +87,10 @@ namespace Tests
             cmd["HireDate"] = DateTime.Today;
             cmd["IsExempt"] = true;
 
-            string updateCmd = cmd.GetUpdateStatement();
+            string updateCmd = cmd.SqlUpdateStatement();
             Assert.IsTrue(updateCmd.Equals(
                 @"UPDATE [Employee] SET
-                    [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [IsExempt]=@IsExempt
+                    [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [TermDate]=@TermDate, [IsExempt]=@IsExempt
                 WHERE [Id]=@Id"));
         }
 
@@ -104,12 +104,12 @@ namespace Tests
             };
 
             var cmd = new SqlServerIntCmd(emp);
-            string insertCmd = cmd.GetInsertStatement();
+            string insertCmd = cmd.SqlInsertStatement();
             Assert.IsTrue(insertCmd.Equals(
                 @"INSERT INTO [Employee] (
-                    [FirstName], [LastName], [IsExempt]
+                    [FirstName], [LastName], [HireDate], [TermDate], [IsExempt]
                 ) VALUES (
-                    @FirstName, @LastName, @IsExempt
+                    @FirstName, @LastName, @HireDate, @TermDate, @IsExempt
                 ); SELECT SCOPE_IDENTITY()"));
         }
     }
