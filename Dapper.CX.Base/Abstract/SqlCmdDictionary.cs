@@ -219,14 +219,7 @@ namespace Dapper.CX.Abstract
             }
 
             return false;
-        }
-
-        private void FillDictionary(TIdentity identityValue, object result)
-        {
-            Id = identityValue;
-            var data = ConvertToDictionary(result);
-            foreach (var kp in data) Add(kp.Key, kp.Value);
-        }
+        }        
 
         public bool IsNew()
         {
@@ -253,9 +246,9 @@ namespace Dapper.CX.Abstract
         {
             try
             {
-                var result = await ExecuteInsertAsync(connection);
+                Id = await ExecuteInsertAsync(connection);
                 SaveAction = SaveAction.Insert;
-                return result;
+                return Id;
             }
             catch (Exception exc)
             {
@@ -389,6 +382,13 @@ namespace Dapper.CX.Abstract
         {
             var properties = @object.GetType().GetProperties();
             return properties.ToDictionary(pi => GetColumnName(pi), pi => pi.GetValue(@object));
+        }
+
+        private void FillDictionary(TIdentity identityValue, object result)
+        {
+            Id = identityValue;
+            var data = ConvertToDictionary(result);
+            foreach (var kp in data) Add(kp.Key, kp.Value);
         }
     }
 }
