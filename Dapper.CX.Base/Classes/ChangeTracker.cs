@@ -1,11 +1,11 @@
-﻿using Dapper.CX.Base.Enums;
-using Dapper.CX.Base.Extensions;
+﻿using Dapper.CX.Enums;
+using Dapper.CX.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Dapper.CX.Base.Classes
+namespace Dapper.CX.Classes
 {
     public class ChangeTracker<TModel> : Dictionary<string, object>
     {

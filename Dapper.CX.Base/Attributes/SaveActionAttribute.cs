@@ -1,7 +1,7 @@
-﻿using Dapper.CX.Base.Enums;
+﻿using Dapper.CX.Enums;
 using System;
 
-namespace Dapper.CX.Base.Attributes
+namespace Dapper.CX.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class SaveActionAttribute : Attribute

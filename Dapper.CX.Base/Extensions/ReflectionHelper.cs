@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace Dapper.CX.Base.Extensions
+namespace Dapper.CX.Extensions
 {
     internal static class ReflectionHelper
     {

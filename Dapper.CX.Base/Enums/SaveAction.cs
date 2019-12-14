@@ -1,4 +1,4 @@
-﻿namespace Dapper.CX.Base.Enums
+﻿namespace Dapper.CX.Enums
 {
     public enum SaveAction
     {

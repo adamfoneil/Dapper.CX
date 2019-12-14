@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dapper.CX.Base.Exceptions
+namespace Dapper.CX.Exceptions
 {
     public class IdentityException : Exception
     {

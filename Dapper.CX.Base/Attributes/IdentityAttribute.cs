@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dapper.CX.Base.Attributes
+namespace Dapper.CX.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class IdentityAttribute : Attribute

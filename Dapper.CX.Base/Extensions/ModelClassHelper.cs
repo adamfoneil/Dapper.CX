@@ -1,11 +1,11 @@
-﻿using Dapper.CX.Base.Attributes;
-using Dapper.CX.Base.Enums;
-using Dapper.CX.Base.Exceptions;
+﻿using Dapper.CX.Attributes;
+using Dapper.CX.Enums;
+using Dapper.CX.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
-namespace Dapper.CX.Base.Extensions
+namespace Dapper.CX.Extensions
 {
 	public static class ModelClassHelper
     {

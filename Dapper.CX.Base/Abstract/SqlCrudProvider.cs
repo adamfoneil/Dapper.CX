@@ -1,7 +1,7 @@
-﻿using Dapper.CX.Base.Classes;
-using Dapper.CX.Base.Enums;
-using Dapper.CX.Base.Exceptions;
-using Dapper.CX.Base.Extensions;
+﻿using Dapper.CX.Classes;
+using Dapper.CX.Enums;
+using Dapper.CX.Exceptions;
+using Dapper.CX.Extensions;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Dapper.CX.Base.Abstract
+namespace Dapper.CX.Abstract
 {
     public abstract class SqlCrudProvider<TIdentity>
     {
@@ -121,7 +121,7 @@ namespace Dapper.CX.Base.Abstract
                     {string.Join(", ", columns.Select(col => ApplyDelimiter(col)))}
                 ) VALUES (
                     {string.Join(", ", columns.Select(col => "@" + col))}
-                )";
+                ); " + SelectIdentityCommand;
         }
 
         public string GetUpdateStatement<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null)
