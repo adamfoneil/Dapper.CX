@@ -226,27 +226,27 @@ namespace Dapper.CX.Abstract
             return Id.Equals(default(TIdentity));
         }
 
-        public async Task<TIdentity> SaveAsync(IDbConnection connection, Action<SqlCmdDictionary<TIdentity>> onInsert = null, Action<SqlCmdDictionary<TIdentity>> onUpdate = null)
+        public async Task<TIdentity> SaveAsync(IDbConnection connection, Action<SqlCmdDictionary<TIdentity>> onInsert = null, Action<SqlCmdDictionary<TIdentity>> onUpdate = null, IDbTransaction transaction = null)
         {            
             if (IsNew())
             {
                 onInsert?.Invoke(this);
-                Id = await InsertAsync(connection);                
+                Id = await InsertAsync(connection, transaction);
             }
             else
             {
                 onUpdate?.Invoke(this);
-                await UpdateAsync(connection, Id);                                
+                await UpdateAsync(connection, Id, transaction);
             }
 
             return Id;
         }
 
-        public async Task<TIdentity> InsertAsync(IDbConnection connection)
+        public async Task<TIdentity> InsertAsync(IDbConnection connection, IDbTransaction transaction = null)
         {
             try
             {
-                Id = await ExecuteInsertAsync(connection);
+                Id = await ExecuteInsertAsync(connection, transaction);
                 SaveAction = SaveAction.Insert;
                 return Id;
             }
@@ -256,7 +256,7 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task UpdateAsync(IDbConnection connection, TIdentity identityValue = default)
+        public async Task UpdateAsync(IDbConnection connection, TIdentity identityValue = default, IDbTransaction transaction = null)
         {
             try
             {
@@ -264,7 +264,7 @@ namespace Dapper.CX.Abstract
                 string sql = SqlUpdateStatement();
                 var dp = GetParameters();
                 dp.Add(IdentityColumn, Id);
-                await connection.ExecuteAsync(sql, dp);
+                await connection.ExecuteAsync(sql, dp, transaction);
                 SaveAction = SaveAction.Update;
             }
             catch (Exception exc)
@@ -288,7 +288,7 @@ namespace Dapper.CX.Abstract
         /// SQL Server Compact Edition seems to require an explicit transaction when doing an insert and returning the identity value.
         /// This is virtual so that SqlCe can override it with this special behavior.
         /// </summary>
-        protected virtual async Task<TIdentity> ExecuteInsertAsync(IDbConnection connection)
+        protected virtual async Task<TIdentity> ExecuteInsertAsync(IDbConnection connection, IDbTransaction transaction = null)
         {
             string sql = (!IdentityInsert) ?
                 SqlInsertStatement() :
@@ -296,7 +296,7 @@ namespace Dapper.CX.Abstract
 
             if (!IdentityInsert)
             {
-                return await connection.QuerySingleOrDefaultAsync<TIdentity>(sql, GetParameters());
+                return await connection.QuerySingleOrDefaultAsync<TIdentity>(sql, GetParameters(), transaction);
             }
             else
             {
