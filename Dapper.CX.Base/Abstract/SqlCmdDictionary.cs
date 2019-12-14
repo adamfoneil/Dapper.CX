@@ -45,14 +45,12 @@ namespace Dapper.CX.Abstract
 
             identityProperty = GetIdentityProperty(type, properties);
             IdentityColumn = identityProperty.Name;
-            TableName = GetTableName(type);
-
-            var allSupportedTypes = SupportedTypes.Concat(ToNullable(SupportedTypes));
+            TableName = GetTableName(type);            
 
             bool isMapped(PropertyInfo pi)
             {
                 if (GetColumnName(pi).Equals(IdentityColumn)) return false;
-                if (!allSupportedTypes.Contains(pi.PropertyType)) return false;
+                if (!SupportedTypes.Contains(pi.PropertyType)) return false;
 
                 var attr = pi.GetCustomAttribute<NotMappedAttribute>();
                 if (attr != null) return false;
@@ -116,11 +114,6 @@ namespace Dapper.CX.Abstract
                 (attr != null && propertyDictionary.ContainsKey(attr.ColumnName)) ? propertyDictionary[attr.ColumnName] :
                 (propertyDictionary.ContainsKey(DefaultIdentityProperty)) ? propertyDictionary[DefaultIdentityProperty] :
                 throw new Exception($"Couldn't determine identity property of type {type.Name}");
-        }
-
-        private static IEnumerable<Type> ToNullable(Type[] types)
-        {
-            return types.Select(t => t.MakeGenericType(typeof(Nullable<>), t));
         }
 
         private static string GetColumnName(PropertyInfo propertyInfo)
@@ -344,7 +337,7 @@ namespace Dapper.CX.Abstract
 
             return
                 $@"UPDATE {ApplyDelimiter(TableName)} SET
-                    {string.Join(", ", Keys.Where(kp => predicate(kp)).Select(col => $"{ApplyDelimiter(col)}=@{ParseColumnName(col)}"))}
+                    {string.Join(", ", KeysWithValues().Where(kp => predicate(kp)).Select(col => $"{ApplyDelimiter(col)}=@{ParseColumnName(col)}"))}
                 WHERE {ApplyDelimiter(IdentityColumn)}=@{IdentityColumn}";
         }
 
@@ -362,9 +355,9 @@ namespace Dapper.CX.Abstract
         {
             return
                 $@"{verb} INTO {ApplyDelimiter(TableName)} (
-                    {string.Join(", ", Keys.Select(s => ApplyDelimiter(s)))}
+                    {string.Join(", ", KeysWithValues().Select(s => ApplyDelimiter(s)))}
                 ) VALUES (
-                    {string.Join(", ", Keys.Select(s => $"@{ParseColumnName(s)}"))}
+                    {string.Join(", ", KeysWithValues().Select(s => $"@{ParseColumnName(s)}"))}
                 )";
         }
 
