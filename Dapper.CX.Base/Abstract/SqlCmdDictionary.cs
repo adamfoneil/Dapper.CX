@@ -136,7 +136,10 @@ namespace Dapper.CX.Abstract
 
         public new object this[string columnName]
         {
-            get { return (ContainsKey(KeyColumnPrefix + columnName)) ? base[KeyColumnPrefix + columnName] : base[columnName]; }
+            get 
+            { 
+                return (ContainsKey(KeyColumnPrefix + columnName)) ? base[KeyColumnPrefix + columnName] : base[columnName]; 
+            }
             set
             {
                 if (ContainsKey(KeyColumnPrefix + columnName))
