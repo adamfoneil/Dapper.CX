@@ -1,8 +1,10 @@
-﻿using Dapper.CX.Classes;
+﻿using Dapper.CX.Attributes;
+using Dapper.CX.Classes;
 using Dapper.CX.Enums;
 using Dapper.CX.Exceptions;
 using Dapper.CX.Extensions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
@@ -59,6 +61,39 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        {
+            if (IsNew(model))
+            {
+                var existing = await GetByPrimaryKeyAsync(connection, model);
+                if (existing != null) SetIdentity(model, GetIdentity(existing));
+            }
+
+            return await SaveAsync(connection, model, changeTracker, onSave);
+        }
+
+        private void SetIdentity<TModel>(TModel model, TIdentity identity)
+        {
+            if (IsNew(model))
+            {
+                var identityProp = typeof(TModel).GetIdentityProperty();
+                identityProp.SetValue(model, identity);
+            }
+            else
+            {
+                throw new InvalidOperationException("Can't set a record's identity more than once.");
+            }
+        }
+
+        private async Task<TModel> GetByPrimaryKeyAsync<TModel>(IDbConnection connection, TModel model)
+        {
+            var props = typeof(TModel).GetProperties().Where(pi => pi.HasAttribute<PrimaryKeyAttribute>()).Select(pi => pi.GetColumnName());
+            if (!props.Any()) throw new Exception($"No primary key properties found on {typeof(TModel).Name}");
+
+            string sql = GetQuerySingleWhereStatement(typeof(TModel), props);
+            return await connection.QuerySingleOrDefaultAsync<TModel>(sql, model);
+        }
+
         public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null)
         {
             onSave?.Invoke(model, SaveAction.Insert);
@@ -111,8 +146,13 @@ namespace Dapper.CX.Abstract
 
         public string GetQuerySingleWhereStatement(Type modelType, object criteria)
         {
-            var properties = criteria.GetType().GetProperties().Select(pi => pi.Name);
-            return $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())} WHERE {string.Join(" AND ", properties.Select(name => ApplyDelimiter(name) + "=@" + name))}";
+            var properties = criteria.GetType().GetProperties();
+            return GetQuerySingleWhereStatement(modelType, properties);
+        }
+
+        public string GetQuerySingleWhereStatement(Type modelType, IEnumerable<PropertyInfo> properties)
+        {
+            return $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())} WHERE {string.Join(" AND ", properties.Select(pi => ApplyDelimiter(pi.GetColumnName()) + "=@" + pi.Name))}";
         }
 
         public string GetInsertStatement(Type modelType)

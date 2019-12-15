@@ -43,5 +43,11 @@ namespace Dapper.CX.SqlServer.Extensions
             var provider = new SqlServerLongCrudProvider();
             return await provider.SaveAsync(connection, model, changeTracker, onSave);
         }
+
+        public static async Task<long> MergeAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        {
+            var provider = new SqlServerIntCrudProvider();
+            return await provider.MergeAsync(connection, model, changeTracker, onSave);
+        }
     }
 }
