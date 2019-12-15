@@ -24,3 +24,34 @@ using (var cn = GetConnection())
     await cn.SaveAsync(appt, ct);  
 }
 ```
+## Reference
+- Task [DeleteAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L127)&lt;TIdentity&gt;
+  (IDbConnection connection, TIdentity id)
+- Task&lt;TModel&gt; [GetAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L41)&lt;TIdentity&gt;
+  (IDbConnection connection, TIdentity identity)
+- string [GetDeleteStatement](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L203)
+  (Type modelType)
+- TIdentity [GetIdentity](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L29)&lt;TModel&gt;
+  (TModel model)
+- string [GetInsertStatement](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L158)
+  (Type modelType)
+- string [GetQuerySingleStatement](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L142)
+  (Type modelType)
+- string [GetQuerySingleWhereStatement](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L147)
+  (Type modelType, object criteria)
+- string [GetQuerySingleWhereStatement](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L153)
+  (Type modelType, IEnumerable&lt;PropertyInfo&gt; properties)
+- string [GetUpdateStatement](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L170)&lt;TModel&gt;
+  (TModel model, [ChangeTracker&lt;TModel&gt;](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Classes/ChangeTracker.cs#L10) changeTracker)
+- Task&lt;TModel&gt; [GetWhereAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L46)
+  (IDbConnection connection, object criteria)
+- Task&lt;TIdentity&gt; [InsertAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L97)&lt;TModel&gt;
+  (IDbConnection connection, TModel model, Action&lt;TModel, SaveAction&gt; onSave)
+- bool [IsNew](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L36)&lt;TModel&gt;
+  (TModel model)
+- Task&lt;TIdentity&gt; [MergeAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L64)&lt;TModel&gt;
+  (IDbConnection connection, TModel model, [ChangeTracker&lt;TModel&gt;](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Classes/ChangeTracker.cs#L10) changeTracker, Action&lt;TModel, SaveAction&gt; onSave)
+- Task&lt;TIdentity&gt; [SaveAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L51)&lt;TModel&gt;
+  (IDbConnection connection, TModel model, [ChangeTracker&lt;TModel&gt;](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Classes/ChangeTracker.cs#L10) changeTracker, Action&lt;TModel, SaveAction&gt; onSave)
+- Task [UpdateAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L112)&lt;TModel&gt;
+  (IDbConnection connection, TModel model, [ChangeTracker&lt;TModel&gt;](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Classes/ChangeTracker.cs#L10) changeTracker, Action&lt;TModel, SaveAction&gt; onSave)
