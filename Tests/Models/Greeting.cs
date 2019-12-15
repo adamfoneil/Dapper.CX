@@ -1,4 +1,4 @@
-﻿using Dapper.CX.Base.Attributes;
+﻿using Dapper.CX.Attributes;
 using System;
 
 namespace Tests.Models

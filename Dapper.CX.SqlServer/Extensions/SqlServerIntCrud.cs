@@ -1,4 +1,6 @@
 ﻿using Dapper.CX.Classes;
+using Dapper.CX.Enums;
+using System;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -18,16 +20,16 @@ namespace Dapper.CX.SqlServer.Extensions
             return await provider.GetWhereAsync<TModel>(connection, criteria);
         }
 
-        public static async Task<int> InsertAsync<TModel>(this IDbConnection connection, TModel model)
+        public static async Task<int> InsertAsync<TModel>(this IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            return await provider.InsertAsync(connection, model);
+            return await provider.InsertAsync(connection, model, onSave);
         }
 
-        public static async Task UpdateAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null)
+        public static async Task UpdateAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            await provider.UpdateAsync(connection, model, changeTracker);
+            await provider.UpdateAsync(connection, model, changeTracker, onSave);
         }
 
         public static async Task DeleteAsync<TModel>(this IDbConnection connection, int id)
@@ -36,10 +38,10 @@ namespace Dapper.CX.SqlServer.Extensions
             await provider.DeleteAsync<TModel>(connection, id);
         }
 
-        public static async Task<int> SaveAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null)
+        public static async Task<int> SaveAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            return await provider.SaveAsync(connection, model, changeTracker);
+            return await provider.SaveAsync(connection, model, changeTracker, onSave);
         }
     }
 }

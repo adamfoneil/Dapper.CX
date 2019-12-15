@@ -46,24 +46,26 @@ namespace Dapper.CX.Abstract
             return await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleWhereStatement(typeof(TModel), criteria), criteria);
         }
 
-        public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null)
+        public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
         {
             if (IsNew(model))
             {
-                return await InsertAsync(connection, model);
+                return await InsertAsync(connection, model, onSave);
             }
             else
             {                
-                await UpdateAsync(connection, model, changeTracker);
+                await UpdateAsync(connection, model, changeTracker, onSave);
                 return GetIdentity(model);
             }
         }
 
-        public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model)
+        public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null)
         {
+            onSave?.Invoke(model, SaveAction.Insert);
             var cmd = new CommandDefinition(GetInsertStatement(typeof(TModel)), model);
+
             try
-            {
+            {                
                 return await connection.QuerySingleOrDefaultAsync<TIdentity>(cmd);
             }
             catch (Exception exc)
@@ -72,8 +74,9 @@ namespace Dapper.CX.Abstract
             }            
         }
 
-        public async Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null)
+        public async Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
         {
+            onSave?.Invoke(model, SaveAction.Update);
             var cmd = new CommandDefinition(GetUpdateStatement(model, changeTracker), model);
 
             try
