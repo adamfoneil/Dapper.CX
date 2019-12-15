@@ -1,4 +1,4 @@
-Nuget package **Dapper.CX** makes it easy to do CRUD operations on pure POCO model classes. The only model class requirement is that they have a property called `Id` or the class has an [Identity](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Attributes/IdentityAttribute.cs) attribute that indicates what its identity property is.
+Nuget package **Dapper.CX.SqlServer** makes it easy to do CRUD operations on pure POCO model classes. The only model class requirement is that they have a property called `Id` or the class has an [Identity](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Attributes/IdentityAttribute.cs) attribute that indicates what its identity property is.
 
 Here's a simple example using [GetAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L41) and [SaveAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L51) methods assuming a fictional `Appointment` model class and fictional `GetConnection` method:
 ```
@@ -20,6 +20,7 @@ using (var cn = GetConnection())
     
     // make your changes
     
-    await cn.SaveAsync(appt, ct); // with a change tracker object, only modified properties are included in update statement  
+    // with a change tracker object, only modified properties are included in update statement 
+    await cn.SaveAsync(appt, ct);  
 }
 ```
