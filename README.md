@@ -24,3 +24,28 @@ using (var cn = GetConnection())
     await cn.SaveAsync(appt, ct);  
 }
 ```
+If you need to update time and user audit tracking at the model level, you can use the `onSave` optional callback like this:
+```
+using (var cn = GetConnection())
+{
+    var model = await cn.GetAsync<Employee>(id);
+    
+    // do some stuff with model
+    
+    await cn.SaveAsync(model, onSave: (row, action) =>
+    {
+        switch (action)
+        {
+            case SaveAction.Insert;                
+                row.CreatedBy = User.Identity.Name;
+                row.DateCreated = DateTime.UtcNow;
+                break;
+            case SaveAction.Update:
+                row.ModifiedBy = User.Identity.Name;
+                row.DateModified = DateTime.UtcNow;
+                break;
+        }
+    });
+}
+```
+In a real app, you'd likely extract the anonymous method to an actual method, and make it work as a convention across your application.
