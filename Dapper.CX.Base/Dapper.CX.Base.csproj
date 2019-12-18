@@ -5,13 +5,26 @@
     <RootNamespace>Dapper.CX</RootNamespace>
     <Version>0.9.0-alpha</Version>
     <Authors>Adam O'Neil</Authors>
-    <Description>Abstract and base classes for a Dapper-based CRUD library</Description>
+    <Description>Abstract and base classes for a Dapper-based platform-neutral CRUD library</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/adamosoftware/Dapper.CX</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/adamosoftware/Dapper.CX</RepositoryUrl>
+    <PackageTags>dapper crud-library</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Copyright>Copyright (c) Adam O'Neil 2019</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -61,15 +61,23 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> keyProperties, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
         {
             if (IsNew(model))
             {
-                var existing = await GetByPrimaryKeyAsync(connection, model);
+                var existing = await GetByPropertiesAsync(connection, model, keyProperties);
                 if (existing != null) SetIdentity(model, GetIdentity(existing));
             }
 
             return await SaveAsync(connection, model, changeTracker, onSave);
+        }
+
+        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        {
+            var props = typeof(TModel).GetProperties().Where(pi => pi.HasAttribute<PrimaryKeyAttribute>()).Select(pi => pi.GetColumnName());
+            if (!props.Any()) throw new Exception($"No primary key properties found on {typeof(TModel).Name}");
+
+            return await MergeAsync(connection, model, props, changeTracker, onSave);
         }
 
         private void SetIdentity<TModel>(TModel model, TIdentity identity)
@@ -85,12 +93,9 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        private async Task<TModel> GetByPrimaryKeyAsync<TModel>(IDbConnection connection, TModel model)
+        private async Task<TModel> GetByPropertiesAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> properties)
         {
-            var props = typeof(TModel).GetProperties().Where(pi => pi.HasAttribute<PrimaryKeyAttribute>()).Select(pi => pi.GetColumnName());
-            if (!props.Any()) throw new Exception($"No primary key properties found on {typeof(TModel).Name}");
-
-            string sql = GetQuerySingleWhereStatement(typeof(TModel), props);
+            string sql = GetQuerySingleWhereStatement(typeof(TModel), properties);
             return await connection.QuerySingleOrDefaultAsync<TModel>(sql, model);
         }
 
@@ -150,9 +155,14 @@ namespace Dapper.CX.Abstract
             return GetQuerySingleWhereStatement(modelType, properties);
         }
 
+        public string GetQuerySingleWhereStatement(Type modelType, IEnumerable<string> propertyNames)
+        {
+            return $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())} WHERE {string.Join(" AND ", propertyNames.Select(name => ApplyDelimiter(name) + "=@" + name))}";
+        }
+
         public string GetQuerySingleWhereStatement(Type modelType, IEnumerable<PropertyInfo> properties)
         {
-            return $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())} WHERE {string.Join(" AND ", properties.Select(pi => ApplyDelimiter(pi.GetColumnName()) + "=@" + pi.Name))}";
+            return GetQuerySingleWhereStatement(modelType, properties.Select(pi => pi.GetColumnName()));            
         }
 
         public string GetInsertStatement(Type modelType)
