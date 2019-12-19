@@ -37,6 +37,12 @@ namespace Tests.SqlServer
             return new SqlServerIntCrudProvider();
         }
 
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            LocalDb.TryDropDatabase("DapperCX", out _);
+        }
+
         [TestMethod]
         public void NewObjShouldBeNew()
         {
