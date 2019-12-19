@@ -11,7 +11,7 @@
     <PackageTags>dapper crud-library sql-server dapper-extensions</PackageTags>
     <PackageProjectUrl>https://github.com/adamosoftware/Dapper.CX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamosoftware/Dapper.CX</RepositoryUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dapper.CX.Base\Dapper.CX.Base.csproj"/>
+    <ProjectReference Include="..\Dapper.CX.Base\Dapper.CX.Base.csproj" />
   </ItemGroup>
 
 </Project>
