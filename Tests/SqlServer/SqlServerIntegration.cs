@@ -1,5 +1,6 @@
 ﻿using Dapper.CX.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SqlServer.LocalDb;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,7 +13,8 @@ namespace Tests.SqlServer
     {
         protected override IDbConnection GetConnection()
         {
-            throw new NotImplementedException();
+            return LocalDb.GetConnection("DapperCX");
+            //throw new NotImplementedException();
         }
 
         protected override SqlCrudProvider<int> GetProvider()
