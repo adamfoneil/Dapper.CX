@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Dapper.CX</RootNamespace>
-    <Version>0.9.0-alpha</Version>
+    <Version>1.0.0</Version>
     <Authors>Adam O'Neil</Authors>
     <Description>Abstract and base classes for a Dapper-based platform-neutral CRUD library</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/adamosoftware/Dapper.CX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamosoftware/Dapper.CX</RepositoryUrl>
     <PackageTags>dapper crud-library</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Copyright>Copyright (c) Adam O'Neil 2019</Copyright>
   </PropertyGroup>
 
