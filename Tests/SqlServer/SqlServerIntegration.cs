@@ -1,10 +1,11 @@
 ﻿using Dapper.CX.Abstract;
+using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlServer.LocalDb;
+using SqlServer.LocalDb.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace Tests.SqlServer
 {
@@ -13,13 +14,45 @@ namespace Tests.SqlServer
     {
         protected override IDbConnection GetConnection()
         {
-            return LocalDb.GetConnection("DapperCX");
-            //throw new NotImplementedException();
+            return LocalDb.GetConnection("DapperCX", CreateObjects());
+        }
+
+        private IEnumerable<InitializeStatement> CreateObjects()
+        {
+            yield return new InitializeStatement(
+                "dbo.Employee",
+                "DROP TABLE %obj%",
+                @"CREATE TABLE %obj% (
+                    [FirstName] nvarchar(50) NOT NULL,
+                    [LastName] nvarchar(50) NOT NULL,
+                    [HireDate] date NULL,
+                    [TermDate] date NULL,
+                    [IsExempt] bit NOT NULL,
+                    [Id] int identity(1, 1) PRIMARY KEY
+                )");            
         }
 
         protected override SqlCrudProvider<int> GetProvider()
         {
-            throw new NotImplementedException();
+            return new SqlServerIntCrudProvider();
+        }
+
+        [TestMethod]
+        public void NewObjShouldBeNew()
+        {
+            NewObjShouldBeNewBase();
+        }
+
+        [TestMethod]
+        public void Insert()
+        {
+            InsertBase();
+        }
+
+        [TestMethod]
+        public void Update()
+        {
+            UpdateBase();
         }
     }
 }

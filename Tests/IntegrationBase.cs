@@ -12,6 +12,13 @@ namespace Tests
 
         protected abstract SqlCrudProvider<TIdentity> GetProvider();
 
+        protected void NewObjShouldBeNewBase()
+        {
+            var emp = GetTestEmployee();
+            var provider = GetProvider();
+            Assert.IsTrue(provider.IsNew(emp));
+        }
+
         protected void InsertBase()
         {
             using (var cn = GetConnection())
@@ -19,7 +26,7 @@ namespace Tests
                 Employee emp = GetTestEmployee();
 
                 var provider = GetProvider();
-                TIdentity id = provider.InsertAsync(cn, emp).Result;
+                provider.InsertAsync(cn, emp).Wait();
                 Assert.IsTrue(emp.Id != default);
             }
         }

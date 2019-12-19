@@ -35,7 +35,7 @@ namespace Dapper.CX.Abstract
 
         public bool IsNew<TModel>(TModel model)
         {
-            return GetIdentity(model).Equals(default);
+            return GetIdentity(model).Equals(default(TIdentity));
         }
 
         public async Task<TModel> GetAsync<TModel>(IDbConnection connection, TIdentity identity)
@@ -106,7 +106,9 @@ namespace Dapper.CX.Abstract
 
             try
             {                
-                return await connection.QuerySingleOrDefaultAsync<TIdentity>(cmd);
+                TIdentity result = await connection.QuerySingleOrDefaultAsync<TIdentity>(cmd);
+                SetIdentity(model, result);
+                return result;
             }
             catch (Exception exc)
             {
