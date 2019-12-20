@@ -4,6 +4,7 @@ using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using Tests.Models;
 
 namespace Tests.SqlServer
@@ -24,7 +25,7 @@ namespace Tests.SqlServer
                     @FirstName, @LastName, @HireDate, @TermDate, @IsExempt
                 ); SELECT SCOPE_IDENTITY();";
 
-            PrintDiffInfo(sql, result);
+            StringDiff.PrintInfo(sql, result);
             Assert.IsTrue(sql.Equals(result));
         }
 
@@ -38,7 +39,7 @@ namespace Tests.SqlServer
                 WHERE 
                     [Id]=@Id";
 
-            PrintDiffInfo(sql, result);
+            StringDiff.PrintInfo(sql, result);
             Assert.IsTrue(sql.Equals(result));
         }
 
@@ -64,16 +65,8 @@ namespace Tests.SqlServer
                 WHERE 
                     [Id]=@Id";
 
-            PrintDiffInfo(sql, result);
+            StringDiff.PrintInfo(sql, result);
             Assert.IsTrue(sql.Equals(result));
-        }
-
-        private void PrintDiffInfo(string string1, string string2)
-        {
-            if (!string1.Equals(string2))
-            {
-
-            }
-        }
+        }        
     }
 }
