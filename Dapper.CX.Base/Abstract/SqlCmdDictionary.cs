@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dapper.CX.Enums;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -128,7 +129,7 @@ namespace Dapper.CX.Abstract
             await connection.ExecuteAsync(sql, dp);
         }
 
-        public async Task<TIdentity> MergeAsync<TIdentity>(IDbConnection connection, Action<SqlCmdDictionary> onInsert = null, Action<SqlCmdDictionary> onUpdate = null)
+        public async Task<TIdentity> MergeAsync<TIdentity>(IDbConnection connection, Action<SqlCmdDictionary, SaveAction> onSave = null)
         {
             var keyColumns = GetKeyColumnNames();
             if (!keyColumns.Any()) throw new InvalidOperationException("MergeAsync method requires explicit key columns--one or more columns prefixed with '#'.");
@@ -136,12 +137,12 @@ namespace Dapper.CX.Abstract
             TIdentity id = await FindIdentityFromKeyValuesAsync<TIdentity>(connection, keyColumns);
             if (id.Equals(default(TIdentity)))
             {
-                onInsert?.Invoke(this);
+                onSave?.Invoke(this, SaveAction.Insert);
                 id = await InsertAsync<TIdentity>(connection);
             }
             else
             {
-                onUpdate?.Invoke(this);
+                onSave?.Invoke(this, SaveAction.Update);
                 await UpdateAsync(connection, id);
             }
 
