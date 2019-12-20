@@ -48,6 +48,88 @@ namespace Tests
                 Assert.IsTrue(emp.FirstName.Equals(newName));
             }
         }
+        
+        protected void DeleteBase()
+        {
+            using (var cn = GetConnection())
+            {
+                var emp = GetTestEmployee();
+                var provider = GetProvider();
+                TIdentity id = provider.InsertAsync(cn, emp).Result;
+
+                provider.DeleteAsync<Employee>(cn, id);
+
+                emp = provider.GetAsync<Employee>(cn, id).Result;
+                Assert.IsNull(emp);
+            }
+        }
+
+        protected void ExistsBase()
+        {
+            using (var cn = GetConnection())
+            {
+                var provider = GetProvider();
+
+                var emp = GetTestEmployee();
+                TIdentity id = provider.SaveAsync(cn, emp).Result;
+
+                Assert.IsTrue(provider.ExistsAsync<Employee>(cn, id).Result);
+            }
+        }
+
+        protected void ExistsWhereBase()
+        {
+            using (var cn = GetConnection())
+            {
+                var provider = GetProvider();
+
+                var emp = GetTestEmployee();
+                provider.SaveAsync(cn, emp).Wait();
+
+                var criteria = new { emp.FirstName, emp.LastName };
+                Assert.IsTrue(provider.ExistsWhereAsync<Employee>(cn, criteria).Result);
+            }
+        }
+
+        protected void MergeExplicitPropsBase()
+        {
+            using (var cn = GetConnection())
+            {                
+                var emp = GetTestEmployee();
+                emp.IsExempt = true;
+
+                var provider = GetProvider();
+                TIdentity id = provider.SaveAsync(cn, emp).Result;
+
+                var mergeEmp = GetTestEmployee();
+                mergeEmp.IsExempt = false;
+
+                provider.MergeAsync(cn, mergeEmp, new string[] { nameof(Employee.FirstName), nameof(Employee.LastName) }).Wait();
+
+                var findEmp = provider.GetAsync<Employee>(cn, id).Result;
+                Assert.IsFalse(findEmp.IsExempt);
+            }
+        }
+
+        protected void MergePKPropsBase()
+        {
+            using (var cn = GetConnection())
+            {
+                var emp = GetTestEmployee();
+                emp.IsExempt = true;
+
+                var provider = GetProvider();
+                TIdentity id = provider.SaveAsync(cn, emp).Result;
+
+                var mergeEmp = GetTestEmployee();
+                mergeEmp.IsExempt = false;
+
+                provider.MergeAsync(cn, mergeEmp).Wait();
+
+                var findEmp = provider.GetAsync<Employee>(cn, id).Result;
+                Assert.IsFalse(findEmp.IsExempt);
+            }
+        }
 
         private static Employee GetTestEmployee()
         {
@@ -58,6 +140,6 @@ namespace Tests
                 HireDate = DateTime.Today,
                 IsExempt = true
             };
-        }
+        }        
     }
 }

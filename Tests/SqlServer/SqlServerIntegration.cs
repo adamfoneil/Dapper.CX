@@ -59,5 +59,35 @@ namespace Tests.SqlServer
         {
             UpdateBase();
         }
+
+        [TestMethod]
+        public void Delete()
+        {
+            DeleteBase();
+        }
+
+        [TestMethod]
+        public void Exists()
+        {
+            ExistsBase();
+        }
+
+        [TestMethod]
+        public void ExistsWhere()
+        {
+            ExistsWhereBase();
+        }
+
+        [TestMethod]
+        public void MergeExplicitProps()
+        {
+            MergeExplicitPropsBase();
+        }
+
+        [TestMethod]
+        public void MergePKProps()
+        {
+            MergePKPropsBase();
+        }
     }
 }

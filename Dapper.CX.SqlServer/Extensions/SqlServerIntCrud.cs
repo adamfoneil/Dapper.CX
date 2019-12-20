@@ -49,5 +49,17 @@ namespace Dapper.CX.SqlServer.Extensions
             var provider = new SqlServerIntCrudProvider();
             return await provider.MergeAsync(connection, model, changeTracker, onSave);
         }
+
+        public static async Task<bool> ExistsAsync<TModel>(this IDbConnection connection, int id)
+        {
+            var provider = new SqlServerIntCrudProvider();
+            return await provider.ExistsAsync<TModel>(connection, id);
+        }
+
+        public static async Task<bool> ExistsWhereAsync<TModel>(this IDbConnection connection, object criteria)
+        {
+            var provider = new SqlServerIntCrudProvider();
+            return await provider.ExistsWhereAsync<TModel>(connection, criteria);
+        }
     }
 }

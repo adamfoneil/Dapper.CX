@@ -7,7 +7,9 @@ namespace Tests.Models
     [Identity(nameof(Id))]
     public class Employee
     {
+        [PrimaryKey]
         public string FirstName { get; set; }
+        [PrimaryKey]
         public string LastName { get; set; }
         public DateTime? HireDate { get; set; }
         public DateTime? TermDate { get; set; }

@@ -16,7 +16,7 @@ namespace Tests.SqlServer
         protected SqlCrudProvider<int> GetProvider() => new SqlServerIntCrudProvider();
 
         [TestMethod]
-        public void InsertStatementBase()
+        public void InsertStatement()
         {
             string sql = GetProvider().GetInsertStatement(typeof(Employee));
             const string result = 
@@ -30,7 +30,7 @@ namespace Tests.SqlServer
         }
 
         [TestMethod]
-        public void UpdateStatementBase()
+        public void UpdateStatement()
         {
             string sql = GetProvider().GetUpdateStatement(new Employee());
             const string result = 
@@ -66,5 +66,12 @@ namespace Tests.SqlServer
             
             Assert.IsTrue(sql.ReplaceWhitespace().Equals(result.ReplaceWhitespace()));
         }        
+
+        [TestMethod]
+        public void DeleteStatement()
+        {
+            string sql = GetProvider().GetDeleteStatement(typeof(Employee));
+            Assert.IsTrue(sql.Equals("DELETE [Employee] WHERE [Id]=@id"));
+        }
     }
 }
