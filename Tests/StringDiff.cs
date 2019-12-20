@@ -45,6 +45,9 @@ namespace Tests
                 {
                     Debug.Print($"string2 overhang: {Overhang(string2, string1)}");
                 }
+
+                Debug.Print($"string1[{string1.Length}] = {string1}");
+                Debug.Print($"string2[{string2.Length}] = {string2}");
             }
             else
             {
