@@ -10,7 +10,7 @@
     <PackageProjectUrl>https://github.com/adamosoftware/Dapper.CX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamosoftware/Dapper.CX</RepositoryUrl>
     <PackageTags>dapper crud-library</PackageTags>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Copyright (c) Adam O'Neil 2019</Copyright>
   </PropertyGroup>
 
