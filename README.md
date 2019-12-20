@@ -53,3 +53,6 @@ using (var cn = GetConnection())
 }
 ```
 In a real app, you'd likely extract the anonymous method to an actual method, and make it work as a convention across your application.
+
+---
+Please see also [Dapper.QX](https://github.com/adamosoftware/Dapper.QX), Dapper.CX's companion library.
