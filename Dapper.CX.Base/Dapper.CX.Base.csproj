@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Dapper.CX</RootNamespace>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Authors>Adam O'Neil</Authors>
     <Description>Abstract and base classes for a Dapper-based platform-neutral CRUD library</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
