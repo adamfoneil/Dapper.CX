@@ -36,8 +36,8 @@ namespace Tests
             using (var cn = GetConnection())
             {
                 var emp = GetTestEmployee();
-                
-                var provider = GetProvider();                
+
+                var provider = GetProvider();
                 TIdentity id = provider.InsertAsync(cn, emp).Result;
 
                 const string newName = "Wonga";

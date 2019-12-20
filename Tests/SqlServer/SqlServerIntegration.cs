@@ -3,7 +3,6 @@ using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlServer.LocalDb;
 using SqlServer.LocalDb.Models;
-using System;
 using System.Collections.Generic;
 using System.Data;
 
@@ -29,7 +28,7 @@ namespace Tests.SqlServer
                     [TermDate] date NULL,
                     [IsExempt] bit NOT NULL,
                     [Id] int identity(1, 1) PRIMARY KEY
-                )");            
+                )");
         }
 
         protected override SqlCrudProvider<int> GetProvider()
