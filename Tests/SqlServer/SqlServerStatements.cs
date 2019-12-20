@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Tests.Extensions;
 using Tests.Models;
 
 namespace Tests.SqlServer
@@ -24,9 +25,8 @@ namespace Tests.SqlServer
                 ) VALUES (
                     @FirstName, @LastName, @HireDate, @TermDate, @IsExempt
                 ); SELECT SCOPE_IDENTITY();";
-
-            StringDiff.PrintInfo(sql, result);
-            Assert.IsTrue(sql.Equals(result));
+            
+            Assert.IsTrue(sql.ReplaceWhitespace().Equals(result.ReplaceWhitespace()));
         }
 
         [TestMethod]
@@ -36,11 +36,10 @@ namespace Tests.SqlServer
             const string result = 
                 @"UPDATE [Employee] SET 
                     [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [TermDate]=@TermDate, [IsExempt]=@IsExempt 
-                WHERE 
+                WHERE
                     [Id]=@Id";
-
-            StringDiff.PrintInfo(sql, result);
-            Assert.IsTrue(sql.Equals(result));
+            
+            Assert.IsTrue(sql.ReplaceWhitespace().Equals(result.ReplaceWhitespace()));
         }
 
         [TestMethod]
@@ -62,11 +61,10 @@ namespace Tests.SqlServer
             const string result =
                 @"UPDATE [Employee] SET 
                     [FirstName]=@FirstName 
-                WHERE 
+                WHERE
                     [Id]=@Id";
-
-            StringDiff.PrintInfo(sql, result);
-            Assert.IsTrue(sql.Equals(result));
+            
+            Assert.IsTrue(sql.ReplaceWhitespace().Equals(result.ReplaceWhitespace()));
         }        
     }
 }
