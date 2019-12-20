@@ -57,7 +57,7 @@ namespace Tests
                 var provider = GetProvider();
                 TIdentity id = provider.InsertAsync(cn, emp).Result;
 
-                provider.DeleteAsync<Employee>(cn, id);
+                provider.DeleteAsync<Employee>(cn, id).Wait();
 
                 emp = provider.GetAsync<Employee>(cn, id).Result;
                 Assert.IsNull(emp);
