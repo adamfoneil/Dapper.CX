@@ -10,7 +10,7 @@ namespace Dapper.CX.Abstract
 {
     public abstract class SqlCmdDictionary : Dictionary<string, object>
     {
-        private const string KeyColumnPrefix = "#";
+        public const string KeyColumnPrefix = "#";
 
         public SqlCmdDictionary()
         {                
