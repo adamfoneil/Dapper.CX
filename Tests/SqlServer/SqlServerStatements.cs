@@ -3,6 +3,7 @@ using Dapper.CX.Classes;
 using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Diagnostics;
 using Tests.Models;
 
 namespace Tests.SqlServer
@@ -16,6 +17,7 @@ namespace Tests.SqlServer
         public void InsertStatementBase()
         {
             string sql = GetProvider().GetInsertStatement(typeof(Employee));
+            Debug.Print(sql);
             Assert.IsTrue(sql.Equals(
                 @"INSERT INTO [Employee] (
                     [FirstName], [LastName], [HireDate], [TermDate], [IsExempt]
@@ -28,6 +30,7 @@ namespace Tests.SqlServer
         public void UpdateStatementBase()
         {
             string sql = GetProvider().GetUpdateStatement(new Employee());
+            Debug.Print(sql);
             Assert.IsTrue(sql.Equals(
                 @"UPDATE [Employee] SET 
                     [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [TermDate]=@TermDate, [IsExempt]=@IsExempt 
@@ -51,6 +54,7 @@ namespace Tests.SqlServer
             emp.FirstName = "argo";
 
             string sql = GetProvider().GetUpdateStatement(emp, ct);
+            Debug.Print(sql);
             Assert.IsTrue(sql.Equals(
                 @"UPDATE [Employee] SET 
                     [FirstName]=@FirstName 
