@@ -145,6 +145,18 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        public async Task<bool> ExistsAsync<TModel>(IDbConnection connection, TIdentity id)
+        {
+            var model = await GetAsync<TModel>(connection, id);
+            return (model != null);
+        }
+
+        public async Task<bool> ExistsWhereAsync<TModel>(IDbConnection connection, object criteria)
+        {
+            var model = await GetWhereAsync<TModel>(connection, criteria);
+            return (model != null);
+        }
+
         #region SQL statements
         public string GetQuerySingleStatement(Type modelType)
         {
