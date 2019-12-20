@@ -1,6 +1,8 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/90etxh1r0aycv1j9?svg=true)](https://ci.appveyor.com/project/adamosoftware/dapper-cx)
 
-Nuget package **Dapper.CX.SqlServer** makes it easy to do CRUD operations on pure POCO model classes. The only model class requirement is that they have a property called `Id` or the class has an [Identity](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Attributes/IdentityAttribute.cs) attribute that indicates what its identity property is. [Why Dapper.CX?](https://github.com/adamosoftware/Dapper.CX/wiki)
+Nuget package **Dapper.CX.SqlServer** makes it easy to do CRUD operations on pure POCO model classes. The only model class requirement is that they have a property called `Id` or the class has an [Identity](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Attributes/IdentityAttribute.cs) attribute that indicates what its identity property is.
+
+Wiki links: [Why Dapper.CX?](https://github.com/adamosoftware/Dapper.CX/wiki), [Reference](https://github.com/adamosoftware/Dapper.CX/wiki/Crud-method-reference)
 
 Here's a simple example using [GetAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L41) and [SaveAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L51) methods assuming a fictional `Appointment` model class and fictional `GetConnection` method:
 ```csharp
