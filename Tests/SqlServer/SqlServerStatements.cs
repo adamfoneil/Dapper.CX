@@ -17,25 +17,29 @@ namespace Tests.SqlServer
         public void InsertStatementBase()
         {
             string sql = GetProvider().GetInsertStatement(typeof(Employee));
-            Debug.Print(sql);
-            Assert.IsTrue(sql.Equals(
+            const string result = 
                 @"INSERT INTO [Employee] (
                     [FirstName], [LastName], [HireDate], [TermDate], [IsExempt]
                 ) VALUES (
                     @FirstName, @LastName, @HireDate, @TermDate, @IsExempt
-                ); SELECT SCOPE_IDENTITY();"));
+                ); SELECT SCOPE_IDENTITY();";
+
+            PrintDiffInfo(sql, result);
+            Assert.IsTrue(sql.Equals(result));
         }
 
         [TestMethod]
         public void UpdateStatementBase()
         {
             string sql = GetProvider().GetUpdateStatement(new Employee());
-            Debug.Print(sql);
-            Assert.IsTrue(sql.Equals(
+            const string result = 
                 @"UPDATE [Employee] SET 
                     [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [TermDate]=@TermDate, [IsExempt]=@IsExempt 
                 WHERE 
-                    [Id]=@Id"));
+                    [Id]=@Id";
+
+            PrintDiffInfo(sql, result);
+            Assert.IsTrue(sql.Equals(result));
         }
 
         [TestMethod]
@@ -54,13 +58,22 @@ namespace Tests.SqlServer
             emp.FirstName = "argo";
 
             string sql = GetProvider().GetUpdateStatement(emp, ct);
-            Debug.Print(sql);
-            Assert.IsTrue(sql.Equals(
+            const string result =
                 @"UPDATE [Employee] SET 
                     [FirstName]=@FirstName 
                 WHERE 
-                    [Id]=@Id"));
+                    [Id]=@Id";
+
+            PrintDiffInfo(sql, result);
+            Assert.IsTrue(sql.Equals(result));
         }
 
+        private void PrintDiffInfo(string string1, string string2)
+        {
+            if (!string1.Equals(string2))
+            {
+
+            }
+        }
     }
 }
