@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Dapper.CX.Base\Dapper.CX.Base.csproj" />
     <ProjectReference Include="..\Dapper.CX.SqlServer\Dapper.CX.SqlServer.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
-﻿using Dapper.CX.Enums;
+﻿using Dapper.CX.Classes;
+using Dapper.CX.Enums;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -159,14 +160,14 @@ namespace Dapper.CX.Abstract
         public string GetUpdateStatement()
         {
             // by default, we include all columns in the update
-            Func<string, bool> predicate = (key) => true;
+            Func<KeyValuePair<string, object>, bool> predicate = (key) => true;
 
             // but if IdentityInsert is on, we need to exclude that from the update
-            if (IdentityInsert) predicate = (key) => !key.ToLower().Equals(IdentityColumn.ToLower());
+            if (IdentityInsert) predicate = (kp) => !kp.Key.ToLower().Equals(IdentityColumn.ToLower());
 
             return
                 $@"UPDATE {ApplyDelimiter(TableName)} SET
-                    {string.Join(", ", Keys.Where(kp => predicate(kp)).Select(col => $"{ApplyDelimiter(col)}=@{ParseColumnName(col)}"))}
+                    {string.Join(", ", this.Where(kp => predicate(kp)).Select(col => $"{ApplyDelimiter(col.Key)}={ValueSyntax(col)}"))}
                 WHERE {ApplyDelimiter(IdentityColumn)}=@{IdentityColumn}";
         }
 
@@ -180,13 +181,20 @@ namespace Dapper.CX.Abstract
             return GetInsertStatementBase("INSERT") + "; " + SelectIdentityCommand;
         }
 
+        protected string ValueSyntax(KeyValuePair<string, object> keyPair)
+        {
+            return (keyPair.Value is SqlExpression) ?
+                (keyPair.Value as SqlExpression).Content :
+                $"@{ParseColumnName(keyPair.Key)}";
+        }
+
         protected string GetInsertStatementBase(string verb)
         {
             return
                 $@"{verb} INTO {ApplyDelimiter(TableName)} (
                     {string.Join(", ", Keys.Select(s => ApplyDelimiter(s)))}
                 ) VALUES (
-                    {string.Join(", ", Keys.Select(s => $"@{ParseColumnName(s)}"))}
+                    {string.Join(", ", this.Select(kp => ValueSyntax(kp)))}
                 )";
         }
 
