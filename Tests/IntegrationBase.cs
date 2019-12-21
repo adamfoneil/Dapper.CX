@@ -1,4 +1,5 @@
-﻿using Dapper.CX.Abstract;
+﻿using Dapper;
+using Dapper.CX.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Data;
@@ -81,6 +82,8 @@ namespace Tests
         {
             using (var cn = GetConnection())
             {
+                cn.Execute("TRUNCATE TABLE [dbo].[Employee]");
+
                 var provider = GetProvider();
 
                 var emp = GetTestEmployee();
@@ -94,7 +97,9 @@ namespace Tests
         protected void MergeExplicitPropsBase()
         {
             using (var cn = GetConnection())
-            {                
+            {
+                cn.Execute("TRUNCATE TABLE [dbo].[Employee]");
+
                 var emp = GetTestEmployee();
                 emp.IsExempt = true;
 
@@ -115,6 +120,8 @@ namespace Tests
         {
             using (var cn = GetConnection())
             {
+                cn.Execute("TRUNCATE TABLE [dbo].[Employee]");
+
                 var emp = GetTestEmployee();
                 emp.IsExempt = true;
 

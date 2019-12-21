@@ -76,7 +76,7 @@ namespace Tests.SqlServer
         }
 
         [TestMethod]
-        public void SqlServerInsertWIthExpression()
+        public void SqlServerInsertWithExpression()
         {
             var ins = new SqlServerCmd("dbo.Table1", "Id")
             {

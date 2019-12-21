@@ -91,7 +91,7 @@ namespace Dapper.CX.Abstract
         protected DynamicParameters GetParameters(object template = null)
         {
             var dp = new DynamicParameters(template);
-            foreach (var kp in this) dp.Add(ParseColumnName(kp.Key), kp.Value);
+            foreach (var kp in this.Where(kp => !(kp.Value is SqlExpression))) dp.Add(ParseColumnName(kp.Key), kp.Value);
             return dp;
         }
 
@@ -117,7 +117,7 @@ namespace Dapper.CX.Abstract
             else
             {
                 await connection.ExecuteAsync(sql, GetParameters());
-                return default(TIdentity);
+                return default;
             }
         }
 

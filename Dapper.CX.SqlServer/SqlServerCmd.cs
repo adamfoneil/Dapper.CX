@@ -61,7 +61,8 @@ namespace Dapper.CX.SqlServer
                 WHERE
 	                SCHEMA_NAME([t].[schema_id])=@schemaName AND
 	                [t].[name]=@tableName AND
-	                [ndx].[is_primary_key]=1", new { schemaName, tableName });
+	                [ndx].[is_primary_key]=1 AND
+                    [col].[is_identity]=0", new { schemaName, tableName });
 
             return await FromTableSchemaAsync(connection, schemaName, tableName, keyColumns);
         }
