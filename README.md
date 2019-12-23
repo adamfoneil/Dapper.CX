@@ -54,5 +54,8 @@ using (var cn = GetConnection())
 ```
 In a real app, you'd likely extract the anonymous method to an actual method, and make it work as a convention across your application.
 
+## And one other thing...
+In addition to the more common strong-typed CRUD operations, Dapper.CX also offers a [SqlCmdDictionary](https://github.com/adamosoftware/Dapper.CX/wiki/Using-SqlCmdDictionary) feature that gives you a clean way to build INSERT and UPDATE statements dynamically.
+
 ---
 Please see also [Dapper.QX](https://github.com/adamosoftware/Dapper.QX), Dapper.CX's companion library.
