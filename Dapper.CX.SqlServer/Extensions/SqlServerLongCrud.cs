@@ -4,7 +4,7 @@ using System;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace Dapper.CX.SqlServer.Extensions
+namespace Dapper.CX.SqlServer.Extensions.Long
 {
     public static class SqlServerLongCrud
     {
