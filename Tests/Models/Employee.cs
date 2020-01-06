@@ -14,6 +14,7 @@ namespace Tests.Models
         public DateTime? HireDate { get; set; }
         public DateTime? TermDate { get; set; }
         public bool IsExempt { get; set; }
+        public DateTime? Timestamp { get; set; }
         public int Id { get; set; }
 
         public IEnumerable<string> Something { get; set; }

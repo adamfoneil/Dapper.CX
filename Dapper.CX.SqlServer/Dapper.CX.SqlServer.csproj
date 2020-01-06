@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper.CX.Base" Version="1.0.1" />
+    <PackageReference Include="Dapper.CX.Base" Version="1.0.3" />
     <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
   </ItemGroup>
 

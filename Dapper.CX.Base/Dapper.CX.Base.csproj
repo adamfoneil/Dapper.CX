@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Dapper.CX</RootNamespace>
-    <Version>1.0.1</Version>
+    <Version>1.0.6</Version>
     <Authors>Adam O'Neil</Authors>
     <Description>Abstract and base classes for a Dapper-based platform-neutral CRUD library</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -12,6 +12,7 @@
     <PackageTags>dapper crud-library</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Copyright (c) Adam O'Neil 2019</Copyright>
+    <PackageReleaseNotes>added SqlExpression for use with SqlCmdDictionary</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
