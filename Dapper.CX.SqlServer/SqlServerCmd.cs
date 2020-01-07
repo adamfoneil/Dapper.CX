@@ -69,6 +69,7 @@ namespace Dapper.CX.SqlServer
 
         public static async Task<SqlServerCmd> FromQueryAsync(IDbConnection connection, string sql, object parameters = null, string omitIdentityColumn = null)
         {
+            // help from https://stackoverflow.com/a/26661203/2023653
             var row = await connection.QuerySingleOrDefaultAsync(sql, parameters);
             var dictionary = row as IDictionary<string, object>;
             var result = new SqlServerCmd();
