@@ -150,5 +150,18 @@ namespace Tests.SqlServer
             }
         }
 
+        [TestMethod]
+        public void SqlServerCmdFromQueryWithId()
+        {
+            CmdDictionaryInsert();
+
+            using (var cn = GetConnection())
+            {
+                int id = cn.Query<int>("SELECT [Id] FROM [dbo].[Employee]").First();
+                var cmd = SqlServerCmd.FromQueryAsync(cn, "SELECT * FROM [dbo].[Employee] WHERE [Id]=@id", new { id }).Result;
+                var columns = cmd.Select(kp => kp.Key).ToArray();
+                Assert.IsTrue(columns.SequenceEqual(new string[] { "FirstName", "LastName", "HireDate", "TermDate", "IsExempt", "Timestamp", "Id" }));
+            }
+        }
     }
 }
