@@ -7,6 +7,8 @@ using SqlServer.LocalDb;
 using SqlServer.LocalDb.Models;
 using System.Collections.Generic;
 using System.Data;
+using Dapper;
+using System.Linq;
 
 namespace Tests.SqlServer
 {
@@ -113,7 +115,7 @@ namespace Tests.SqlServer
                 var id = cmd.InsertAsync<int>(cn).Result;
                 Assert.IsTrue(cn.RowExistsAsync("[dbo].[Employee] WHERE [LastName]='Wainright'").Result);
             }            
-        }
+        }        
 
         [TestMethod]
         public void CmdDictionaryUpdate()
@@ -133,5 +135,20 @@ namespace Tests.SqlServer
                 Assert.IsTrue(cn.RowExistsAsync("[dbo].[Employee] WHERE [LastName]='Wainright2'").Result);
             }
         }
+
+        [TestMethod]
+        public void SqlServerCmdFromQuery()
+        {
+            CmdDictionaryInsert();
+
+            using (var cn = GetConnection())
+            {
+                int id = cn.Query<int>("SELECT [Id] FROM [dbo].[Employee]").First();
+                var cmd = SqlServerCmd.FromQueryAsync(cn, "SELECT * FROM [dbo].[Employee] WHERE [Id]=@id", new { id }, "Id").Result;
+                var columns = cmd.Select(kp => kp.Key).ToArray();
+                Assert.IsTrue(columns.SequenceEqual(new string[] { "FirstName", "LastName", "HireDate", "TermDate", "IsExempt", "Timestamp" }));
+            }
+        }
+
     }
 }

@@ -67,6 +67,21 @@ namespace Dapper.CX.SqlServer
             return await FromTableSchemaAsync(connection, schemaName, tableName, keyColumns);
         }
 
+        public static async Task<SqlServerCmd> FromQueryAsync(IDbConnection connection, string sql, object parameters = null, string omitIdentityColumn = null)
+        {
+            var row = await connection.QuerySingleOrDefaultAsync(sql, parameters);
+            var dictionary = row as IDictionary<string, object>;
+            var result = new SqlServerCmd();
+            foreach (var kp in dictionary)
+            {
+                if (!kp.Key.Equals(omitIdentityColumn))
+                {
+                    result.Add(kp.Key, kp.Value);
+                }                
+            }
+            return result;            
+        }
+
         protected override string SelectIdentityCommand => "SELECT SCOPE_IDENTITY();";
 
         protected override char StartDelimiter => '[';

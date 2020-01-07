@@ -136,7 +136,7 @@ namespace Tests
                 var findEmp = provider.GetAsync<Employee>(cn, id).Result;
                 Assert.IsFalse(findEmp.IsExempt);
             }
-        }
+        }        
 
         private static Employee GetTestEmployee()
         {
