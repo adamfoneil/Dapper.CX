@@ -19,7 +19,7 @@ namespace Tests.Base
         {
             yield return new InitializeStatement(
                 "dbo.SomethingElse", "DROP %obj%",
-                @"CREATE TABLE [dbo].[SomethingElse] (
+                @"CREATE TABLE %obj% (
                     [EmployeeId] int NOT NULL,
                     [Balance] decimal NULL,
                     [Whatever] nvarchar(50) NULL,
