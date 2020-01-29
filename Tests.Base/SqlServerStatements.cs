@@ -18,7 +18,7 @@ namespace Tests.Base
         private static IEnumerable<InitializeStatement> AdditionalObjects()
         {
             yield return new InitializeStatement(
-                "dbo.SomethingElse", "DROP %obj%",
+                "dbo.SomethingElse", "DROP TABLE %obj%",
                 @"CREATE TABLE %obj% (
                     [EmployeeId] int NOT NULL,
                     [Balance] decimal NULL,
