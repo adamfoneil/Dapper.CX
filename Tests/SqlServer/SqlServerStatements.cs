@@ -3,8 +3,6 @@ using Dapper.CX.Classes;
 using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
-using System.Linq;
 using Tests.Extensions;
 using Tests.Models;
 

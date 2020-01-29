@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Tests.Models
 {
     [Identity(nameof(Id))]
-    public class EmployeeCustom : ICustomGet, IGetMore<EmployeeCustom>
+    public class EmployeeCustom : ICustomGet, IGetRelated<EmployeeCustom>
     {
         [PrimaryKey]
         public string FirstName { get; set; }

@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dapper.CX.SqlServer\Dapper.CX.SqlServer.csproj" />
+    <ProjectReference Include="..\Tests.Models\Tests.Models.csproj" />
   </ItemGroup>
 
 </Project>

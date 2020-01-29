@@ -1,8 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Threading.Tasks;
-
-namespace Dapper.CX.Interfaces
+﻿namespace Dapper.CX.Interfaces
 {
     /// <summary>
     /// implement this on model classes to inject your own SELECT...FROM
