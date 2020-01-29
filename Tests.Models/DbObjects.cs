@@ -19,7 +19,15 @@ namespace Tests.Models
                     [Timestamp] datetime NULL,
                     [Id] int identity(1, 1) PRIMARY KEY
                 )");
-        }
 
+            yield return new InitializeStatement(
+                "dbo.SomethingElse", "DROP TABLE %obj%",
+                @"CREATE TABLE %obj% (
+                    [EmployeeId] int NOT NULL,
+                    [Balance] decimal NULL,
+                    [Whatever] nvarchar(50) NULL,
+                    [Id] int identity(1,1) PRIMARY KEY
+                )");
+        }
     }
 }
