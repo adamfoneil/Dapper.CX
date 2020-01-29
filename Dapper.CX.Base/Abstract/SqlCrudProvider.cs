@@ -258,7 +258,8 @@ namespace Dapper.CX.Abstract
         {
             bool isMapped(PropertyInfo pi)
             {
-                if (pi.IsIdentity()) return false;
+                if (!pi.CanWrite) return false;
+                if (pi.IsIdentity()) return false;                
                 if (!SupportedTypes.Contains(pi.PropertyType)) return false;
                 if (!pi.AllowSaveAction(saveAction)) return false;
 

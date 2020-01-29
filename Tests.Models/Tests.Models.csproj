@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SqlServer.LocalDb.Testing" Version="1.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Dapper.CX.Base\Dapper.CX.Base.csproj" />
   </ItemGroup>
 

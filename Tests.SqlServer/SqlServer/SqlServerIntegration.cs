@@ -1,14 +1,13 @@
-﻿using Dapper.CX.Abstract;
+﻿using Dapper;
+using Dapper.CX.Abstract;
 using Dapper.CX.Classes;
-using Dapper.CX.SqlServer;
 using Dapper.CX.Extensions;
+using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlServer.LocalDb;
-using SqlServer.LocalDb.Models;
-using System.Collections.Generic;
 using System.Data;
-using Dapper;
 using System.Linq;
+using Tests.Models;
 
 namespace Tests.SqlServer
 {
@@ -22,29 +21,13 @@ namespace Tests.SqlServer
 
             using (var cn = LocalDb.GetConnection("DapperCX"))
             {
-                LocalDb.ExecuteInitializeStatements(cn, CreateObjects());
+                LocalDb.ExecuteInitializeStatements(cn, DbObjects.CreateObjects());
             }            
         }
 
         protected override IDbConnection GetConnection()
         {
             return LocalDb.GetConnection("DapperCX");
-        }
-
-        private static IEnumerable<InitializeStatement> CreateObjects()
-        {
-            yield return new InitializeStatement(
-                "dbo.Employee",
-                "DROP TABLE %obj%",
-                @"CREATE TABLE %obj% (
-                    [FirstName] nvarchar(50) NOT NULL,
-                    [LastName] nvarchar(50) NOT NULL,
-                    [HireDate] date NULL,
-                    [TermDate] date NULL,
-                    [IsExempt] bit NOT NULL,
-                    [Timestamp] datetime NULL,
-                    [Id] int identity(1, 1) PRIMARY KEY
-                )");
         }
 
         protected override SqlCrudProvider<int> GetProvider()

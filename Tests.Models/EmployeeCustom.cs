@@ -2,12 +2,14 @@
 using Dapper.CX.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Threading.Tasks;
 
 namespace Tests.Models
 {
     [Identity(nameof(Id))]
+    [Table("Employee")]
     public class EmployeeCustom : ICustomGet, IGetRelated<EmployeeCustom>
     {
         [PrimaryKey]
@@ -20,7 +22,9 @@ namespace Tests.Models
         public DateTime? Timestamp { get; set; }
         public int Id { get; set; }
 
+        [NotMapped]
         public decimal Balance { get; set; }
+        [NotMapped]
         public string Whatever { get; set; }
 
         public IEnumerable<string> Something { get; set; }
