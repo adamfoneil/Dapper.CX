@@ -2,11 +2,13 @@
 using Dapper.CX.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Tests.Models
 {
     [Identity(nameof(Id))]
-    public class EmployeeCustom : ICustomGet
+    public class EmployeeCustom : ICustomGet, IGetMore<EmployeeCustom>
     {
         [PrimaryKey]
         public string FirstName { get; set; }
@@ -30,5 +32,12 @@ namespace Tests.Models
             LEFT JOIN [dbo].[SomethingElse] [se] ON [emp].[Id]=[se].[EmployeeId]";
 
         public string WhereId => "[emp].[Id]=@id";
+
+        public Func<IDbConnection, EmployeeCustom, Task> OnGetAsync => async (cn, model) =>
+        {
+            model.Something = new string[] { "this", "that", "other" };
+            model.SomethingElse = new DateTime[] { DateTime.Today };
+            await Task.CompletedTask;
+        };
     }    
 }

@@ -41,12 +41,30 @@ namespace Dapper.CX.Abstract
 
         public async Task<TModel> GetAsync<TModel>(IDbConnection connection, TIdentity identity)
         {
-            return await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleStatement(typeof(TModel)), new { id = identity });
+            var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleStatement(typeof(TModel)), new { id = identity });
+
+            await OnGetRelatedAsync(connection, result);
+
+            return result;
         }
 
         public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, object criteria)
         {
-            return await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleWhereStatement(typeof(TModel), criteria), criteria);
+            var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleWhereStatement(typeof(TModel), criteria), criteria);
+
+            await OnGetRelatedAsync(connection, result);
+
+            return result;
+        }
+
+        private static async Task OnGetRelatedAsync<TModel>(IDbConnection connection, TModel result)
+        {
+            if (result == null) return;
+
+            if (typeof(TModel).Implements(typeof(IGetRelated<TModel>)))
+            {
+                await ((IGetRelated<TModel>)result).OnGetAsync.Invoke(connection, result);
+            }
         }
 
         public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
