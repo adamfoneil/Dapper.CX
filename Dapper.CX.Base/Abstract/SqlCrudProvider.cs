@@ -3,6 +3,7 @@ using Dapper.CX.Classes;
 using Dapper.CX.Enums;
 using Dapper.CX.Exceptions;
 using Dapper.CX.Extensions;
+using Dapper.CX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -160,7 +161,17 @@ namespace Dapper.CX.Abstract
         #region SQL statements
         public string GetQuerySingleStatement(Type modelType)
         {
-            return $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())} WHERE {ApplyDelimiter(modelType.GetIdentityName())}=@id";
+            bool isCustom = modelType.Implements(typeof(ICustomGet));
+
+            string query = (isCustom) ?
+                GetCustomSelectFrom(modelType) :
+                $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())}";
+
+            string whereId = (isCustom) ?
+                GetCustomWhereId(modelType) :
+                $"{ApplyDelimiter(modelType.GetIdentityName())}=@id";
+
+            return $"{query} WHERE {whereId}";
         }
 
         public string GetQuerySingleWhereStatement(Type modelType, object criteria)
@@ -171,7 +182,25 @@ namespace Dapper.CX.Abstract
 
         public string GetQuerySingleWhereStatement(Type modelType, IEnumerable<string> propertyNames)
         {
-            return $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())} WHERE {string.Join(" AND ", propertyNames.Select(name => ApplyDelimiter(name) + "=@" + name))}";
+            string whereClause = $"WHERE {string.Join(" AND ", propertyNames.Select(name => ApplyDelimiter(name) + "=@" + name))}";
+
+            string query = (modelType.Implements(typeof(ICustomGet))) ? 
+                GetCustomSelectFrom(modelType) :
+                $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())}";
+
+            return $"{query} {whereClause}";
+        }
+
+        private string GetCustomSelectFrom(Type modelType)
+        {
+            var model = Activator.CreateInstance(modelType) as ICustomGet;
+            return model.SelectFrom;
+        }
+
+        private string GetCustomWhereId(Type modelType)
+        {
+            var model = Activator.CreateInstance(modelType) as ICustomGet;
+            return model.WhereId;
         }
 
         public string GetQuerySingleWhereStatement(Type modelType, IEnumerable<PropertyInfo> properties)

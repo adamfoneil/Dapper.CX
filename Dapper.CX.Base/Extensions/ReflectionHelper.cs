@@ -36,5 +36,10 @@ namespace Dapper.CX.Extensions
             propertyInfo = (properties.ContainsKey(propertyName)) ? properties[propertyName] : null;
             return (propertyInfo != null);
         }
+
+        internal static bool Implements(this Type type, Type interfaceType)
+        {
+            return type.GetInterfaces().Contains(interfaceType);
+        }
     }
 }
