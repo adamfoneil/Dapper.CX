@@ -71,14 +71,5 @@ namespace Tests.SqlServer
             string sql = GetProvider().GetDeleteStatement(typeof(Employee));
             Assert.IsTrue(sql.Equals("DELETE [Employee] WHERE [Id]=@id"));
         }
-
-        [TestMethod]
-        public void CustomGetStatement()
-        {
-            string sql = GetProvider().GetQuerySingleStatement(typeof(EmployeeCustom));
-            Assert.IsTrue(sql.Equals(@"SELECT [emp].*, [se].[Balance], [se].[Whatever]
-            FROM [dbo].[Employee] [emp]
-            LEFT JOIN [dbo].[SomethingElse] [se] ON [emp].[Id]=[se].[EmployeeId] WHERE [emp].[Id]=@id"));
-        }
     }
 }

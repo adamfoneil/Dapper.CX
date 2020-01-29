@@ -13,4 +13,9 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Dapper.CX.SqlServer\Dapper.CX.SqlServer.csproj" />
+    <ProjectReference Include="..\Tests.Models\Tests.Models.csproj" />
+  </ItemGroup>
+
 </Project>
