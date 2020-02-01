@@ -6,6 +6,7 @@ using Dapper.CX.Extensions;
 using Dapper.CX.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
@@ -93,7 +94,7 @@ namespace Dapper.CX.Abstract
 
         public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
         {
-            var props = typeof(TModel).GetProperties().Where(pi => pi.HasAttribute<PrimaryKeyAttribute>()).Select(pi => pi.GetColumnName());
+            var props = typeof(TModel).GetProperties().Where(pi => pi.HasAttribute<KeyAttribute>()).Select(pi => pi.GetColumnName());
             if (!props.Any()) throw new Exception($"No primary key properties found on {typeof(TModel).Name}");
 
             return await MergeAsync(connection, model, props, changeTracker, onSave);
