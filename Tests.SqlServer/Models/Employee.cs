@@ -1,15 +1,16 @@
 ﻿using Dapper.CX.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Tests.Models
 {
     [Identity(nameof(Id))]
     public class Employee
     {
-        [PrimaryKey]
+        [Key]
         public string FirstName { get; set; }
-        [PrimaryKey]
+        [Key]
         public string LastName { get; set; }
         public DateTime? HireDate { get; set; }
         public DateTime? TermDate { get; set; }

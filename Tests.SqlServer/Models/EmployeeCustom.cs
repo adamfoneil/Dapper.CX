@@ -2,6 +2,7 @@
 using Dapper.CX.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Threading.Tasks;
@@ -12,9 +13,9 @@ namespace Tests.Models
     [Table("Employee")]
     public class EmployeeCustom : ICustomGet, IGetRelated<EmployeeCustom>
     {
-        [PrimaryKey]
+        [Key]
         public string FirstName { get; set; }
-        [PrimaryKey]
+        [Key]
         public string LastName { get; set; }
         public DateTime? HireDate { get; set; }
         public DateTime? TermDate { get; set; }
