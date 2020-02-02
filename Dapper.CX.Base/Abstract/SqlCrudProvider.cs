@@ -1,8 +1,9 @@
-﻿using AO.DbSchema.Enums;
+﻿using AO.DbSchema.Attributes.Interfaces;
+using AO.DbSchema.Enums;
+using AO.DbSchema.Interfaces;
 using Dapper.CX.Classes;
 using Dapper.CX.Exceptions;
 using Dapper.CX.Extensions;
-using Dapper.CX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -120,11 +121,13 @@ namespace Dapper.CX.Abstract
 
         public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null)
         {
+            await ValidateInternal(connection, model);
+
             onSave?.Invoke(model, SaveAction.Insert);
             var cmd = new CommandDefinition(GetInsertStatement(typeof(TModel)), model);
 
             try
-            {                
+            {
                 TIdentity result = await connection.QuerySingleOrDefaultAsync<TIdentity>(cmd);
                 SetIdentity(model, result);
                 return result;
@@ -132,11 +135,13 @@ namespace Dapper.CX.Abstract
             catch (Exception exc)
             {
                 throw new CrudException(cmd, exc);
-            }            
+            }
         }
 
         public async Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
         {
+            await ValidateInternal(connection, model);
+
             onSave?.Invoke(model, SaveAction.Update);
             var cmd = new CommandDefinition(GetUpdateStatement(model, changeTracker), model);
 
@@ -174,6 +179,18 @@ namespace Dapper.CX.Abstract
         {
             var model = await GetWhereAsync<TModel>(connection, criteria);
             return (model != null);
+        }
+
+        private static async Task ValidateInternal<TModel>(IDbConnection connection, TModel model)
+        {
+            if (typeof(TModel).Implements(typeof(IValidate<TModel>)))
+            {
+                var result = ((IValidate<TModel>)model).Validate();
+                if (!result.IsValid) throw new Exceptions.ValidationException(result.Message);
+
+                result = await ((IValidate<TModel>)model).ValidateAsync(connection);
+                if (!result.IsValid) throw new Exceptions.ValidationException(result.Message);
+            }
         }
 
         #region SQL statements

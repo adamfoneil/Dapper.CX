@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Dapper.CX</RootNamespace>
-    <Version>1.0.10</Version>
+    <Version>1.0.11</Version>
     <Authors>Adam O'Neil</Authors>
     <Description>Abstract and base classes for a Dapper-based platform-neutral CRUD library</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AO.DbSchema.Attributes" Version="1.0.0" />
+    <PackageReference Include="AO.DbSchema.Attributes" Version="1.0.3" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
