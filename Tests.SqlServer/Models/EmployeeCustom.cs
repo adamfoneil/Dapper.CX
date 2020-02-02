@@ -1,5 +1,5 @@
 ﻿using AO.DbSchema.Attributes;
-using Dapper.CX.Interfaces;
+using AO.DbSchema.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
