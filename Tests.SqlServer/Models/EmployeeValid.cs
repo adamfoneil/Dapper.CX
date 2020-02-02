@@ -6,25 +6,25 @@ using Tests.Models;
 
 namespace Tests.SqlServer.Models
 {
-    public class EmployeeValid : Employee, IValidate<Employee>
+    public class EmployeeValid : Employee, IValidate
     {
-        public ValidationResult Validate()
+        public ValidateResult Validate()
         {
             if (TermDate < HireDate)
             {
-                return new ValidationResult()
+                return new ValidateResult()
                 {
                     Message = "TermDate cannot be before HireDate",
                     IsValid = false
                 };
             }
 
-            return new ValidationResult() { IsValid = true };
+            return new ValidateResult() { IsValid = true };
         }
 
-        public Task<ValidationResult> ValidateAsync(IDbConnection connection)
+        public Task<ValidateResult> ValidateAsync(IDbConnection connection)
         {
-            return Task.FromResult(new ValidationResult() { IsValid = true });
+            return Task.FromResult(new ValidateResult() { IsValid = true });
         }
     }
 }
