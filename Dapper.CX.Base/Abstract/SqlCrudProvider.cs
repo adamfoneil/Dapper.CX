@@ -1,6 +1,5 @@
-﻿using Dapper.CX.Attributes;
+﻿using AO.DbSchema.Enums;
 using Dapper.CX.Classes;
-using Dapper.CX.Enums;
 using Dapper.CX.Exceptions;
 using Dapper.CX.Extensions;
 using Dapper.CX.Interfaces;

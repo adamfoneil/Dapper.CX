@@ -1,4 +1,4 @@
-﻿using Dapper.CX.Enums;
+﻿using AO.DbSchema.Enums;
 using Dapper.CX.Extensions;
 using System;
 using System.Collections.Generic;

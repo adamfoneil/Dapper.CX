@@ -1,5 +1,5 @@
-﻿using Dapper.CX.Attributes;
-using Dapper.CX.Enums;
+﻿using AO.DbSchema.Attributes;
+using AO.DbSchema.Enums;
 using Dapper.CX.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;

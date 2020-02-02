@@ -1,5 +1,5 @@
-﻿using Dapper.CX.Classes;
-using Dapper.CX.Enums;
+﻿using AO.DbSchema.Enums;
+using Dapper.CX.Classes;
 using System;
 using System.Collections.Generic;
 using System.Data;
