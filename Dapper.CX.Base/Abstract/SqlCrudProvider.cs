@@ -183,12 +183,12 @@ namespace Dapper.CX.Abstract
 
         private static async Task ValidateInternal<TModel>(IDbConnection connection, TModel model)
         {
-            if (typeof(TModel).Implements(typeof(IValidate<TModel>)))
+            if (typeof(TModel).Implements(typeof(IValidate)))
             {
-                var result = ((IValidate<TModel>)model).Validate();
+                var result = ((IValidate)model).Validate();
                 if (!result.IsValid) throw new Exceptions.ValidationException(result.Message);
 
-                result = await ((IValidate<TModel>)model).ValidateAsync(connection);
+                result = await ((IValidate)model).ValidateAsync(connection);
                 if (!result.IsValid) throw new Exceptions.ValidationException(result.Message);
             }
         }
