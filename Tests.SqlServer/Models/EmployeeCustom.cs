@@ -1,4 +1,4 @@
-﻿using Dapper.CX.Attributes;
+﻿using AO.DbSchema.Attributes;
 using Dapper.CX.Interfaces;
 using System;
 using System.Collections.Generic;
