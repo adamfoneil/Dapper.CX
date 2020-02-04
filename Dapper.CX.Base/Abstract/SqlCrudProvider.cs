@@ -62,9 +62,9 @@ namespace Dapper.CX.Abstract
         {
             if (result == null) return;
 
-            if (typeof(TModel).Implements(typeof(IGetRelated<TModel>)))
+            if (typeof(TModel).Implements(typeof(IGetRelated)))
             {
-                await ((IGetRelated<TModel>)result).OnGetAsync.Invoke(connection, result);
+                await ((IGetRelated)result).OnGetAsync.Invoke(connection);
             }
         }
 
