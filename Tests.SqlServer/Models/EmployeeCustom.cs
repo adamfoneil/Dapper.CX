@@ -11,7 +11,7 @@ namespace Tests.Models
 {
     [Identity(nameof(Id))]
     [Table("Employee")]
-    public class EmployeeCustom : ICustomGet, IGetRelated<EmployeeCustom>
+    public class EmployeeCustom : ICustomGet, IGetRelated
     {
         [Key]
         public string FirstName { get; set; }
@@ -38,10 +38,10 @@ namespace Tests.Models
 
         public string WhereId => "[emp].[Id]=@id";
 
-        public Func<IDbConnection, EmployeeCustom, Task> OnGetAsync => async (cn, model) =>
+        public Func<IDbConnection, Task> OnGetAsync => async (cn) =>
         {
-            model.Something = new string[] { "this", "that", "other" };
-            model.SomethingElse = new DateTime[] { DateTime.Today };
+            this.Something = new string[] { "this", "that", "other" };
+            this.SomethingElse = new DateTime[] { DateTime.Today };
             await Task.CompletedTask;
         };
     }    
