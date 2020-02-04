@@ -54,6 +54,15 @@ using (var cn = GetConnection())
 ```
 In a real app, you'd likely extract the anonymous method to an actual method, and make it work as a convention across your application.
 
+## Customizing behaviors with interfaces
+There are some interfaces you can use on model classes to implement validation and custom `Get` behavior. These come from [AO.DbSchema.Attributes](https://github.com/adamosoftware/DbSchema.Attributes):
+
+- [ICustomGet](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Interfaces/ICustomGet.cs) lets you inject portions of the SQL statements that Dapper.CX generates. See the [test](https://github.com/adamosoftware/Dapper.CX/blob/master/Tests.SqlServer/SqlServer/SqlServerIntegration.cs#L152) for an example, along with the related [model class](https://github.com/adamosoftware/Dapper.CX/blob/master/Tests.SqlServer/Models/EmployeeCustom.cs#L14).
+
+- IGetRelated
+
+- IValidate
+
 ## And one other thing...
 In addition to the more common strong-typed CRUD operations, Dapper.CX also offers a [SqlCmdDictionary](https://github.com/adamosoftware/Dapper.CX/wiki/Using-SqlCmdDictionary) feature that gives you a clean way to build INSERT and UPDATE statements dynamically.
 
