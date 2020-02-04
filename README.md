@@ -57,11 +57,11 @@ In a real app, you'd likely extract the anonymous method to an actual method, an
 ## Customizing behaviors with interfaces
 There are some interfaces you can use on model classes to implement validation and custom `Get` behavior. These come from [AO.DbSchema.Attributes](https://github.com/adamosoftware/DbSchema.Attributes):
 
-- [ICustomGet](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Interfaces/ICustomGet.cs) lets you inject portions of the SQL statements that Dapper.CX generates. See the [test](https://github.com/adamosoftware/Dapper.CX/blob/master/Tests.SqlServer/SqlServer/SqlServerIntegration.cs#L152) for an example, along with the related [model class](https://github.com/adamosoftware/Dapper.CX/blob/master/Tests.SqlServer/Models/EmployeeCustom.cs#L14).
+- [ICustomGet](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Interfaces/ICustomGet.cs) lets you inject portions of the SQL statements that Dapper.CX generates. See the [test](https://github.com/adamosoftware/Dapper.CX/blob/master/Tests.SqlServer/SqlServer/SqlServerIntegration.cs#L152) for an example, along with the related [model class](https://github.com/adamosoftware/Dapper.CX/blob/master/Tests.SqlServer/Models/EmployeeCustom.cs#L34..L39).
 
-- IGetRelated
+- [IGetRelated](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Interfaces/IGetRelated.cs) lets you implement navigation properties by injecting a delegate in which you can perform additional gets every time a model is queried. See the [test](https://github.com/adamosoftware/Dapper.CX/blob/master/Tests.SqlServer/SqlServer/SqlServerIntegration.cs#L161) for an example. This uses the same sample model class [above](https://github.com/adamosoftware/Dapper.CX/blob/master/Tests.SqlServer/Models/EmployeeCustom.cs#L41).
 
-- IValidate
+- [IValidate](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Interfaces/IValidate.cs) lets you perform validation on a model class prior to an insert or update. See [test](https://github.com/adamosoftware/Dapper.CX/blob/master/Tests.SqlServer/Validation.cs#L11) and related [model class](https://github.com/adamosoftware/Dapper.CX/blob/master/Tests.SqlServer/Models/EmployeeValid.cs) for example. Note that `IValidate` has two methods `Validate` and `ValidateAsync`. The async version passes a connection argument so you can perform that requires looking up something in the database. The sync version is for validating properties of the model that don't require any database lookup.
 
 ## And one other thing...
 In addition to the more common strong-typed CRUD operations, Dapper.CX also offers a [SqlCmdDictionary](https://github.com/adamosoftware/Dapper.CX/wiki/Using-SqlCmdDictionary) feature that gives you a clean way to build INSERT and UPDATE statements dynamically.
