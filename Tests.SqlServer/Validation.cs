@@ -19,7 +19,7 @@ namespace Tests.SqlServer
             };
 
             var result = emp.Validate();
-            Assert.IsTrue(result.IsValid == false);
+            Assert.IsTrue(!result.IsValid);
         }
     }
 }
