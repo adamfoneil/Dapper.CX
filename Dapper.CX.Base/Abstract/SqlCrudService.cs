@@ -8,18 +8,20 @@ namespace Dapper.CX.Abstract
 {
     public abstract class SqlCrudService<TIdentity>
     {
+        private readonly string _connectionString;
         private readonly SqlCrudProvider<TIdentity> _crudProvider;
 
-        public SqlCrudService(SqlCrudProvider<TIdentity> crudProvider)
+        public SqlCrudService(string connectionString, SqlCrudProvider<TIdentity> crudProvider)
         {
+            _connectionString = connectionString;
             _crudProvider = crudProvider;
         }
 
-        protected abstract IDbConnection GetConnection();
+        protected abstract IDbConnection GetConnection(string connectionString);
 
         public async Task<TIdentity> SaveAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
         {
-            using (var cn = GetConnection())
+            using (var cn = GetConnection(_connectionString))
             {
                 return await _crudProvider.SaveAsync(cn, model, changeTracker, onSave);
             }
@@ -27,7 +29,7 @@ namespace Dapper.CX.Abstract
 
         public async Task<TIdentity> MergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
         {
-            using (var cn = GetConnection())
+            using (var cn = GetConnection(_connectionString))
             {
                 return await _crudProvider.MergeAsync(cn, model, changeTracker, onSave);
             }
@@ -35,7 +37,7 @@ namespace Dapper.CX.Abstract
 
         public async Task DeleteAsync(TIdentity id)
         {
-            using (var cn = GetConnection())
+            using (var cn = GetConnection(_connectionString))
             {
                 await _crudProvider.DeleteAsync<TIdentity>(cn, id);
             }
