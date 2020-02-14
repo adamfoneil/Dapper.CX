@@ -57,7 +57,7 @@ namespace Dapper.CX.Abstract
             {
                 return await _crudProvider.SaveAsync(cn, model, changeTracker, onSave);
             }
-        }
+        }        
 
         public async Task<TIdentity> MergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
         {
@@ -65,7 +65,7 @@ namespace Dapper.CX.Abstract
             {
                 return await _crudProvider.MergeAsync(cn, model, changeTracker, onSave);
             }
-        }
+        }        
 
         public async Task<TIdentity> InsertAsync<TModel>(TModel model, Action<TModel, SaveAction> onSave = null)
         {
@@ -73,7 +73,7 @@ namespace Dapper.CX.Abstract
             {
                 return await _crudProvider.InsertAsync(cn, model, onSave);
             }
-        }
+        }        
 
         public async Task UpdateAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
         {
@@ -81,14 +81,106 @@ namespace Dapper.CX.Abstract
             {
                 await _crudProvider.UpdateAsync(cn, model, changeTracker, onSave);
             }
-        }
+        }        
 
-        public async Task DeleteAsync(TIdentity id)
+        public async Task DeleteAsync<TModel>(TIdentity id)
         {
             using (var cn = GetConnection(_connectionString))
             {
-                await _crudProvider.DeleteAsync<TIdentity>(cn, id);
+                await _crudProvider.DeleteAsync<TModel>(cn, id);
             }
+        }
+
+        public async Task<Result> TrySaveAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        {
+            var result = new Result();
+
+            try
+            {
+                result.Id = await SaveAsync(model, changeTracker, onSave);
+                result.IsSuccessful = true;
+            }
+            catch (Exception exc)
+            {
+                result.Exception = exc;
+            }
+
+            return result;
+        }
+
+        public async Task<Result> TryMergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        {
+            var result = new Result();
+
+            try
+            {
+                result.Id = await MergeAsync(model, changeTracker, onSave);
+                result.IsSuccessful = true;
+            }
+            catch (Exception exc)
+            {
+                result.Exception = exc;
+            }
+
+            return result;
+        }
+
+        public async Task<Result> TryInsertAsync<TModel>(TModel model, Action<TModel, SaveAction> onSave = null)
+        {
+            var result = new Result();
+
+            try
+            {
+                result.Id = await InsertAsync(model, onSave);
+                result.IsSuccessful = true;
+            }
+            catch (Exception exc)
+            {
+                result.Exception = exc;
+            }
+
+            return result;
+        }
+
+        public async Task<Result> TryDeleteAsync<TModel>(TIdentity id)
+        {
+            var result = new Result();
+
+            try
+            {
+                await DeleteAsync<TModel>(id);
+                result.IsSuccessful = true;
+            }
+            catch (Exception exc)
+            {
+                result.Exception = exc;
+            }
+
+            return result;
+        }
+
+        public async Task<Result> TryUpdateAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        {
+            var result = new Result();
+
+            try
+            {
+                await UpdateAsync(model, changeTracker, onSave);
+                result.IsSuccessful = true;
+            }
+            catch (Exception exc)
+            {
+                result.Exception = exc;
+            }
+
+            return result;
+        }
+
+        public class Result
+        {
+            public bool IsSuccessful { get; set; }
+            public TIdentity Id { get; set; }
+            public Exception Exception { get; set; }
         }
     }
 }
