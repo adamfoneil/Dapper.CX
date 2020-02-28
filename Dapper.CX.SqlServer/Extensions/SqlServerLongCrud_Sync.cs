@@ -2,7 +2,7 @@
 using System;
 using System.Data;
 
-namespace Dapper.CX.SqlServer.Extensions
+namespace Dapper.CX.SqlServer.Extensions.Long
 {
     public static partial class SqlServerLongCrud
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Data;
 
-namespace Dapper.CX.SqlServer.Extensions
+namespace Dapper.CX.SqlServer.Extensions.Int
 {
     public static partial class SqlServerIntCrud
     {

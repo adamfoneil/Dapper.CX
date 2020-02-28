@@ -3,7 +3,7 @@ using System.Data;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace Dapper.CX.SqlServer.Extensions
+namespace Dapper.CX.SqlServer.Extensions.Int
 {
     public static partial class SqlServerIntCrud
     {
