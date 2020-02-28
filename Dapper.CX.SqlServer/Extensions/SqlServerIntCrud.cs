@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dapper.CX.SqlServer.Extensions.Int
 {
-    public static class SqlServerIntCrud
+    public static partial class SqlServerIntCrud
     {
         public static async Task<TModel> GetAsync<TModel>(this IDbConnection connection, int id)
         {
@@ -20,10 +20,10 @@ namespace Dapper.CX.SqlServer.Extensions.Int
             return await provider.GetWhereAsync<TModel>(connection, criteria);
         }
 
-        public static async Task<int> InsertAsync<TModel>(this IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null)
+        public static async Task<int> InsertAsync<TModel>(this IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true)
         {
             var provider = new SqlServerIntCrudProvider();
-            return await provider.InsertAsync(connection, model, onSave);
+            return await provider.InsertAsync(connection, model, onSave, getIdentity);
         }
 
         public static async Task UpdateAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)

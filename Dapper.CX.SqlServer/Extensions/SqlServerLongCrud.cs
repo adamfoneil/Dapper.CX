@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dapper.CX.SqlServer.Extensions.Long
 {
-    public static class SqlServerLongCrud
+    public static partial class SqlServerLongCrud
     {
         public static async Task<TModel> GetAsync<TModel>(this IDbConnection connection, long id)
         {

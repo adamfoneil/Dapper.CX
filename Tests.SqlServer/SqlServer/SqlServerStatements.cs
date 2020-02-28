@@ -30,7 +30,7 @@ namespace Tests.SqlServer
         [TestMethod]
         public void UpdateStatement()
         {
-            string sql = GetProvider().GetUpdateStatement(new Employee());
+            string sql = GetProvider().GetUpdateStatement<Employee>();
             const string result = 
                 @"UPDATE [Employee] SET 
                     [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [TermDate]=@TermDate, [IsExempt]=@IsExempt, [Timestamp]=@Timestamp
@@ -55,7 +55,7 @@ namespace Tests.SqlServer
 
             emp.FirstName = "argo";
 
-            string sql = GetProvider().GetUpdateStatement(emp, ct);
+            string sql = GetProvider().GetUpdateStatement<Employee>(ct);
             const string result =
                 @"UPDATE [Employee] SET 
                     [FirstName]=@FirstName 
