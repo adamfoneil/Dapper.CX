@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
 {
-    public abstract class SqlCrudProvider<TIdentity>
+    public abstract partial class SqlCrudProvider<TIdentity>
     {
         protected abstract string SelectIdentityCommand { get; }
         protected abstract char StartDelimiter { get; }
