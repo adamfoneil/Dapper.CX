@@ -34,7 +34,7 @@ namespace Dapper.CX.Abstract
         {            
             CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns);            
             await connection.ExecuteAsync(cmd);            
-        }
+        }       
 
         private CommandDefinition GetSetColumnsUpdateCommand<TModel>(TModel @object, Expression<Func<TModel, object>>[] setColumns)
         {

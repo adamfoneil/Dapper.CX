@@ -119,17 +119,17 @@ namespace Dapper.CX.Abstract
             return await connection.QuerySingleOrDefaultAsync<TModel>(sql, model);
         }
 
-        public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null)
+        public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true)
         {
             await ValidateInternal(connection, model);
 
             onSave?.Invoke(model, SaveAction.Insert);
-            var cmd = new CommandDefinition(GetInsertStatement(typeof(TModel)), model);
+            var cmd = new CommandDefinition(GetInsertStatement(typeof(TModel), getIdentity: getIdentity), model);
 
             try
             {
-                TIdentity result = await connection.QuerySingleOrDefaultAsync<TIdentity>(cmd);
-                SetIdentity(model, result);
+                TIdentity result = await connection.QuerySingleOrDefaultAsync<TIdentity>(cmd);                    
+                if (getIdentity) SetIdentity(model, result);
                 return result;
             }
             catch (Exception exc)
@@ -243,7 +243,7 @@ namespace Dapper.CX.Abstract
             return GetQuerySingleWhereStatement(modelType, properties.Select(pi => pi.GetColumnName()));            
         }
 
-        public string GetInsertStatement(Type modelType, IEnumerable<string> columnNames = null)
+        public string GetInsertStatement(Type modelType, IEnumerable<string> columnNames = null, bool getIdentity = true)
         {
             var columns = columnNames ?? GetMappedProperties(modelType, SaveAction.Insert).Select(pi => pi.GetColumnName());
 
@@ -252,7 +252,7 @@ namespace Dapper.CX.Abstract
                     {string.Join(", ", columns.Select(col => ApplyDelimiter(col)))}
                 ) VALUES (
                     {string.Join(", ", columns.Select(col => "@" + col))}
-                ); " + SelectIdentityCommand;
+                ); " + ((getIdentity) ? SelectIdentityCommand : string.Empty);
         }
 
         public string GetUpdateStatement<TModel>(ChangeTracker<TModel> changeTracker = null, IEnumerable<string> columnNames = null)

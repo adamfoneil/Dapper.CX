@@ -23,7 +23,7 @@ namespace Tests.Base
         private IDbConnection GetConnection()
         {
             return LocalDb.GetConnection("DapperCX");
-        }
+        }        
 
         [TestMethod]
         public void UpdateWithLambda()
@@ -36,5 +36,31 @@ namespace Tests.Base
                 provider.UpdateAsync(cn, emp, m => m.FirstName, m => m.LastName).Wait();
             }
         }        
+
+        [TestMethod]
+        public void PlainInsertAsync()
+        {
+            var emp = new Employee() { FirstName = "Janzy", LastName = "Horzenyadle" };
+            var provider = new SqlServerIntCrudProvider();
+
+            using (var cn = GetConnection())
+            {                
+                var result = provider.InsertAsync(cn, emp, getIdentity: false).Result;
+                Assert.IsTrue(result == default);
+            }
+        }
+
+        [TestMethod]
+        public void PlainInsert()
+        {
+            var emp = new Employee() { FirstName = "Janzy", LastName = "Horzenyadle" };
+            var provider = new SqlServerIntCrudProvider();
+
+            using (var cn = GetConnection())
+            {                
+                var result = provider.Insert(cn, emp, getIdentity: false);
+                Assert.IsTrue(result == default);
+            }
+        }
     }
 }
