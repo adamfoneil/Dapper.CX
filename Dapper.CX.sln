@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.CX.SqlServer", "Dapp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.SqlServer", "Tests.SqlServer\Tests.SqlServer.csproj", "{E9E088CA-23CD-4374-8904-80885548A758}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Base", "Tests.Base\Tests.Base.csproj", "{0DADBD92-3F4B-4E95-B20C-FFE100F3CB2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{E9E088CA-23CD-4374-8904-80885548A758}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9E088CA-23CD-4374-8904-80885548A758}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9E088CA-23CD-4374-8904-80885548A758}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DADBD92-3F4B-4E95-B20C-FFE100F3CB2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DADBD92-3F4B-4E95-B20C-FFE100F3CB2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DADBD92-3F4B-4E95-B20C-FFE100F3CB2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DADBD92-3F4B-4E95-B20C-FFE100F3CB2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

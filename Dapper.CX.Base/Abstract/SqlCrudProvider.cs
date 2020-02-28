@@ -143,7 +143,7 @@ namespace Dapper.CX.Abstract
             await ValidateInternal(connection, model);
 
             onSave?.Invoke(model, SaveAction.Update);
-            var cmd = new CommandDefinition(GetUpdateStatement(model, changeTracker), model);
+            var cmd = new CommandDefinition(GetUpdateStatement(changeTracker), model);
 
             try
             {                               
@@ -243,9 +243,9 @@ namespace Dapper.CX.Abstract
             return GetQuerySingleWhereStatement(modelType, properties.Select(pi => pi.GetColumnName()));            
         }
 
-        public string GetInsertStatement(Type modelType)
+        public string GetInsertStatement(Type modelType, IEnumerable<string> columnNames = null)
         {
-            var columns = GetMappedProperties(modelType, SaveAction.Insert).Select(pi => pi.GetColumnName());
+            var columns = columnNames ?? GetMappedProperties(modelType, SaveAction.Insert).Select(pi => pi.GetColumnName());
 
             return
                 $@"INSERT INTO {ApplyDelimiter(modelType.GetTableName())} (
@@ -255,9 +255,10 @@ namespace Dapper.CX.Abstract
                 ); " + SelectIdentityCommand;
         }
 
-        public string GetUpdateStatement<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null)
+        public string GetUpdateStatement<TModel>(ChangeTracker<TModel> changeTracker = null, IEnumerable<string> columnNames = null)
         {
             var columns = 
+                columnNames ??
                 changeTracker?.GetModifiedColumns(SaveAction.Update) ?? 
                 GetMappedProperties(typeof(TModel), SaveAction.Update).Select(pi => pi.GetColumnName());
 
