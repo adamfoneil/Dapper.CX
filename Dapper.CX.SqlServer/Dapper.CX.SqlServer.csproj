@@ -6,7 +6,7 @@
     <Authors>Adam O'Neil</Authors>
     <Company>Adam O'Neil</Company>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Description>SQL Server implementation of Dapper.CX</Description>
+    <Description>SQL Server implementation of Dapper.CX, a lightweight, feature-rich CRUD library</Description>
     <Copyright>Copyright (c) Adam O'Neil 2019</Copyright>
     <PackageTags>dapper crud-library sql-server dapper-extensions</PackageTags>
     <PackageProjectUrl>https://github.com/adamosoftware/Dapper.CX</PackageProjectUrl>
