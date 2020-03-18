@@ -18,6 +18,12 @@ namespace Dapper.CX.SqlServer.Extensions.Int
             return provider.GetWhere<TModel>(connection, criteria);            
         }
 
+        public static void Delete<TModel>(this IDbConnection connection, int id)
+        {
+            var provider = new SqlServerIntCrudProvider();
+            provider.Delete<TModel>(connection, id);
+        }
+
         public static int Insert<TModel>(this IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true)
         {
             var provider = new SqlServerIntCrudProvider();
