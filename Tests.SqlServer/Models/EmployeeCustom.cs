@@ -38,7 +38,7 @@ namespace Tests.Models
 
         public string WhereId => "[emp].[Id]=@id";
 
-        public Func<IDbConnection, Task> OnGetAsync => async (cn) =>
+        public Func<IDbConnection, IDbTransaction, Task> OnGetAsync => async (cn, txn) =>
         {
             this.Something = new string[] { "this", "that", "other" };
             this.SomethingElse = new DateTime[] { DateTime.Today };

@@ -22,7 +22,7 @@ namespace Tests.SqlServer.Models
             return new ValidateResult() { IsValid = true };
         }
 
-        public Task<ValidateResult> ValidateAsync(IDbConnection connection)
+        public Task<ValidateResult> ValidateAsync(IDbConnection connection, IDbTransaction txn = null)
         {
             return Task.FromResult(new ValidateResult() { IsValid = true });
         }
