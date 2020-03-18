@@ -8,58 +8,58 @@ namespace Dapper.CX.SqlServer.Extensions.Int
 {
     public static partial class SqlServerIntCrud
     {
-        public static async Task<TModel> GetAsync<TModel>(this IDbConnection connection, int id)
+        public static async Task<TModel> GetAsync<TModel>(this IDbConnection connection, int id, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            return await provider.GetAsync<TModel>(connection, id);
+            return await provider.GetAsync<TModel>(connection, id, txn);
         }
 
-        public static async Task<TModel> GetWhereAsync<TModel>(this IDbConnection connection, object criteria)
+        public static async Task<TModel> GetWhereAsync<TModel>(this IDbConnection connection, object criteria, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            return await provider.GetWhereAsync<TModel>(connection, criteria);
+            return await provider.GetWhereAsync<TModel>(connection, criteria, txn);
         }
 
-        public static async Task<int> InsertAsync<TModel>(this IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true)
+        public static async Task<int> InsertAsync<TModel>(this IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            return await provider.InsertAsync(connection, model, onSave, getIdentity);
+            return await provider.InsertAsync(connection, model, onSave, getIdentity, txn);
         }
 
-        public static async Task UpdateAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        public static async Task UpdateAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            await provider.UpdateAsync(connection, model, changeTracker, onSave);
+            await provider.UpdateAsync(connection, model, changeTracker, onSave, txn);
         }
 
-        public static async Task DeleteAsync<TModel>(this IDbConnection connection, int id)
+        public static async Task DeleteAsync<TModel>(this IDbConnection connection, int id, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            await provider.DeleteAsync<TModel>(connection, id);
+            await provider.DeleteAsync<TModel>(connection, id, txn);
         }
 
-        public static async Task<int> SaveAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        public static async Task<int> SaveAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            return await provider.SaveAsync(connection, model, changeTracker, onSave);
+            return await provider.SaveAsync(connection, model, changeTracker, onSave, txn);
         }
 
-        public static async Task<int> MergeAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        public static async Task<int> MergeAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            return await provider.MergeAsync(connection, model, changeTracker, onSave);
+            return await provider.MergeAsync(connection, model, changeTracker, onSave, txn);
         }
 
-        public static async Task<bool> ExistsAsync<TModel>(this IDbConnection connection, int id)
+        public static async Task<bool> ExistsAsync<TModel>(this IDbConnection connection, int id, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            return await provider.ExistsAsync<TModel>(connection, id);
+            return await provider.ExistsAsync<TModel>(connection, id, txn);
         }
 
-        public static async Task<bool> ExistsWhereAsync<TModel>(this IDbConnection connection, object criteria)
+        public static async Task<bool> ExistsWhereAsync<TModel>(this IDbConnection connection, object criteria, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            return await provider.ExistsWhereAsync<TModel>(connection, criteria);
+            return await provider.ExistsWhereAsync<TModel>(connection, criteria, txn);
         }
     }
 }
