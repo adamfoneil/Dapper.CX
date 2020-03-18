@@ -12,6 +12,12 @@ namespace Dapper.CX.SqlServer.Extensions.Long
             return provider.Get<TModel>(connection, id);
         }
 
+        public static TModel GetWhere<TModel>(this IDbConnection connection, object criteria)
+        {
+            var provider = new SqlServerLongCrudProvider();
+            return provider.GetWhere<TModel>(connection, criteria);
+        }
+
         public static long Insert<TModel>(this IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true)
         {
             var provider = new SqlServerLongCrudProvider();
