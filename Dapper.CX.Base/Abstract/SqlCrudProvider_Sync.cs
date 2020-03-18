@@ -17,6 +17,20 @@ namespace Dapper.CX.Abstract
             return connection.QuerySingleOrDefault<TModel>(GetQuerySingleWhereStatement(typeof(TModel), criteria), criteria);
         }
 
+        public void Delete<TModel>(IDbConnection connection, TIdentity id)
+        {
+            var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id });
+
+            try
+            {
+                connection.Execute(cmd);
+            }
+            catch (Exception exc)
+            {
+                throw new CrudException(cmd, exc);
+            }
+        }
+
         public TIdentity Insert<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true)
         {
             onSave?.Invoke(model, SaveAction.Insert);
