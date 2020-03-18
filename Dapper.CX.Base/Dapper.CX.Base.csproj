@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Dapper.CX</RootNamespace>
-    <Version>1.0.18</Version>
+    <Version>1.0.19</Version>
     <Authors>Adam O'Neil</Authors>
     <Description>Abstract and base classes for a Dapper-based platform-neutral CRUD library</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -12,7 +12,7 @@
     <PackageTags>dapper crud-library</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Copyright (c) Adam O'Neil 2019</Copyright>
-    <PackageReleaseNotes>added sync methods and some overloads from Postulate</PackageReleaseNotes>
+    <PackageReleaseNotes>added GetWhere sync method</PackageReleaseNotes>
     <NeutralLanguage />
   </PropertyGroup>
 
