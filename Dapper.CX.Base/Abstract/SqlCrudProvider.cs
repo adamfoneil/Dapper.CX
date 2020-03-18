@@ -40,64 +40,64 @@ namespace Dapper.CX.Abstract
             return GetIdentity(model).Equals(default(TIdentity));
         }
 
-        public async Task<TModel> GetAsync<TModel>(IDbConnection connection, TIdentity identity)
+        public async Task<TModel> GetAsync<TModel>(IDbConnection connection, TIdentity identity, IDbTransaction txn = null)
         {
-            var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleStatement(typeof(TModel)), new { id = identity });
+            var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleStatement(typeof(TModel)), new { id = identity }, txn);
 
-            await OnGetRelatedAsync(connection, result);
+            await OnGetRelatedAsync(connection, result, txn);
 
             return result;
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, object criteria)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, object criteria, IDbTransaction txn = null)
         {
-            var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleWhereStatement(typeof(TModel), criteria), criteria);
+            var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleWhereStatement(typeof(TModel), criteria), criteria, txn);
 
-            await OnGetRelatedAsync(connection, result);
+            await OnGetRelatedAsync(connection, result, txn);
 
             return result;
         }
 
-        private static async Task OnGetRelatedAsync<TModel>(IDbConnection connection, TModel result)
+        private static async Task OnGetRelatedAsync<TModel>(IDbConnection connection, TModel result, IDbTransaction txn = null)
         {
             if (result == null) return;
 
             if (typeof(TModel).Implements(typeof(IGetRelated)))
             {
-                await ((IGetRelated)result).OnGetAsync.Invoke(connection);
+                await ((IGetRelated)result).OnGetAsync.Invoke(connection, txn);
             }
         }
 
-        public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             if (IsNew(model))
             {
-                return await InsertAsync(connection, model, onSave);
+                return await InsertAsync(connection, model, onSave, txn: txn);
             }
             else
             {                
-                await UpdateAsync(connection, model, changeTracker, onSave);
+                await UpdateAsync(connection, model, changeTracker, onSave, txn);
                 return GetIdentity(model);
             }
         }
 
-        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> keyProperties, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> keyProperties, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             if (IsNew(model))
             {
-                var existing = await GetByPropertiesAsync(connection, model, keyProperties);
+                var existing = await GetByPropertiesAsync(connection, model, keyProperties, txn);
                 if (existing != null) SetIdentity(model, GetIdentity(existing));
             }
 
-            return await SaveAsync(connection, model, changeTracker, onSave);
+            return await SaveAsync(connection, model, changeTracker, onSave, txn);
         }
 
-        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             var props = typeof(TModel).GetProperties().Where(pi => pi.HasAttribute<KeyAttribute>()).Select(pi => pi.GetColumnName());
             if (!props.Any()) throw new Exception($"No primary key properties found on {typeof(TModel).Name}");
 
-            return await MergeAsync(connection, model, props, changeTracker, onSave);
+            return await MergeAsync(connection, model, props, changeTracker, onSave, txn);
         }
 
         private void SetIdentity<TModel>(TModel model, TIdentity identity)
@@ -113,22 +113,22 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        private async Task<TModel> GetByPropertiesAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> properties)
+        private async Task<TModel> GetByPropertiesAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> properties, IDbTransaction txn = null)
         {
             string sql = GetQuerySingleWhereStatement(typeof(TModel), properties);
-            return await connection.QuerySingleOrDefaultAsync<TModel>(sql, model);
+            return await connection.QuerySingleOrDefaultAsync<TModel>(sql, model, txn);
         }
 
-        public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true)
+        public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true, IDbTransaction txn = null)
         {
             await ValidateInternal(connection, model);
 
             onSave?.Invoke(model, SaveAction.Insert);
-            var cmd = new CommandDefinition(GetInsertStatement(typeof(TModel), getIdentity: getIdentity), model);
+            var cmd = new CommandDefinition(GetInsertStatement(typeof(TModel), getIdentity: getIdentity), model, txn);
 
             try
             {
-                TIdentity result = await connection.QuerySingleOrDefaultAsync<TIdentity>(cmd);                    
+                TIdentity result = await connection.QuerySingleOrDefaultAsync<TIdentity>(cmd);
                 if (getIdentity) SetIdentity(model, result);
                 return result;
             }
@@ -138,12 +138,12 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null)
+        public async Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             await ValidateInternal(connection, model);
 
             onSave?.Invoke(model, SaveAction.Update);
-            var cmd = new CommandDefinition(GetUpdateStatement(changeTracker), model);
+            var cmd = new CommandDefinition(GetUpdateStatement(changeTracker), model, txn);
 
             try
             {                               
@@ -155,9 +155,9 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id)
+        public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null)
         {
-            var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id });
+            var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id }, txn);
 
             try
             {
@@ -169,26 +169,26 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task<bool> ExistsAsync<TModel>(IDbConnection connection, TIdentity id)
+        public async Task<bool> ExistsAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null)
         {
-            var model = await GetAsync<TModel>(connection, id);
+            var model = await GetAsync<TModel>(connection, id, txn);
             return (model != null);
         }
 
-        public async Task<bool> ExistsWhereAsync<TModel>(IDbConnection connection, object criteria)
+        public async Task<bool> ExistsWhereAsync<TModel>(IDbConnection connection, object criteria, IDbTransaction txn = null)
         {
-            var model = await GetWhereAsync<TModel>(connection, criteria);
+            var model = await GetWhereAsync<TModel>(connection, criteria, txn);
             return (model != null);
         }
 
-        private static async Task ValidateInternal<TModel>(IDbConnection connection, TModel model)
+        private static async Task ValidateInternal<TModel>(IDbConnection connection, TModel model, IDbTransaction txn = null)
         {
             if (typeof(TModel).Implements(typeof(IValidate)))
             {
                 var result = ((IValidate)model).Validate();
                 if (!result.IsValid) throw new Exceptions.ValidationException(result.Message);
 
-                result = await ((IValidate)model).ValidateAsync(connection);
+                result = await ((IValidate)model).ValidateAsync(connection, txn);
                 if (!result.IsValid) throw new Exceptions.ValidationException(result.Message);
             }
         }
