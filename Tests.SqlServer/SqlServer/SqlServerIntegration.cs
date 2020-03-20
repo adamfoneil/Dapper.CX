@@ -179,5 +179,30 @@ namespace Tests.SqlServer
             }
         }
 
+        [TestMethod]
+        public void TransactionRollback()
+        {
+            var provider = GetProvider();
+
+            const string lastName = "Thorgas";
+            const string firstName = "Enslow";
+
+            using (var cn = GetConnection())
+            {                
+                using (var txn = cn.BeginTransaction())
+                {
+                    provider.SaveAsync(cn, new Employee()
+                    {
+                        FirstName = firstName,
+                        LastName = lastName
+                    }, txn: txn).Wait();
+
+                    txn.Rollback();
+                }
+
+                Assert.IsTrue(!provider.ExistsWhereAsync<Employee>(cn, new { lastName, firstName }).Result);
+            }
+        }
+
     }
 }
