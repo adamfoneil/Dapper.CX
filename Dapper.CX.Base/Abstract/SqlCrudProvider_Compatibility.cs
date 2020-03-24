@@ -55,7 +55,7 @@ namespace Dapper.CX.Abstract
             return new CommandDefinition(cmdText, dp);
         }
 
-        private string PropertyNameFromLambda(Expression expression)
+        internal static string PropertyNameFromLambda(Expression expression)
         {
             // thanks to http://odetocode.com/blogs/scott/archive/2012/11/26/why-all-the-lambdas.aspx
             // thanks to http://stackoverflow.com/questions/671968/retrieving-property-name-from-lambda-expression
