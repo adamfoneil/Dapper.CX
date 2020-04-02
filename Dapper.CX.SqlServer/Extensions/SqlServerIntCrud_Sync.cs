@@ -32,19 +32,19 @@ namespace Dapper.CX.SqlServer.Extensions.Int
             return provider.Insert(connection, model, onSave, getIdentity, txn);
         }
 
-        public static void Update<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public static void Update<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
             provider.Update(connection, model, changeTracker, onSave, txn);
         }
 
-        public static void Update<TModel>(IDbConnection connection, TModel model, params Expression<Func<TModel, object>>[] setColumns)
+        public static void Update<TModel>(this IDbConnection connection, TModel model, params Expression<Func<TModel, object>>[] setColumns)
         {
             var provider = new SqlServerIntCrudProvider();
             provider.Update(connection, model, setColumns);
         }
 
-        public static int Save<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public static int Save<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
             return provider.Save(connection, model, changeTracker, onSave, txn);
