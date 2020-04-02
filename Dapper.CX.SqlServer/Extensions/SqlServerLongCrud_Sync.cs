@@ -1,6 +1,8 @@
 ﻿using AO.DbSchema.Enums;
+using Dapper.CX.Classes;
 using System;
 using System.Data;
+using System.Linq.Expressions;
 
 namespace Dapper.CX.SqlServer.Extensions.Long
 {
@@ -28,6 +30,24 @@ namespace Dapper.CX.SqlServer.Extensions.Long
         {
             var provider = new SqlServerLongCrudProvider();
             return provider.Insert(connection, model, onSave, getIdentity, txn);
+        }
+
+        public static void Update<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        {
+            var provider = new SqlServerIntCrudProvider();
+            provider.Update(connection, model, changeTracker, onSave, txn);
+        }
+
+        public static void Update<TModel>(IDbConnection connection, TModel model, params Expression<Func<TModel, object>>[] setColumns)
+        {
+            var provider = new SqlServerIntCrudProvider();
+            provider.Update(connection, model, setColumns);
+        }
+
+        public static long Save<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        {
+            var provider = new SqlServerIntCrudProvider();
+            return provider.Save(connection, model, changeTracker, onSave, txn);
         }
     }
 }
