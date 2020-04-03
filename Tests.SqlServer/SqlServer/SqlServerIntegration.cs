@@ -94,6 +94,7 @@ namespace Tests.SqlServer
                 cmd["LastName"] = "Wainright";
                 cmd["IsExempt"] = true;
                 cmd["Timestamp"] = new SqlExpression("getdate()");
+                cmd["Status"] = Status.Active;
 
                 var sql = cmd.GetInsertStatement();
                 var id = cmd.InsertAsync<int>(cn).Result;
@@ -114,6 +115,8 @@ namespace Tests.SqlServer
                 cmd["LastName"] = "Wainright2";
                 cmd["IsExempt"] = true;
                 cmd["Timestamp"] = new SqlExpression("getdate()");
+                cmd["Status"] = Status.Inactive;
+                cmd["Value"] = OtherEnum.That;
                 
                 cmd.UpdateAsync(cn, 1).Wait();
                 Assert.IsTrue(cn.RowExistsAsync("[dbo].[Employee] WHERE [LastName]='Wainright2'").Result);
@@ -130,7 +133,7 @@ namespace Tests.SqlServer
                 int id = cn.Query<int>("SELECT [Id] FROM [dbo].[Employee]").First();
                 var cmd = SqlServerCmd.FromQueryAsync(cn, "SELECT * FROM [dbo].[Employee] WHERE [Id]=@id", new { id }, "Id").Result;
                 var columns = cmd.Select(kp => kp.Key).ToArray();
-                Assert.IsTrue(columns.SequenceEqual(new string[] { "FirstName", "LastName", "HireDate", "TermDate", "IsExempt", "Timestamp" }));
+                Assert.IsTrue(columns.SequenceEqual(new string[] { "FirstName", "LastName", "HireDate", "TermDate", "IsExempt", "Timestamp", "Status", "Value" }));
             }
         }
 
@@ -144,7 +147,7 @@ namespace Tests.SqlServer
                 int id = cn.Query<int>("SELECT [Id] FROM [dbo].[Employee]").First();
                 var cmd = SqlServerCmd.FromQueryAsync(cn, "SELECT * FROM [dbo].[Employee] WHERE [Id]=@id", new { id }).Result;
                 var columns = cmd.Select(kp => kp.Key).ToArray();
-                Assert.IsTrue(columns.SequenceEqual(new string[] { "FirstName", "LastName", "HireDate", "TermDate", "IsExempt", "Timestamp", "Id" }));
+                Assert.IsTrue(columns.SequenceEqual(new string[] { "FirstName", "LastName", "HireDate", "TermDate", "IsExempt", "Timestamp", "Status", "Value", "Id" }));
             }
         }
 
@@ -167,7 +170,8 @@ namespace Tests.SqlServer
                     FirstName = "Whoever",
                     LastName = "Nobody",
                     IsExempt = true,
-                    HireDate = DateTime.Today
+                    HireDate = DateTime.Today,
+                    Value = OtherEnum.Other
                 };
 
                 var provider = GetProvider();

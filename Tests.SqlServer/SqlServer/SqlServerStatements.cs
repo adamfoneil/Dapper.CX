@@ -17,11 +17,11 @@ namespace Tests.SqlServer
         public void InsertStatement()
         {
             string sql = GetProvider().GetInsertStatement(typeof(Employee));
-            const string result = 
+            const string result =
                 @"INSERT INTO [Employee] (
-                    [FirstName], [LastName], [HireDate], [TermDate], [IsExempt], [Timestamp]
+                    [FirstName], [LastName], [HireDate], [TermDate], [IsExempt], [Timestamp], [Status], [Value]
                 ) VALUES (
-                    @FirstName, @LastName, @HireDate, @TermDate, @IsExempt, @Timestamp
+                    @FirstName, @LastName, @HireDate, @TermDate, @IsExempt, @Timestamp, @Status, @Value
                 ); SELECT SCOPE_IDENTITY();";
             
             Assert.IsTrue(sql.ReplaceWhitespace().Equals(result.ReplaceWhitespace()));
@@ -31,9 +31,9 @@ namespace Tests.SqlServer
         public void UpdateStatement()
         {
             string sql = GetProvider().GetUpdateStatement<Employee>();
-            const string result = 
+            const string result =
                 @"UPDATE [Employee] SET 
-                    [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [TermDate]=@TermDate, [IsExempt]=@IsExempt, [Timestamp]=@Timestamp
+                    [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [TermDate]=@TermDate, [IsExempt]=@IsExempt, [Timestamp]=@Timestamp, [Status]=@Status, [Value]=@Value
                 WHERE
                     [Id]=@Id";
             
