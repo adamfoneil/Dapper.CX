@@ -18,6 +18,7 @@ namespace Tests.Models
                     [IsExempt] bit NOT NULL,
                     [Timestamp] datetime NULL,
                     [Status] int NOT NULL,
+                    [Value] int NULL,
                     [Id] int identity(1, 1) PRIMARY KEY
                 )");
 

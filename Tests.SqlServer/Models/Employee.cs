@@ -11,6 +11,13 @@ namespace Tests.Models
         Inactive
     }
 
+    public enum OtherEnum
+    {
+        This,
+        That,
+        Other
+    }
+
     [Identity(nameof(Id))]
     public class Employee
     {
@@ -23,6 +30,7 @@ namespace Tests.Models
         public bool IsExempt { get; set; }
         public DateTime? Timestamp { get; set; }
         public Status Status { get; set; } = Status.Active;
+        public OtherEnum? Value { get; set; }
         public int Id { get; set; }
 
         public IEnumerable<string> Something { get; set; }

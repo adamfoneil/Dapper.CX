@@ -21,6 +21,8 @@ namespace Tests.Models
         public DateTime? TermDate { get; set; }
         public bool IsExempt { get; set; }
         public DateTime? Timestamp { get; set; }
+        public Status Status { get; set; }
+        public OtherEnum? Value { get; set; }
         public int Id { get; set; }
 
         [NotMapped]

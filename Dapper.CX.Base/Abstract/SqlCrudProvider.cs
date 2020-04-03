@@ -281,11 +281,19 @@ namespace Dapper.CX.Abstract
 
         private PropertyInfo[] GetMappedProperties(Type modelType, SaveAction saveAction)
         {
+            bool isNullableEnum(Type type)
+            {
+                return
+                    type.IsGenericType &&
+                    type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)) &&
+                    type.GetGenericArguments()[0].IsEnum;
+            }
+
             bool isMapped(PropertyInfo pi)
             {
                 if (!pi.CanWrite) return false;
                 if (pi.IsIdentity()) return false;                
-                if (!SupportedTypes.Contains(pi.PropertyType) && !pi.PropertyType.IsEnum) return false;
+                if (!SupportedTypes.Contains(pi.PropertyType) && !pi.PropertyType.IsEnum && !isNullableEnum(pi.PropertyType)) return false;
                 if (!pi.AllowSaveAction(saveAction)) return false;
 
                 var attr = pi.GetCustomAttribute<NotMappedAttribute>();

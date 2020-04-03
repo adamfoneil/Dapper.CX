@@ -9,6 +9,7 @@
   <ItemGroup>
     <Compile Include="..\Dapper.CX.SqlServer\Abstract\SqlServerCrudProvider.cs" Link="Linked\SqlServerCrudProvider.cs" />
     <Compile Include="..\Dapper.CX.SqlServer\SqlServerIntCrudProvider.cs" Link="Linked\SqlServerIntCrudProvider.cs" />
+    <Compile Include="..\Tests.SqlServer\Extensions\StringExtensions.cs" Link="Linked\Extensions\StringExtensions.cs" />
     <Compile Include="..\Tests.SqlServer\Models\DbObjects.cs" Link="Linked\Models\DbObjects.cs" />
     <Compile Include="..\Tests.SqlServer\Models\Employee.cs" Link="Linked\Models\Employee.cs" />
   </ItemGroup>
@@ -21,11 +22,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="SqlServer.LocalDb.Testing" Version="1.0.9" />
+    <PackageReference Include="SqlServer.LocalDb.Testing" Version="1.0.10" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Linked\Models\" />
+    <Folder Include="Linked\Extensions\" />
   </ItemGroup>
 
   <ItemGroup>
