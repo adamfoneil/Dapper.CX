@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -126,6 +127,8 @@ namespace Dapper.CX.Abstract
             onSave?.Invoke(model, SaveAction.Insert);
             var cmd = new CommandDefinition(GetInsertStatement(typeof(TModel), getIdentity: getIdentity), model, txn);
 
+            Debug.Print(cmd.CommandText);
+
             try
             {
                 TIdentity result = await connection.QuerySingleOrDefaultAsync<TIdentity>(cmd);
@@ -145,6 +148,8 @@ namespace Dapper.CX.Abstract
             onSave?.Invoke(model, SaveAction.Update);
             var cmd = new CommandDefinition(GetUpdateStatement(changeTracker), model, txn);
 
+            Debug.Print(cmd.CommandText);
+
             try
             {                               
                 await connection.ExecuteAsync(cmd);
@@ -158,6 +163,8 @@ namespace Dapper.CX.Abstract
         public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null)
         {
             var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id }, txn);
+
+            Debug.Print(cmd.CommandText);
 
             try
             {

@@ -5,6 +5,7 @@ using Dapper.CX.Exceptions;
 using Dapper.CX.Extensions;
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace Dapper.CX.Abstract
@@ -25,6 +26,8 @@ namespace Dapper.CX.Abstract
         {
             var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id }, txn);
 
+            Debug.Print(cmd.CommandText);
+
             try
             {
                 connection.Execute(cmd);
@@ -41,6 +44,8 @@ namespace Dapper.CX.Abstract
 
             onSave?.Invoke(model, SaveAction.Insert);
             var cmd = new CommandDefinition(GetInsertStatement(typeof(TModel), getIdentity: getIdentity), model, txn);
+
+            Debug.Print(cmd.CommandText);
 
             try
             {
@@ -60,6 +65,8 @@ namespace Dapper.CX.Abstract
 
             onSave?.Invoke(model, SaveAction.Update);
             var cmd = new CommandDefinition(GetUpdateStatement(changeTracker), model, txn);
+
+            Debug.Print(cmd.CommandText);
 
             try
             {
