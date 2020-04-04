@@ -32,7 +32,7 @@ namespace Dapper.CX.SqlServer.Extensions.Long
             await provider.UpdateAsync(connection, model, changeTracker, onSave, txn);
         }
 
-        public static async Task DeleteAsync<TModel>(this IDbConnection connection, int id, IDbTransaction txn = null)
+        public static async Task DeleteAsync<TModel>(this IDbConnection connection, long id, IDbTransaction txn = null)
         {
             var provider = new SqlServerLongCrudProvider();
             await provider.DeleteAsync<TModel>(connection, id, txn);
