@@ -18,7 +18,8 @@ namespace Dapper.CX.SqlServer.Abstract
             typeof(long), typeof(long?),
             typeof(decimal), typeof(decimal?),
             typeof(double), typeof(double?),
-            typeof(float), typeof(float?)
+            typeof(float), typeof(float?),
+            typeof(TimeSpan), typeof(TimeSpan?)
         };
     }
 }
