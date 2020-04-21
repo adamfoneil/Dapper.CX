@@ -4,6 +4,7 @@ using AO.DbSchema.Interfaces;
 using Dapper.CX.Classes;
 using Dapper.CX.Exceptions;
 using Dapper.CX.Extensions;
+using Dapper.CX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -153,6 +154,19 @@ namespace Dapper.CX.Abstract
             try
             {                               
                 await connection.ExecuteAsync(cmd);
+
+                var saveable = changeTracker as IDbSaveable;
+                if (saveable != null)
+                {
+                    try
+                    {
+                        await saveable.SaveAsync(connection);
+                    }
+                    catch (Exception exc)
+                    {
+                        throw new ChangeTrackerSaveException(exc);
+                    }
+                }
             }
             catch (Exception exc)
             {

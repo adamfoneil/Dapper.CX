@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.CX.SqlServer", "Dapp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.SqlServer", "Tests.SqlServer\Tests.SqlServer.csproj", "{E9E088CA-23CD-4374-8904-80885548A758}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Base", "Tests.Base\Tests.Base.csproj", "{0DADBD92-3F4B-4E95-B20C-FFE100F3CB2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Base", "Tests.Base\Tests.Base.csproj", "{0DADBD92-3F4B-4E95-B20C-FFE100F3CB2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
