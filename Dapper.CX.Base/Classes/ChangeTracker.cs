@@ -10,18 +10,22 @@ namespace Dapper.CX.Classes
     public class ChangeTracker<TModel> : Dictionary<string, object>
     {
         private readonly Dictionary<string, PropertyInfo> _properties;
-        private readonly TModel _instance;
+        
+        protected readonly TModel Instance;
 
         public ChangeTracker(TModel @object)
         {
-            _instance = @object;
+            Instance = @object;
 
             string identityName = (typeof(TModel).TryGetIdentityName(out string name)) ? name : string.Empty;
+
             var props = @object.GetType().GetProperties().Where(pi =>
                 pi.CanWrite &&
                 !pi.GetIndexParameters().Any() &&
                 !pi.Name.Equals(identityName)).ToArray();
+
             _properties = props.ToDictionary(pi => pi.Name);
+
             foreach (var pi in props) Add(pi.GetColumnName(), pi.GetValue(@object));
         }
 
@@ -30,11 +34,11 @@ namespace Dapper.CX.Classes
         /// </summary>
         public string[] GetModifiedColumns(SaveAction? saveAction = null)
         {
-            Func<KeyValuePair<string, PropertyInfo>, bool> filter = (kp) => IsModified(kp, _instance);
+            Func<KeyValuePair<string, PropertyInfo>, bool> filter = (kp) => IsModified(kp, Instance);
 
             if (saveAction.HasValue)
             {
-                filter = (kp) => IsModified(kp, _instance) && kp.Value.AllowSaveAction(saveAction.Value);
+                filter = (kp) => IsModified(kp, Instance) && kp.Value.AllowSaveAction(saveAction.Value);
             }
 
             return _properties
