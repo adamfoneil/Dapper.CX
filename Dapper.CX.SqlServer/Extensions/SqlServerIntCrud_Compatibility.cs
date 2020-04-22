@@ -18,5 +18,11 @@ namespace Dapper.CX.SqlServer.Extensions.Int
             var provider = new SqlServerIntCrudProvider();
             await provider.UpdateAsync(connection, @object, setColumns);
         }
+
+        public static async Task UpdateAsync<TModel>(this IDbConnection connection, TModel @object, IDbTransaction txn, params Expression<Func<TModel, object>>[] setColumns)
+        {
+            var provider = new SqlServerIntCrudProvider();
+            await provider.UpdateAsync(connection, @object, txn, setColumns);
+        }
     }
 }
