@@ -27,6 +27,12 @@ namespace Dapper.CX.Abstract
             return GetIdentity(@object);
         }
 
+        public async Task UpdateAsync<TModel>(IDbConnection connection, TModel @object, IDbTransaction txn, params Expression<Func<TModel, object>>[] setColumns)
+        {
+            CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns, txn);
+            await connection.ExecuteAsync(cmd);
+        }
+
         /// <summary>
         /// Performs a SQL update on select properties of an object
         /// </summary>
@@ -36,7 +42,7 @@ namespace Dapper.CX.Abstract
             await connection.ExecuteAsync(cmd);            
         }       
 
-        private CommandDefinition GetSetColumnsUpdateCommand<TModel>(TModel @object, Expression<Func<TModel, object>>[] setColumns)
+        private CommandDefinition GetSetColumnsUpdateCommand<TModel>(TModel @object, Expression<Func<TModel, object>>[] setColumns, IDbTransaction txn = null)
         {
             var type = typeof(TModel);
             DynamicParameters dp = new DynamicParameters();
@@ -52,7 +58,7 @@ namespace Dapper.CX.Abstract
             string cmdText = $"UPDATE {ApplyDelimiter(type.GetTableName())} SET {setColumnExpr} WHERE {ApplyDelimiter(type.GetIdentityName())}=@id";
             dp.Add("id", GetIdentity(@object));
 
-            return new CommandDefinition(cmdText, dp);
+            return new CommandDefinition(cmdText, dp, transaction: txn);
         }
 
         private string PropertyNameFromLambda(Expression expression)

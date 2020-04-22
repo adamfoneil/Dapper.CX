@@ -78,6 +78,12 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        public void Update<TModel>(IDbConnection connection, TModel @object, IDbTransaction txn, params Expression<Func<TModel, object>>[] setColumns)
+        {
+            CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns, txn);            
+            connection.Execute(cmd);
+        }
+
         public void Update<TModel>(IDbConnection connection, TModel @object, params Expression<Func<TModel, object>>[] setColumns)
         {
             CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns);
