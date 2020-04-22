@@ -1,4 +1,5 @@
-﻿using Dapper.CX.ChangeTracking.Models;
+﻿using AO.DbSchema.Attributes.Interfaces;
+using Dapper.CX.ChangeTracking.Models;
 using Dapper.CX.Extensions;
 using Dapper.CX.Interfaces;
 using Dapper.CX.SqlServer.Extensions.Long;
@@ -14,10 +15,12 @@ namespace Dapper.CX.Classes
         private static bool _initialized = false;
 
         private readonly string _userName;
+        private readonly string _nullText;
 
-        public LoggedChangeTracker(string userName, TModel @object) : base(@object)
+        public LoggedChangeTracker(string userName, TModel @object, string nullText = "<null>") : base(@object)
         {
             _userName = userName;
+            _nullText = nullText;
         }
 
         public async Task SaveAsync(IDbConnection connection)
@@ -33,8 +36,13 @@ namespace Dapper.CX.Classes
                 {
                     int version = await IncrementRowVersionAsync(connection, tableName, rowId, txn);
 
+                    var textLookup = Instance as ITextLookup;
+
                     foreach (var kp in GetModifiedProperties())
                     {
+                        var oldValue = this[kp.Key];
+                        var newValue = kp.Value.GetValue(Instance);
+
                         var history = new ColumnHistory()
                         {
                             UserName = _userName,
@@ -43,12 +51,13 @@ namespace Dapper.CX.Classes
                             RowId = rowId,
                             Version = version,
                             ColumnName = kp.Key,
-                            //OldValue = kp.Value?.ToString(),
-                            //NewValue = 
+                            OldValue = await textLookup?.GetTextFromKeyAsync(connection, kp.Key, oldValue) ?? oldValue?.ToString() ?? _nullText,
+                            NewValue = await textLookup?.GetTextFromKeyAsync(connection, kp.Key, newValue) ?? newValue?.ToString() ?? _nullText
                         };
 
                         await connection.SaveAsync(history, txn: txn);
                     }
+
                     txn.Commit();
                 }
                 catch 
