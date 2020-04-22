@@ -31,7 +31,7 @@ namespace Dapper.CX.Classes
             {
                 int version = await IncrementRowVersionAsync(connection, tableName, rowId, txn);
                 
-                foreach (var kp in this)
+                foreach (var kp in GetModifiedProperties())
                 {
                     var history = new ColumnHistory()
                     {
@@ -45,14 +45,24 @@ namespace Dapper.CX.Classes
                         //NewValue = 
                     };
                     
-                    await connection.SaveAsync(history);
+                    await connection.SaveAsync(history, txn: txn);
                 }
             }            
         }
 
-        private Task<int> IncrementRowVersionAsync(IDbConnection connection, string tableName, long rowId, IDbTransaction txn)
+        private async Task<int> IncrementRowVersionAsync(IDbConnection connection, string tableName, long rowId, IDbTransaction txn)
         {
-            throw new NotImplementedException();
+            var rowVersion = await connection.GetWhereAsync<RowVersion>(new { tableName, rowId }, txn) ?? new RowVersion()
+            {
+                TableName = tableName,
+                RowId = rowId                
+            };
+
+            rowVersion.Version++;
+
+            //await connection.UpdateAsync(rowVersion, )
+
+            return rowVersion.Version;
         }
 
         private long GetRowId()

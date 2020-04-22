@@ -33,6 +33,13 @@ namespace Dapper.CX.Classes
         /// call this after you've made desired changes to your model class instance to get the names of modified properties
         /// </summary>
         public string[] GetModifiedColumns(SaveAction? saveAction = null)
+        {            
+            return GetModifiedProperties(saveAction)
+                .Select(kp => kp.Key)
+                .ToArray();
+        }
+
+        protected IEnumerable<KeyValuePair<string, PropertyInfo>> GetModifiedProperties(SaveAction? saveAction = null)
         {
             Func<KeyValuePair<string, PropertyInfo>, bool> filter = (kp) => IsModified(kp, Instance);
 
@@ -41,10 +48,7 @@ namespace Dapper.CX.Classes
                 filter = (kp) => IsModified(kp, Instance) && kp.Value.AllowSaveAction(saveAction.Value);
             }
 
-            return _properties
-                .Where(kp => filter(kp))
-                .Select(kp => kp.Key)
-                .ToArray();
+            return _properties.Where(kp => filter(kp));
         }
 
         private bool IsModified(KeyValuePair<string, PropertyInfo> kp, TModel @object)

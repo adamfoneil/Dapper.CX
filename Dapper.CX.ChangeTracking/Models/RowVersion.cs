@@ -5,16 +5,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Dapper.CX.ChangeTracking.Models
 {
     [Identity(nameof(Id))]
-    [Table("RowVersion", Schema = "changes")]
-    [UniqueConstraint(nameof(TableName), nameof(RowId))]
+    [Table("RowVersion", Schema = "changes")]    
     public class RowVersion
     {
         public long Id { get; set; }
 
         [Required]
         [MaxLength(100)]
+        [Key]
         public string TableName { get; set; }
 
+        [Key]
         public long RowId { get; set; }
 
         public int Version { get; set; }
