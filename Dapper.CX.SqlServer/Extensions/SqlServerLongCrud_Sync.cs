@@ -34,19 +34,25 @@ namespace Dapper.CX.SqlServer.Extensions.Long
 
         public static void Update<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
-            var provider = new SqlServerIntCrudProvider();
+            var provider = new SqlServerLongCrudProvider();
             provider.Update(connection, model, changeTracker, onSave, txn);
         }
 
         public static void Update<TModel>(this IDbConnection connection, TModel model, params Expression<Func<TModel, object>>[] setColumns)
         {
-            var provider = new SqlServerIntCrudProvider();
+            var provider = new SqlServerLongCrudProvider();
             provider.Update(connection, model, setColumns);
+        }
+
+        public static void Update<TModel>(this IDbConnection connection, TModel model, IDbTransaction txn, params Expression<Func<TModel, object>>[] setColumns)
+        {
+            var provider = new SqlServerLongCrudProvider();
+            provider.Update(connection, model, txn, setColumns);
         }
 
         public static long Save<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
-            var provider = new SqlServerIntCrudProvider();
+            var provider = new SqlServerLongCrudProvider();
             return provider.Save(connection, model, changeTracker, onSave, txn);
         }
     }

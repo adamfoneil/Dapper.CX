@@ -44,6 +44,12 @@ namespace Dapper.CX.SqlServer.Extensions.Int
             provider.Update(connection, model, setColumns);
         }
 
+        public static void Update<TModel>(this IDbConnection connection, TModel model, IDbTransaction txn, params Expression<Func<TModel, object>>[] setColumns)
+        {
+            var provider = new SqlServerIntCrudProvider();
+            provider.Update(connection, model, txn, setColumns);
+        }
+
         public static int Save<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
