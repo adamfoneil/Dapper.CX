@@ -29,23 +29,32 @@ namespace Dapper.CX.Classes
 
             using (var txn = connection.BeginTransaction())
             {
-                int version = await IncrementRowVersionAsync(connection, tableName, rowId, txn);
-                
-                foreach (var kp in GetModifiedProperties())
+                try
                 {
-                    var history = new ColumnHistory()
+                    int version = await IncrementRowVersionAsync(connection, tableName, rowId, txn);
+
+                    foreach (var kp in GetModifiedProperties())
                     {
-                        UserName = _userName,
-                        Timestamp = DateTime.UtcNow,
-                        TableName = tableName,
-                        RowId = rowId,
-                        Version = version,
-                        ColumnName = kp.Key,
-                        //OldValue = kp.Value?.ToString(),
-                        //NewValue = 
-                    };
-                    
-                    await connection.SaveAsync(history, txn: txn);
+                        var history = new ColumnHistory()
+                        {
+                            UserName = _userName,
+                            Timestamp = DateTime.UtcNow,
+                            TableName = tableName,
+                            RowId = rowId,
+                            Version = version,
+                            ColumnName = kp.Key,
+                            //OldValue = kp.Value?.ToString(),
+                            //NewValue = 
+                        };
+
+                        await connection.SaveAsync(history, txn: txn);
+                    }
+                    txn.Commit();
+                }
+                catch 
+                {
+                    txn.Rollback();
+                    throw;
                 }
             }            
         }
@@ -60,7 +69,7 @@ namespace Dapper.CX.Classes
 
             rowVersion.Version++;
 
-            //await connection.UpdateAsync(rowVersion, )
+            await connection.UpdateAsync(rowVersion, txn, r => r.Version);
 
             return rowVersion.Version;
         }
