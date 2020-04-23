@@ -100,7 +100,7 @@ namespace Dapper.CX.Classes
 
             rowVersion.Version++;
 
-            await connection.UpdateAsync(rowVersion, txn, r => r.Version);
+            await connection.SaveAsync(rowVersion, txn: txn);
 
             return rowVersion.Version;
         }
