@@ -89,14 +89,15 @@ namespace Tests.Base
                     Price = 23.4m
                 };
 
-                provider.Save(cn, w);
+                int widgetId = provider.Save(cn, w);
 
                 var ct = new LoggedChangeTracker<Widget>("adamo", w);
                 w.Price = 21.7m;
                 w.TypeId = ids.Last();
                 provider.SaveAsync(cn, w, ct).Wait();
 
-
+                Assert.IsTrue(cn.RowExistsAsync("[changes].[ColumnHistory] WHERE [TableName]='Widget' AND [RowId]=@widgetId AND [ColumnName]='Price' AND [OldValue]='23.4' AND [NewValue]='21.7'", new { widgetId }).Result);
+                Assert.IsTrue(cn.RowExistsAsync("[changes].[ColumnHistory] WHERE [TableName]='Widget' AND [RowId]=@widgetId AND [ColumnName]='TypeId' AND [OldValue]='this' AND [NewValue]='other'", new { widgetId }).Result);
             }
         }
     }

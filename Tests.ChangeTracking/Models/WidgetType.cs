@@ -1,6 +1,8 @@
 ﻿using AO.DbSchema.Attributes;
 using AO.DbSchema.Attributes.Interfaces;
 using Dapper;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
@@ -30,6 +32,8 @@ namespace Tests.ChangeTracking.Models
         public decimal Price { get; set; }
 
         public bool IsActive { get; set; }
+
+        public IEnumerable<string> GetLookupProperties() => new string[] { nameof(TypeId) };
 
         public async Task<string> GetTextFromKeyAsync(IDbConnection connection, IDbTransaction transaction, string propertyName, object keyValue)
         {
