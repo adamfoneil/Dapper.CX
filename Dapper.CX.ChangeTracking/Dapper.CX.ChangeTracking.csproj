@@ -10,16 +10,14 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/adamosoftware/Dapper.CX</RepositoryUrl>
     <PackageProjectUrl>https://github.com/adamosoftware/Dapper.CX</PackageProjectUrl>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AO.DbSchema.Attributes" Version="1.0.15" />
     <PackageReference Include="AO.ModelSync.Library" Version="2.0.9" />
+    <PackageReference Include="Dapper.CX.Base" Version="1.0.28" />
     <PackageReference Include="Dapper.CX.SqlServer" Version="1.0.30" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Dapper.CX.Base\Dapper.CX.Base.csproj" />
   </ItemGroup>
 
   <ItemGroup>
