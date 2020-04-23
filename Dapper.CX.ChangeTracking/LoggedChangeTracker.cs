@@ -23,6 +23,13 @@ namespace Dapper.CX.Classes
             _nullText = nullText;
         }
 
+        private enum ValueType
+        {
+            Enum,
+            Lookup,
+            Raw
+        }
+
         public async Task SaveAsync(IDbConnection connection)
         {
             await InitializeAsync(connection);
@@ -40,8 +47,23 @@ namespace Dapper.CX.Classes
 
                     foreach (var kp in GetModifiedProperties())
                     {
-                        var oldValue = this[kp.Key];
-                        var newValue = kp.Value.GetValue(Instance);
+                        var rawOldValue = this[kp.Key];
+                        var rawNewValue = kp.Value.GetValue(Instance);
+
+                        var valueType = 
+                            (kp.Value.PropertyType.IsEnum) ? ValueType.Enum :
+                            (textLookup != null) ? ValueType.Lookup :
+                            ValueType.Raw;
+                        
+                        var oldValue = 
+                            (valueType == ValueType.Enum) ? rawOldValue?.ToString() :
+                            (valueType == ValueType.Lookup) ? await textLookup.GetTextFromKeyAsync(connection, kp.Key, rawOldValue) :
+                            rawOldValue;
+
+                        var newValue =
+                            (valueType == ValueType.Enum) ? rawNewValue?.ToString() :
+                            (valueType == ValueType.Lookup) ? await textLookup.GetTextFromKeyAsync(connection, kp.Key, rawNewValue) :
+                            rawNewValue;
 
                         var history = new ColumnHistory()
                         {
@@ -51,8 +73,8 @@ namespace Dapper.CX.Classes
                             RowId = rowId,
                             Version = version,
                             ColumnName = kp.Key,
-                            OldValue = await textLookup?.GetTextFromKeyAsync(connection, kp.Key, oldValue) ?? oldValue?.ToString() ?? _nullText,
-                            NewValue = await textLookup?.GetTextFromKeyAsync(connection, kp.Key, newValue) ?? newValue?.ToString() ?? _nullText
+                            OldValue = oldValue?.ToString() ?? _nullText,
+                            NewValue = newValue?.ToString() ?? _nullText
                         };
 
                         await connection.SaveAsync(history, txn: txn);
