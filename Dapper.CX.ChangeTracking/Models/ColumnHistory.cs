@@ -1,13 +1,11 @@
 ﻿using AO.DbSchema.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dapper.CX.ChangeTracking.Models
 {
-    [Identity(nameof(Id))]
-    [UniqueConstraint(nameof(TableName), nameof(RowId), nameof(Version), nameof(ColumnName))]
-    [Table("ColumnHistory", Schema = "changes")]
+    [Identity(nameof(Id))]    
+    [Schema("changes")]
     public class ColumnHistory
     {
         public long Id { get; set; }
@@ -20,14 +18,18 @@ namespace Dapper.CX.ChangeTracking.Models
 
         [Required]
         [MaxLength(100)]
+        [Key]
         public string TableName { get; set; }
 
+        [Key]
         public long RowId { get; set; }
 
+        [Key]
         public int Version { get; set; }
 
         [MaxLength(100)]
         [Required]
+        [Key]
         public string ColumnName { get; set; }        
 
         [Required]

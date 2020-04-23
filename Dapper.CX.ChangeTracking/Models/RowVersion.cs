@@ -1,11 +1,10 @@
 ﻿using AO.DbSchema.Attributes;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dapper.CX.ChangeTracking.Models
 {
     [Identity(nameof(Id))]
-    [Table("RowVersion", Schema = "changes")]    
+    [Schema("changes")]
     public class RowVersion
     {
         public long Id { get; set; }
