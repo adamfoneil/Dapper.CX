@@ -1,6 +1,7 @@
 ﻿using Dapper.CX.Extensions;
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -57,6 +58,8 @@ namespace Dapper.CX.Abstract
             
             string cmdText = $"UPDATE {ApplyDelimiter(type.GetTableName())} SET {setColumnExpr} WHERE {ApplyDelimiter(type.GetIdentityName())}=@id";
             dp.Add("id", GetIdentity(@object));
+
+            Debug.Print(cmdText);
 
             return new CommandDefinition(cmdText, dp, transaction: txn);
         }
