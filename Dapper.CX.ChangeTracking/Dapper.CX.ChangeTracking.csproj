@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Adam O'Neil</Authors>
+    <Company>Adam O'Neil</Company>
+    <Copyright>Copyright (c) 2020 Adam O'Neil</Copyright>
+    <Description>Track row change history across your database by user, with key-to-text lookups</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/adamosoftware/Dapper.CX</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/adamosoftware/Dapper.CX</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +20,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dapper.CX.Base\Dapper.CX.Base.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
