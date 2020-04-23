@@ -57,12 +57,12 @@ namespace Dapper.CX.Classes
                         
                         var oldValue = 
                             (valueType == ValueType.Enum) ? rawOldValue?.ToString() :
-                            (valueType == ValueType.Lookup) ? await textLookup.GetTextFromKeyAsync(connection, kp.Key, rawOldValue) :
+                            (valueType == ValueType.Lookup) ? await textLookup.GetTextFromKeyAsync(connection, txn, kp.Key, rawOldValue) :
                             rawOldValue;
 
                         var newValue =
                             (valueType == ValueType.Enum) ? rawNewValue?.ToString() :
-                            (valueType == ValueType.Lookup) ? await textLookup.GetTextFromKeyAsync(connection, kp.Key, rawNewValue) :
+                            (valueType == ValueType.Lookup) ? await textLookup.GetTextFromKeyAsync(connection, txn, kp.Key, rawNewValue) :
                             rawNewValue;
 
                         var history = new ColumnHistory()
