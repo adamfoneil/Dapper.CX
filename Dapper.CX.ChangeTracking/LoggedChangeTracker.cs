@@ -6,6 +6,7 @@ using Dapper.CX.SqlServer.Extensions.Long;
 using ModelSync.Library.Models;
 using System;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Classes
@@ -52,7 +53,7 @@ namespace Dapper.CX.Classes
 
                         var valueType = 
                             (kp.Value.PropertyType.IsEnum) ? ValueType.Enum :
-                            (textLookup != null) ? ValueType.Lookup :
+                            (textLookup?.GetLookupProperties()?.Contains(kp.Key) ?? false) ? ValueType.Lookup :
                             ValueType.Raw;
                         
                         var oldValue = 
