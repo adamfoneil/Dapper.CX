@@ -14,10 +14,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AO.DbSchema.Attributes" Version="1.0.15" />
+    <PackageReference Include="AO.DbSchema.Attributes" Version="1.0.16" />
     <PackageReference Include="AO.ModelSync.Library" Version="2.0.9" />
     <PackageReference Include="Dapper.CX.Base" Version="1.0.28" />
-    <PackageReference Include="Dapper.CX.SqlServer" Version="1.0.30" />
+    <PackageReference Include="Dapper.CX.SqlServer" Version="1.0.31" />
   </ItemGroup>
 
   <ItemGroup>
