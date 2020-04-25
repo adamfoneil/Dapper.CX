@@ -1,14 +1,12 @@
 ﻿using AO.DbSchema.Attributes.Interfaces;
 using Dapper.CX.ChangeTracking.Models;
 using Dapper.CX.Extensions;
-using Dapper.CX.Interfaces;
 using Dapper.CX.SqlServer.Extensions.Long;
 using ModelSync.Library.Models;
 using System;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using IDbSaveable = AO.DbSchema.Attributes.Interfaces.IDbSaveable;
 
 namespace Dapper.CX.Classes
 {

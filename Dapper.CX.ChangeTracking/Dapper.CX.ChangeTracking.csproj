@@ -9,14 +9,15 @@
     <Description>Track row change history across your database by user, with key-to-text lookups</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/adamosoftware/Dapper.CX</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/adamosoftware/Dapper.CX</PackageProjectUrl>
-    <Version>1.0.1</Version>
+    <PackageProjectUrl>https://github.com/adamosoftware/Dapper.CX/wiki/Using-ChangeTracker</PackageProjectUrl>
+    <Version>1.0.2</Version>
+    <PackageReleaseNotes>some interface refactor</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AO.DbSchema.Attributes" Version="1.0.16" />
     <PackageReference Include="AO.ModelSync.Library" Version="2.0.9" />
-    <PackageReference Include="Dapper.CX.Base" Version="1.0.28" />
+    <PackageReference Include="Dapper.CX.Base" Version="1.0.29" />
     <PackageReference Include="Dapper.CX.SqlServer" Version="1.0.31" />
   </ItemGroup>
 

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.31</Version>
+    <Version>1.0.32</Version>
     <Authors>Adam O'Neil</Authors>
     <Company>Adam O'Neil</Company>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -12,11 +12,11 @@
     <PackageProjectUrl>https://github.com/adamosoftware/Dapper.CX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamosoftware/Dapper.CX</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageReleaseNotes>added IDbTransaction args to some Update(Async) overloads</PackageReleaseNotes>
+    <PackageReleaseNotes>minor interface refactoring</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper.CX.Base" Version="1.0.28" />
+    <PackageReference Include="Dapper.CX.Base" Version="1.0.29" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.2" />
   </ItemGroup>
 
