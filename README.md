@@ -1,9 +1,9 @@
 | 
 [![Build status](https://ci.appveyor.com/api/projects/status/90etxh1r0aycv1j9?svg=true)](https://ci.appveyor.com/project/adamosoftware/dapper-cx) 
 |
-[![Nuget](https://img.shields.io/nuget/v/Dapper.CX.SqlServer?label=Nuget&20Crud)](https://www.nuget.org/packages/Dapper.CX.SqlServer/)
+[![Nuget](https://img.shields.io/nuget/v/Dapper.CX.SqlServer?label=Crud)](https://www.nuget.org/packages/Dapper.CX.SqlServer/)
 |
-[![Nuget](https://img.shields.io/nuget/v/Dapper.CX.ChangeTracking?label=Nuget&20ChangeTracking)](https://www.nuget.org/packages/Dapper.CX.ChangeTracking/)
+[![Nuget](https://img.shields.io/nuget/v/Dapper.CX.ChangeTracking?label=ChangeTracking)](https://www.nuget.org/packages/Dapper.CX.ChangeTracking/)
 
 Nuget package **Dapper.CX.SqlServer** makes it easy to do CRUD operations on pure POCO model classes. The only model class requirement is that they have a property called `Id` or the class has an [Identity](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Attributes/IdentityAttribute.cs) attribute that indicates what its identity property is.
 
