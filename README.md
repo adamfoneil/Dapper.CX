@@ -4,7 +4,7 @@
 
 Nuget package **Dapper.CX.SqlServer** makes it easy to do CRUD operations on pure POCO model classes via `IDbConnection` extension methods. See [method reference](https://github.com/adamosoftware/Dapper.CX/wiki/Crud-method-reference). The only model class requirement is that they have a property called `Id` or the class has an [Identity](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Attributes/IdentityAttribute.cs) attribute that indicates what its identity property is. `int` and `long` identity types are supported.
 
-Here's a simple example using [GetAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L43) and [SaveAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L71) methods assuming a fictional `Appointment` model class and fictional `GetConnection` method:
+Here's a simple example using [GetAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L44) and [SaveAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L72) methods assuming a fictional `Appointment` model class and fictional `GetConnection` method:
 ```csharp
 using (var cn = GetConnection())
 {
