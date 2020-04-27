@@ -15,7 +15,7 @@ using (var cn = GetConnection())
     await cn.SaveAsync(appt);
 }
 ```
-The `SaveAsync` method performs an insert or update depending on whether the model object [IsNew](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L38) or not. Here's a more sophisticated example showing the [GetWhereAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L52) method and [ChangeTracker](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Classes/ChangeTracker.cs) object. [Learn more](https://github.com/adamosoftware/Dapper.CX/wiki/Using-ChangeTracker) about tracking changes.
+The `SaveAsync` method performs an insert or update depending on whether the model object [IsNew](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L39) or not. Here's a more sophisticated example showing the [GetWhereAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L53) method and [ChangeTracker](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Classes/ChangeTracker.cs) object. [Learn more](https://github.com/adamosoftware/Dapper.CX/wiki/Using-ChangeTracker) about tracking changes.
 ```csharp
 using (var cn = GetConnection())
 {
