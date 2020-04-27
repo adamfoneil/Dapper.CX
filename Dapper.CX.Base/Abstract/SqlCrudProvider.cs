@@ -6,6 +6,7 @@ using Dapper.CX.Exceptions;
 using Dapper.CX.Extensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
@@ -15,9 +16,13 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
-{
+{    
     public abstract partial class SqlCrudProvider<TIdentity>
     {
+        internal const string HelpersCategory = "Helpers";
+        internal const string CrudCategory = "Crud Methods";
+        internal const string SqlCategory = "SQL Generation";
+
         protected abstract string SelectIdentityCommand { get; }
         protected abstract char StartDelimiter { get; }
         protected abstract char EndDelimiter { get; }
@@ -29,6 +34,7 @@ namespace Dapper.CX.Abstract
 
         protected abstract TIdentity ConvertIdentity(object identity);
 
+        [Category(HelpersCategory)]
         public TIdentity GetIdentity<TModel>(TModel model)
         {
             var idProperty = typeof(TModel).GetIdentityProperty();
@@ -36,11 +42,13 @@ namespace Dapper.CX.Abstract
             return ConvertIdentity(idValue);
         }
 
+        [Category(HelpersCategory)]
         public bool IsNew<TModel>(TModel model)
         {
             return GetIdentity(model).Equals(default(TIdentity));
         }
 
+        [Category(CrudCategory)]
         public async Task<TModel> GetAsync<TModel>(IDbConnection connection, TIdentity identity, IDbTransaction txn = null)
         {
             var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleStatement(typeof(TModel)), new { id = identity }, txn);
@@ -50,6 +58,7 @@ namespace Dapper.CX.Abstract
             return result;
         }
 
+        [Category(CrudCategory)]
         public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, object criteria, IDbTransaction txn = null)
         {
             var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleWhereStatement(typeof(TModel), criteria), criteria, txn);
@@ -69,6 +78,7 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        [Category(CrudCategory)]
         public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             if (IsNew(model))
@@ -82,6 +92,7 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        [Category(CrudCategory)]
         public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> keyProperties, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             if (IsNew(model))
@@ -93,6 +104,7 @@ namespace Dapper.CX.Abstract
             return await SaveAsync(connection, model, changeTracker, onSave, txn);
         }
 
+        [Category(CrudCategory)]
         public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             var props = typeof(TModel).GetProperties().Where(pi => pi.HasAttribute<KeyAttribute>()).Select(pi => pi.GetColumnName());
@@ -100,7 +112,7 @@ namespace Dapper.CX.Abstract
 
             return await MergeAsync(connection, model, props, changeTracker, onSave, txn);
         }
-
+        
         private void SetIdentity<TModel>(TModel model, TIdentity identity)
         {
             if (IsNew(model))
@@ -120,6 +132,7 @@ namespace Dapper.CX.Abstract
             return await connection.QuerySingleOrDefaultAsync<TModel>(sql, model, txn);
         }
 
+        [Category(CrudCategory)]
         public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true, IDbTransaction txn = null)
         {
             await ValidateInternal(connection, model);
@@ -141,6 +154,7 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        [Category(CrudCategory)]
         public async Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             await ValidateInternal(connection, model);
@@ -173,6 +187,7 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        [Category(CrudCategory)]
         public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null)
         {
             var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id }, txn);
@@ -189,12 +204,14 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        [Category(CrudCategory)]
         public async Task<bool> ExistsAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null)
         {
             var model = await GetAsync<TModel>(connection, id, txn);
             return (model != null);
         }
 
+        [Category(CrudCategory)]
         public async Task<bool> ExistsWhereAsync<TModel>(IDbConnection connection, object criteria, IDbTransaction txn = null)
         {
             var model = await GetWhereAsync<TModel>(connection, criteria, txn);
@@ -214,6 +231,7 @@ namespace Dapper.CX.Abstract
         }
 
         #region SQL statements
+        [Category(SqlCategory)]
         public string GetQuerySingleStatement(Type modelType)
         {
             bool isCustom = modelType.Implements(typeof(ICustomGet));
@@ -229,12 +247,14 @@ namespace Dapper.CX.Abstract
             return $"{query} WHERE {whereId}";
         }
 
+        [Category(SqlCategory)]
         public string GetQuerySingleWhereStatement(Type modelType, object criteria)
         {
             var properties = criteria.GetType().GetProperties();
             return GetQuerySingleWhereStatement(modelType, properties);
         }
 
+        [Category(SqlCategory)]
         public string GetQuerySingleWhereStatement(Type modelType, IEnumerable<string> propertyNames)
         {
             string whereClause = $"WHERE {string.Join(" AND ", propertyNames.Select(name => ApplyDelimiter(name) + "=@" + name))}";
@@ -258,11 +278,13 @@ namespace Dapper.CX.Abstract
             return model.WhereId;
         }
 
+        [Category(SqlCategory)]
         public string GetQuerySingleWhereStatement(Type modelType, IEnumerable<PropertyInfo> properties)
         {
             return GetQuerySingleWhereStatement(modelType, properties.Select(pi => pi.GetColumnName()));            
         }
 
+        [Category(SqlCategory)]
         public string GetInsertStatement(Type modelType, IEnumerable<string> columnNames = null, bool getIdentity = true)
         {
             var columns = columnNames ?? GetMappedProperties(modelType, SaveAction.Insert).Select(pi => pi.GetColumnName());
@@ -275,6 +297,7 @@ namespace Dapper.CX.Abstract
                 ); " + ((getIdentity) ? SelectIdentityCommand : string.Empty);
         }
 
+        [Category(SqlCategory)]
         public string GetUpdateStatement<TModel>(ChangeTracker<TModel> changeTracker = null, IEnumerable<string> columnNames = null)
         {
             var columns = 
@@ -318,6 +341,7 @@ namespace Dapper.CX.Abstract
             return modelType.GetProperties().Where(pi => isMapped(pi)).ToArray();
         }
 
+        [Category(SqlCategory)]
         public string GetDeleteStatement(Type modelType)
         {                        
             return $@"DELETE {ApplyDelimiter(modelType.GetTableName())} WHERE {ApplyDelimiter(modelType.GetIdentityName())}=@id";
@@ -329,7 +353,6 @@ namespace Dapper.CX.Abstract
                 .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(namePart => $"{StartDelimiter}{namePart}{EndDelimiter}"));
         }
-
         #endregion
     }
 }

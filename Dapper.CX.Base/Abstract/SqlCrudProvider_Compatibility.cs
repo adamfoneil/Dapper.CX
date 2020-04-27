@@ -1,5 +1,6 @@
 ﻿using Dapper.CX.Extensions;
 using System;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace Dapper.CX.Abstract
 {
     public abstract partial class SqlCrudProvider<TIdentity>
     {
+        [Category(CrudCategory)]
         public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel @object, params string[] columnNames)
         {
             if (IsNew(@object))
@@ -28,6 +30,7 @@ namespace Dapper.CX.Abstract
             return GetIdentity(@object);
         }
 
+        [Category(CrudCategory)]
         public async Task UpdateAsync<TModel>(IDbConnection connection, TModel @object, IDbTransaction txn, params Expression<Func<TModel, object>>[] setColumns)
         {
             CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns, txn);
@@ -37,6 +40,7 @@ namespace Dapper.CX.Abstract
         /// <summary>
         /// Performs a SQL update on select properties of an object
         /// </summary>
+        [Category(CrudCategory)]
         public async Task UpdateAsync<TModel>(IDbConnection connection, TModel @object, params Expression<Func<TModel, object>>[] setColumns)
         {            
             CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns);            
