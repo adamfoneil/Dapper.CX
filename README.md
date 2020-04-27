@@ -1,7 +1,7 @@
 | 
 [![Build status](https://ci.appveyor.com/api/projects/status/90etxh1r0aycv1j9?svg=true)](https://ci.appveyor.com/project/adamosoftware/dapper-cx) 
 |
-[![Nuget](https://img.shields.io/nuget/v/Dapper.CX.SqlServer?label=Crud)](https://www.nuget.org/packages/Dapper.CX.SqlServer/)
+[![Nuget](https://img.shields.io/nuget/v/Dapper.CX.SqlServer?label=SqlServer)](https://www.nuget.org/packages/Dapper.CX.SqlServer/)
 |
 [![Nuget](https://img.shields.io/nuget/v/Dapper.CX.ChangeTracking?label=ChangeTracking)](https://www.nuget.org/packages/Dapper.CX.ChangeTracking/)
 
