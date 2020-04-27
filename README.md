@@ -1,13 +1,8 @@
-| 
 [![Build status](https://ci.appveyor.com/api/projects/status/90etxh1r0aycv1j9?svg=true)](https://ci.appveyor.com/project/adamosoftware/dapper-cx) 
-|
 [![Nuget](https://img.shields.io/nuget/v/Dapper.CX.SqlServer?label=SqlServer)](https://www.nuget.org/packages/Dapper.CX.SqlServer/)
-|
 [![Nuget](https://img.shields.io/nuget/v/Dapper.CX.ChangeTracking?label=ChangeTracking)](https://www.nuget.org/packages/Dapper.CX.ChangeTracking/)
 
-Nuget package **Dapper.CX.SqlServer** makes it easy to do CRUD operations on pure POCO model classes. The only model class requirement is that they have a property called `Id` or the class has an [Identity](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Attributes/IdentityAttribute.cs) attribute that indicates what its identity property is.
-
-Wiki links: [Why Dapper.CX?](https://github.com/adamosoftware/Dapper.CX/wiki), [Reference](https://github.com/adamosoftware/Dapper.CX/wiki/Crud-method-reference). Note that Dapper.CX doesn't create tables. Please see my [ModelSync](https://github.com/adamosoftware/ModelSync) project for info on that.
+Nuget package **Dapper.CX.SqlServer** makes it easy to do CRUD operations on pure POCO model classes. The only model class requirement is that they have a property called `Id` or the class has an [Identity](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Attributes/IdentityAttribute.cs) attribute that indicates what its identity property is. `int` and `long` identity types are supported.
 
 Here's a simple example using [GetAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L43) and [SaveAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L71) methods assuming a fictional `Appointment` model class and fictional `GetConnection` method:
 ```csharp
@@ -58,6 +53,8 @@ using (var cn = GetConnection())
 }
 ```
 In a real app, you'd likely extract the anonymous method to an actual method, and make it work as a convention across your application.
+
+Wiki links: [Why Dapper.CX?](https://github.com/adamosoftware/Dapper.CX/wiki), [Reference](https://github.com/adamosoftware/Dapper.CX/wiki/Crud-method-reference). Note that Dapper.CX doesn't create tables. Please see my [ModelSync](https://github.com/adamosoftware/ModelSync) project for info on that.
 
 ## Customizing behaviors with interfaces
 There are some interfaces you can use on model classes to implement validation and custom `Get` behavior. To use these, your model class project must add package [AO.DbSchema.Attributes](https://github.com/adamosoftware/DbSchema.Attributes) as a dependency:
