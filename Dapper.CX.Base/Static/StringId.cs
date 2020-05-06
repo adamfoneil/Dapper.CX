@@ -24,14 +24,20 @@ namespace Dapper.CX.Static
             while (sb.Length < length)
             {                
                 int max = maximums[rnd.Next(maximums.Length)];
-                index += rnd.Next(max);
-                if (index > sourceChars.Length - 1) index %= sourceChars.Length;
+                int increment = rnd.Next(max);
+                int forwardOrBackward = ((rnd.Next(max) % 2) == 0) ? 1 : -1;
+                index += increment * forwardOrBackward;
+                if (index < 0) index *= -1;
+                if (index > sourceChars.Length - 1) index %= sourceChars.Length;                
 
                 if (nonConsecutiveIndexes.Contains(index))
                 {
                     while (index == priorIndex)
                     {
-                        index += rnd.Next(max);
+                        increment = rnd.Next(max);                        
+                        forwardOrBackward = ((rnd.Next(max) % 2) == 0) ? 1 : -1;
+                        index += increment * forwardOrBackward;
+                        if (index < 0) index *= -1;
                         if (index > sourceChars.Length - 1) index %= sourceChars.Length;
                     }
                 }

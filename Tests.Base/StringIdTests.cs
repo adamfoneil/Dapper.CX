@@ -1,7 +1,6 @@
 ﻿using Dapper.CX.Static;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Tests.Base
 {
@@ -22,11 +21,9 @@ namespace Tests.Base
                 if (!ids.Add(id)) dups.Add(id);
             }
 
-            var dupGrp = dups.GroupBy(s => s);
-
             Assert.IsTrue(ids.Count == count);
 
-            // dup rate is about ‭0.00025‬
+            // dup rate is about ‭0.00025‬ or one every 4000, which I don't consider good enough
         }
     }
 }
