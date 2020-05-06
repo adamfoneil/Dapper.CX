@@ -18,15 +18,13 @@ namespace Tests.Base
             
             for (int i = 0; i < count; i++)
             {
-                string id = StringId.New(16);
+                string id = StringId.New(9);
                 if (!ids.Add(id)) dups.Add(id);
-            }
-
-            JsonFile.Save(@"C:\users\adam\desktop\DupIds.json", dups);
+            }            
 
             Assert.IsTrue(ids.Count == count);
 
-            // dup rate is about ‭0.00025‬ or one every 4000, which I don't consider good enough
+            // no dups in a million -- good enough for now!
         }
     }
 }

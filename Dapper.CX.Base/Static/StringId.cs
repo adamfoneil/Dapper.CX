@@ -1,37 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Dapper.CX.Static
 {
     public static class StringId
     {
+        // idea from https://scottlilly.com/create-better-random-numbers-in-c/
+        private static readonly RNGCryptoServiceProvider _generator = new RNGCryptoServiceProvider();
+
         public static string New(int length)
         {
-            var rnd = new Random();
+            var sourceBytes = Encoding.ASCII.GetBytes("abcdefghijklmnopqrstuvwxyz0123456789");
 
-            var sourceChars = "abcdefghijklmnopqrstuvwxyz01234567890"
-                .ToCharArray()
-                .Select(c => new { Character = c, SortOrder = rnd.Next(1000) })
-                .OrderBy(item => item.SortOrder)
-                .Select(item => item.Character)
-                .ToArray();
-            
-            StringBuilder sb = new StringBuilder();
-                                    
-            int index = 0;
-            const int max = 100;
-            while (sb.Length < length)
-            {                                
-                int increment = rnd.Next(max);                
-                index += increment;                
-                if (index > sourceChars.Length - 1) index %= sourceChars.Length;                                
-                sb.Append(sourceChars[index]);                
-            }
+            string result = null;
 
-            return sb.ToString();
-        }
+            do
+            {
+                // the random bytes generated won't necessarily be characters I allow, 
+                // so I generate more than I need, and filter for the allowed
+                byte[] randomBytes = new byte[length * 10];
+                _generator.GetNonZeroBytes(randomBytes);
+                var randomAllowedBytes = randomBytes.Where(b => sourceBytes.Contains(b)).Take(length);
+                result = new string(randomAllowedBytes.Select(b => (char)b).ToArray());
+            } while (result.Length < length);
+
+            // you're not certain to get enough good characters to reach the desired result length,
+            // so I have this brute force method of simply trying again until I get the desired length,
+            // altough I think you want to be careful with this
+
+            return result;
+        }        
+
     }
 }
