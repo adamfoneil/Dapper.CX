@@ -1,4 +1,5 @@
 ﻿using Dapper.CX.Static;
+using JsonSettings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
@@ -17,9 +18,11 @@ namespace Tests.Base
             
             for (int i = 0; i < count; i++)
             {
-                string id = StringId.New(12);
+                string id = StringId.New(16);
                 if (!ids.Add(id)) dups.Add(id);
             }
+
+            JsonFile.Save(@"C:\users\adam\desktop\DupIds.json", dups);
 
             Assert.IsTrue(ids.Count == count);
 
