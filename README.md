@@ -6,7 +6,7 @@ Nuget package **Dapper.CX.SqlServer** makes it easy to do CRUD operations on pur
 
 ![img](https://github.com/adamosoftware/Dapper.CX/blob/master/choose-namespace.png)
 
-Here's a simple example using [GetAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L44) and [SaveAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L72) methods assuming a fictional `Appointment` model class and fictional `GetConnection` method:
+Here's a simple example using [GetAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L52) and [SaveAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L82) methods assuming a fictional `Appointment` model class and fictional `GetConnection` method:
 ```csharp
 using (var cn = GetConnection())
 {
@@ -17,7 +17,7 @@ using (var cn = GetConnection())
     await cn.SaveAsync(appt);
 }
 ```
-The `SaveAsync` method performs an insert or update depending on whether the model object [IsNew](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L39) or not. Here's a more sophisticated example showing the [GetWhereAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L53) method and [ChangeTracker](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Classes/ChangeTracker.cs) object. [Learn more](https://github.com/adamosoftware/Dapper.CX/wiki/Using-ChangeTracker) about tracking changes.
+The `SaveAsync` method performs an insert or update depending on whether the model object [IsNew](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L46) or not. Here's a more sophisticated example showing the [GetWhereAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L62) method and [ChangeTracker](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Classes/ChangeTracker.cs) object. [Learn more](https://github.com/adamosoftware/Dapper.CX/wiki/Using-ChangeTracker) about tracking changes.
 ```csharp
 using (var cn = GetConnection())
 {
