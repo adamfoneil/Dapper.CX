@@ -1,4 +1,4 @@
-﻿using AO.DbSchema.Enums;
+﻿using AO.Models.Enums;
 using Dapper.CX.Classes;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace Dapper.CX.Abstract
         protected const string KeyColumnPrefix = "#";
 
         public SqlCmdDictionary()
-        {                
+        {
         }
 
         public SqlCmdDictionary(IEnumerable<string> columnNames)

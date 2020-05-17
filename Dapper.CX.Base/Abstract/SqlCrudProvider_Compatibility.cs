@@ -1,6 +1,5 @@
 ﻿using Dapper.CX.Extensions;
 using System;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
@@ -11,8 +10,7 @@ using System.Threading.Tasks;
 namespace Dapper.CX.Abstract
 {
     public abstract partial class SqlCrudProvider<TIdentity>
-    {
-        [Category(CrudCategory)]
+    {        
         public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel @object, params string[] columnNames)
         {
             if (IsNew(@object))
@@ -29,8 +27,7 @@ namespace Dapper.CX.Abstract
 
             return GetIdentity(@object);
         }
-
-        [Category(CrudCategory)]
+        
         public async Task UpdateAsync<TModel>(IDbConnection connection, TModel @object, IDbTransaction txn, params Expression<Func<TModel, object>>[] setColumns)
         {
             CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns, txn);
@@ -39,13 +36,12 @@ namespace Dapper.CX.Abstract
 
         /// <summary>
         /// Performs a SQL update on select properties of an object
-        /// </summary>
-        [Category(CrudCategory)]
+        /// </summary>        
         public async Task UpdateAsync<TModel>(IDbConnection connection, TModel @object, params Expression<Func<TModel, object>>[] setColumns)
-        {            
-            CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns);            
-            await connection.ExecuteAsync(cmd);            
-        }       
+        {
+            CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns);
+            await connection.ExecuteAsync(cmd);
+        }
 
         private CommandDefinition GetSetColumnsUpdateCommand<TModel>(TModel @object, Expression<Func<TModel, object>>[] setColumns, IDbTransaction txn = null)
         {
@@ -59,7 +55,7 @@ namespace Dapper.CX.Abstract
                 dp.Add(propName, e.Compile().Invoke(@object));
                 return $"{ApplyDelimiter(pi.GetColumnName())}=@{propName}";
             }));
-            
+
             string cmdText = $"UPDATE {ApplyDelimiter(type.GetTableName())} SET {setColumnExpr} WHERE {ApplyDelimiter(type.GetIdentityName())}=@id";
             dp.Add("id", GetIdentity(@object));
 

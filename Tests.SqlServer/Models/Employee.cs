@@ -1,4 +1,4 @@
-﻿using AO.DbSchema.Attributes;
+﻿using AO.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

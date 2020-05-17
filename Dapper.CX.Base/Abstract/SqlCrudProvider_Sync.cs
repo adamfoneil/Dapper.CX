@@ -1,10 +1,8 @@
-﻿using AO.DbSchema.Attributes.Interfaces;
-using AO.DbSchema.Enums;
+﻿using AO.Models.Enums;
+using AO.Models.Interfaces;
 using Dapper.CX.Classes;
 using Dapper.CX.Exceptions;
-using Dapper.CX.Extensions;
 using System;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq.Expressions;
@@ -12,20 +10,17 @@ using System.Linq.Expressions;
 namespace Dapper.CX.Abstract
 {
     public abstract partial class SqlCrudProvider<TIdentity>
-    {
-        [Category(CrudCategory)]
+    {        
         public TModel Get<TModel>(IDbConnection connection, TIdentity identity, IDbTransaction txn = null)
         {
             return connection.QuerySingleOrDefault<TModel>(GetQuerySingleStatement(typeof(TModel)), new { id = identity }, txn);
         }
-
-        [Category(CrudCategory)]
+     
         public TModel GetWhere<TModel>(IDbConnection connection, object criteria, IDbTransaction txn = null)
         {
             return connection.QuerySingleOrDefault<TModel>(GetQuerySingleWhereStatement(typeof(TModel), criteria), criteria, txn);
         }
 
-        [Category(CrudCategory)]
         public void Delete<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null)
         {
             var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id }, txn);
@@ -41,8 +36,7 @@ namespace Dapper.CX.Abstract
                 throw new CrudException(cmd, exc);
             }
         }
-
-        [Category(CrudCategory)]
+        
         public TIdentity Insert<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true, IDbTransaction txn = null)
         {
             SyncValidateInner(model);
@@ -63,8 +57,7 @@ namespace Dapper.CX.Abstract
                 throw new CrudException(cmd, exc);
             }
         }
-
-        [Category(CrudCategory)]
+        
         public void Update<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             SyncValidateInner(model);
@@ -83,22 +76,19 @@ namespace Dapper.CX.Abstract
                 throw new CrudException(cmd, exc);
             }
         }
-
-        [Category(CrudCategory)]
+        
         public void Update<TModel>(IDbConnection connection, TModel @object, IDbTransaction txn, params Expression<Func<TModel, object>>[] setColumns)
         {
-            CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns, txn);            
+            CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns, txn);
             connection.Execute(cmd);
         }
-
-        [Category(CrudCategory)]
+        
         public void Update<TModel>(IDbConnection connection, TModel @object, params Expression<Func<TModel, object>>[] setColumns)
         {
             CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns);
             connection.Execute(cmd);
         }
-
-        [Category(CrudCategory)]
+        
         public TIdentity Save<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             if (IsNew(model))
@@ -114,9 +104,10 @@ namespace Dapper.CX.Abstract
 
         private static void SyncValidateInner<TModel>(TModel model)
         {
-            if (typeof(TModel).Implements(typeof(IValidate)))
+            var validate = model as IValidate;
+            if (validate != null)
             {
-                var result = ((IValidate)model).Validate();
+                var result = validate.Validate();
                 if (!result.IsValid) throw new ValidationException(result.Message);
             }
         }

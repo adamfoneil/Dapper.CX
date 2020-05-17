@@ -1,4 +1,4 @@
-﻿using AO.DbSchema.Enums;
+﻿using AO.Models.Enums;
 using Dapper.CX.Classes;
 using System;
 using System.Data;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Dapper.CX.Abstract
 {
     public abstract class SqlCrudService<TIdentity>
-    {        
+    {
         private readonly SqlCrudProvider<TIdentity> _crudProvider;
 
         protected readonly string _connectionString;
@@ -58,7 +58,7 @@ namespace Dapper.CX.Abstract
             {
                 return await _crudProvider.SaveAsync(cn, model, changeTracker, onSave, txn);
             }
-        }        
+        }
 
         public async Task<TIdentity> MergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
@@ -66,7 +66,7 @@ namespace Dapper.CX.Abstract
             {
                 return await _crudProvider.MergeAsync(cn, model, changeTracker, onSave, null);
             }
-        }        
+        }
 
         public async Task<TIdentity> InsertAsync<TModel>(TModel model, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
@@ -74,7 +74,7 @@ namespace Dapper.CX.Abstract
             {
                 return await _crudProvider.InsertAsync(cn, model, onSave, txn: txn);
             }
-        }        
+        }
 
         public async Task UpdateAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
         {
@@ -82,7 +82,7 @@ namespace Dapper.CX.Abstract
             {
                 await _crudProvider.UpdateAsync(cn, model, changeTracker, onSave, txn);
             }
-        }        
+        }
 
         public async Task DeleteAsync<TModel>(TIdentity id, IDbTransaction txn = null)
         {

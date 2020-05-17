@@ -1,4 +1,4 @@
-﻿using AO.DbSchema.Enums;
+﻿using AO.Models.Enums;
 using Dapper.CX.Extensions;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace Dapper.CX.Classes
     public class ChangeTracker<TModel> : Dictionary<string, object>
     {
         private readonly Dictionary<string, PropertyInfo> _properties;
-        
+
         protected readonly TModel Instance;
 
         public ChangeTracker(TModel @object)
@@ -33,7 +33,7 @@ namespace Dapper.CX.Classes
         /// call this after you've made desired changes to your model class instance to get the names of modified properties
         /// </summary>
         public string[] GetModifiedColumns(SaveAction? saveAction = null)
-        {            
+        {
             return GetModifiedProperties(saveAction)
                 .Select(kp => kp.Key)
                 .ToArray();
