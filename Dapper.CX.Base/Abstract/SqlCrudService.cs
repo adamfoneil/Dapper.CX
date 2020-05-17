@@ -1,4 +1,5 @@
 ﻿using AO.Models.Enums;
+using AO.Models.Interfaces;
 using Dapper.CX.Classes;
 using System;
 using System.Data;
@@ -11,11 +12,13 @@ namespace Dapper.CX.Abstract
         private readonly SqlCrudProvider<TIdentity> _crudProvider;
 
         protected readonly string _connectionString;
+        protected readonly IUser<TIdentity> _user;
 
-        public SqlCrudService(string connectionString, SqlCrudProvider<TIdentity> crudProvider)
+        public SqlCrudService(string connectionString, SqlCrudProvider<TIdentity> crudProvider, IUser<TIdentity> user = null)
         {
             _connectionString = connectionString;
             _crudProvider = crudProvider;
+            _user = user;
         }
 
         public abstract IDbConnection GetConnection();
@@ -24,7 +27,7 @@ namespace Dapper.CX.Abstract
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.GetAsync<TModel>(cn, id, txn);
+                return await _crudProvider.GetAsync<TModel>(cn, id, txn, _user);
             }
         }
 
@@ -32,7 +35,7 @@ namespace Dapper.CX.Abstract
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.GetWhereAsync<TModel>(cn, criteria, txn);
+                return await _crudProvider.GetWhereAsync<TModel>(cn, criteria, txn, _user);
             }
         }
 
@@ -40,7 +43,7 @@ namespace Dapper.CX.Abstract
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.ExistsAsync<TModel>(cn, id, null);
+                return await _crudProvider.ExistsAsync<TModel>(cn, id, txn);
             }
         }
 
@@ -52,19 +55,19 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task<TIdentity> SaveAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public async Task<TIdentity> SaveAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.SaveAsync(cn, model, changeTracker, onSave, txn);
+                return await _crudProvider.SaveAsync(cn, model, changeTracker, txn, _user);
             }
         }
 
-        public async Task<TIdentity> MergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public async Task<TIdentity> MergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.MergeAsync(cn, model, changeTracker, onSave, null);
+                return await _crudProvider.MergeAsync(cn, model, changeTracker, txn, _user);
             }
         }
 
@@ -72,7 +75,7 @@ namespace Dapper.CX.Abstract
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.InsertAsync(cn, model, onSave, txn: txn);
+                return await _crudProvider.InsertAsync(cn, model, getIdentity:true, txn, _user);
             }
         }
 
@@ -80,7 +83,7 @@ namespace Dapper.CX.Abstract
         {
             using (var cn = GetConnection())
             {
-                await _crudProvider.UpdateAsync(cn, model, changeTracker, onSave, txn);
+                await _crudProvider.UpdateAsync(cn, model, changeTracker, txn);
             }
         }
 
@@ -92,13 +95,13 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task<Result> TrySaveAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public async Task<Result> TrySaveAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
         {
             var result = new Result();
 
             try
             {
-                result.Id = await SaveAsync(model, changeTracker, onSave, txn);
+                result.Id = await SaveAsync(model, changeTracker, txn);
                 result.IsSuccessful = true;
             }
             catch (Exception exc)
@@ -109,13 +112,13 @@ namespace Dapper.CX.Abstract
             return result;
         }
 
-        public async Task<Result> TryMergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public async Task<Result> TryMergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
         {
             var result = new Result();
 
             try
             {
-                result.Id = await MergeAsync(model, changeTracker, onSave, txn);
+                result.Id = await MergeAsync(model, changeTracker, txn);
                 result.IsSuccessful = true;
             }
             catch (Exception exc)

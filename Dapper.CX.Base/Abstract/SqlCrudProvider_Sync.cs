@@ -37,11 +37,10 @@ namespace Dapper.CX.Abstract
             }
         }
         
-        public TIdentity Insert<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true, IDbTransaction txn = null)
+        public TIdentity Insert<TModel>(IDbConnection connection, TModel model, bool getIdentity = true, IDbTransaction txn = null)
         {
             SyncValidateInner(model);
-
-            onSave?.Invoke(model, SaveAction.Insert);
+            
             var cmd = new CommandDefinition(GetInsertStatement(typeof(TModel), getIdentity: getIdentity), model, txn);
 
             Debug.Print(cmd.CommandText);
@@ -58,11 +57,10 @@ namespace Dapper.CX.Abstract
             }
         }
         
-        public void Update<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public void Update<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
         {
             SyncValidateInner(model);
-
-            onSave?.Invoke(model, SaveAction.Update);
+            
             var cmd = new CommandDefinition(GetUpdateStatement(changeTracker), model, txn);
 
             Debug.Print(cmd.CommandText);
@@ -89,15 +87,15 @@ namespace Dapper.CX.Abstract
             connection.Execute(cmd);
         }
         
-        public TIdentity Save<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public TIdentity Save<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
         {
             if (IsNew(model))
             {
-                return Insert(connection, model, onSave, txn: txn);
+                return Insert(connection, model, txn: txn);
             }
             else
             {
-                Update(connection, model, changeTracker, onSave, txn);
+                Update(connection, model, changeTracker, txn);
                 return GetIdentity(model);
             }
         }

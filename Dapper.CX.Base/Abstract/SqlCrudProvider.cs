@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.SymbolStore;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -40,18 +41,30 @@ namespace Dapper.CX.Abstract
             return GetIdentity(model).Equals(default(TIdentity));
         }
 
-        public async Task<TModel> GetAsync<TModel>(IDbConnection connection, TIdentity identity, IDbTransaction txn = null)
+        public async Task<TModel> GetAsync<TModel>(IDbConnection connection, TIdentity identity, IDbTransaction txn = null, IUser<TIdentity> user = null)
         {
             var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleStatement(typeof(TModel)), new { id = identity }, txn);
+
+            if (user != null && result != null)
+            {
+                await VerifyGetPermission(connection, identity, txn, user, result);
+                await VerifyTenantIsolation(connection, user, result, txn);
+            }
 
             await OnGetRelatedAsync(connection, result, txn);
 
             return result;
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, object criteria, IDbTransaction txn = null)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, object criteria, IDbTransaction txn = null, IUser<TIdentity> user = null)
         {
             var result = await connection.QuerySingleOrDefaultAsync<TModel>(GetQuerySingleWhereStatement(typeof(TModel), criteria), criteria, txn);
+
+            if (user != null && result != null)
+            {
+                await VerifyGetPermission(connection, GetIdentity(result), txn, user, result);
+                await VerifyTenantIsolation(connection, user, result, txn);
+            }
 
             await OnGetRelatedAsync(connection, result, txn);
 
@@ -66,20 +79,20 @@ namespace Dapper.CX.Abstract
             if (getRelated != null) await getRelated.GetRelatedAsync(connection, txn);
         }
 
-        public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUser<TIdentity> user = null)
         {
             if (IsNew(model))
             {
-                return await InsertAsync(connection, model, onSave, txn: txn);
+                return await InsertAsync(connection, model, getIdentity:true, txn, user);
             }
             else
             {
-                await UpdateAsync(connection, model, changeTracker, onSave, txn);
+                await UpdateAsync(connection, model, changeTracker, txn, user);
                 return GetIdentity(model);
             }
         }
 
-        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> keyProperties, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> keyProperties, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUser<TIdentity> user = null)
         {
             if (IsNew(model))
             {
@@ -87,15 +100,15 @@ namespace Dapper.CX.Abstract
                 if (existing != null) SetIdentity(model, GetIdentity(existing));
             }
 
-            return await SaveAsync(connection, model, changeTracker, onSave, txn);
+            return await SaveAsync(connection, model, changeTracker, txn, user);
         }
 
-        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUser<TIdentity> user = null)
         {
             var props = typeof(TModel).GetProperties().Where(pi => pi.HasAttribute<KeyAttribute>()).Select(pi => pi.GetColumnName());
             if (!props.Any()) throw new Exception($"No primary key properties found on {typeof(TModel).Name}");
 
-            return await MergeAsync(connection, model, props, changeTracker, onSave, txn);
+            return await MergeAsync(connection, model, props, changeTracker, txn, user);
         }
 
         private void SetIdentity<TModel>(TModel model, TIdentity identity)
@@ -117,11 +130,14 @@ namespace Dapper.CX.Abstract
             return await connection.QuerySingleOrDefaultAsync<TModel>(sql, model, txn);
         }
 
-        public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true, IDbTransaction txn = null)
+        public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, bool getIdentity = true, IDbTransaction txn = null, IUser<TIdentity> user = null)
         {
             await ValidateInternal(connection, model);
 
-            onSave?.Invoke(model, SaveAction.Insert);
+            AuditRow(model, SaveAction.Insert, user);
+
+            await VerifyTenantIsolation(connection, user, model, txn);
+
             var cmd = new CommandDefinition(GetInsertStatement(typeof(TModel), getIdentity: getIdentity), model, txn);
 
             Debug.Print(cmd.CommandText);
@@ -138,11 +154,14 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public async Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUser<TIdentity> user = null)
         {
             await ValidateInternal(connection, model);
 
-            onSave?.Invoke(model, SaveAction.Update);
+            AuditRow(model, SaveAction.Update, user);
+
+            await VerifyTenantIsolation(connection, user, model, txn);
+
             var cmd = new CommandDefinition(GetUpdateStatement(changeTracker), model, txn);
 
             Debug.Print(cmd.CommandText);
@@ -170,9 +189,15 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null)
+        public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null, IUser<TIdentity> user = null)
         {
             var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id }, txn);
+
+            if (user != null && typeof(TModel).Implements(typeof(ITenantIsolated<TIdentity>)))
+            {
+                var model = await GetAsync<TModel>(connection, id, txn);
+                await VerifyTenantIsolation(connection, user, model, txn);
+            }            
 
             Debug.Print(cmd.CommandText);
 
@@ -327,5 +352,36 @@ namespace Dapper.CX.Abstract
                 .Select(namePart => $"{StartDelimiter}{namePart}{EndDelimiter}"));
         }
         #endregion
+
+        private static async Task VerifyGetPermission<TModel>(IDbConnection connection, TIdentity identity, IDbTransaction txn, IUser<TIdentity> user, TModel result)
+        {
+            var permission = result as IPermission;
+            if (permission != null)
+            {
+                if (!await permission.AllowGetAsync(connection, user, txn))
+                {
+                    throw new PermissionException($"User {user.Name} does not have permission to {typeof(TModel).Name} Id {identity}");
+                }
+            }
+        }
+
+        private static async Task VerifyTenantIsolation<TModel>(IDbConnection connection, IUser<TIdentity> user, TModel result, IDbTransaction txn)
+        {
+            if (user == null) return;
+
+            var isolated = result as ITenantIsolated<TIdentity>;
+            if (isolated != null)
+            {
+                var tenantId = await isolated.GetTenantIdAsync(connection, txn);
+                if (!tenantId.Equals(user.TenantId)) throw new TenantIsolationException($"User {user.Name} is not a valid tenant of {typeof(TModel).Name} Id {tenantId}");
+            }
+        }
+
+        private static void AuditRow<TModel>(TModel model, SaveAction saveAction, IUser<TIdentity> user)
+        {
+            if (user == null) return;
+            var audit = model as IAudit;
+            audit?.Stamp(saveAction, user);
+        }
     }
 }
