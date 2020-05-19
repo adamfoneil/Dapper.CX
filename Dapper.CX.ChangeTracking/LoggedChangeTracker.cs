@@ -1,4 +1,5 @@
 ﻿using AO.DbSchema.Attributes.Interfaces;
+using AO.Models.Interfaces;
 using Dapper.CX.ChangeTracking.Models;
 using Dapper.CX.Extensions;
 using Dapper.CX.SqlServer.Extensions.Long;
@@ -10,16 +11,16 @@ using System.Threading.Tasks;
 
 namespace Dapper.CX.Classes
 {
-    public class LoggedChangeTracker<TModel> : ChangeTracker<TModel>, IDbSaveable
+    public class LoggedChangeTracker<TModel> : ChangeTracker<TModel>, AO.Models.Interfaces.IDbSaveable
     {
         private static bool _initialized = false;
 
-        private readonly string _userName;
+        private readonly IUserBase _user;
         private readonly string _nullText;
 
-        public LoggedChangeTracker(string userName, TModel @object, string nullText = "<null>") : base(@object)
+        public LoggedChangeTracker(IUserBase user, TModel @object, string nullText = "<null>") : base(@object)
         {
-            _userName = userName;
+            _user = user;
             _nullText = nullText;
         }
 
@@ -43,7 +44,7 @@ namespace Dapper.CX.Classes
                 {
                     int version = await IncrementRowVersionAsync(connection, tableName, rowId, txn);
 
-                    var textLookup = Instance as ITextLookup;
+                    var textLookup = Instance as AO.Models.Interfaces.ITextLookup;
 
                     foreach (var kp in GetModifiedProperties())
                     {
@@ -67,8 +68,8 @@ namespace Dapper.CX.Classes
 
                         var history = new ColumnHistory()
                         {
-                            UserName = _userName,
-                            Timestamp = DateTime.UtcNow,
+                            UserName = _user.Name,
+                            Timestamp = _user.LocalTime,
                             TableName = tableName,
                             RowId = rowId,
                             Version = version,
