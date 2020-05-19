@@ -9,7 +9,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Diagnostics;
-using System.Diagnostics.SymbolStore;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -83,7 +82,7 @@ namespace Dapper.CX.Abstract
         {
             if (IsNew(model))
             {
-                return await InsertAsync(connection, model, getIdentity:true, txn, user);
+                return await InsertAsync(connection, model, getIdentity: true, txn, user);
             }
             else
             {
@@ -197,7 +196,7 @@ namespace Dapper.CX.Abstract
             {
                 var model = await GetAsync<TModel>(connection, id, txn);
                 await VerifyTenantIsolation(connection, user, model, txn);
-            }            
+            }
 
             Debug.Print(cmd.CommandText);
 

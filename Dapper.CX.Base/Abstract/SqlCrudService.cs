@@ -75,7 +75,7 @@ namespace Dapper.CX.Abstract
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.InsertAsync(cn, model, getIdentity:true, txn, _user);
+                return await _crudProvider.InsertAsync(cn, model, getIdentity: true, txn, _user);
             }
         }
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Dapper.CX.Abstract
 {
     public abstract partial class SqlCrudProvider<TIdentity>
-    {        
+    {
         public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel @object, params string[] columnNames)
         {
             if (IsNew(@object))
@@ -27,7 +27,7 @@ namespace Dapper.CX.Abstract
 
             return GetIdentity(@object);
         }
-        
+
         public async Task UpdateAsync<TModel>(IDbConnection connection, TModel @object, IDbTransaction txn, params Expression<Func<TModel, object>>[] setColumns)
         {
             CommandDefinition cmd = GetSetColumnsUpdateCommand(@object, setColumns, txn);
