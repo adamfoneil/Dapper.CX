@@ -1,5 +1,4 @@
-﻿using AO.DbSchema.Attributes.Interfaces;
-using AO.Models.Interfaces;
+﻿using AO.Models.Interfaces;
 using Dapper.CX.ChangeTracking.Models;
 using Dapper.CX.Extensions;
 using Dapper.CX.SqlServer.Extensions.Long;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Dapper.CX.Classes
 {
-    public class LoggedChangeTracker<TModel> : ChangeTracker<TModel>, AO.Models.Interfaces.IDbSaveable
+    public class LoggedChangeTracker<TModel> : ChangeTracker<TModel>, IDbSaveable
     {
         private static bool _initialized = false;
 
