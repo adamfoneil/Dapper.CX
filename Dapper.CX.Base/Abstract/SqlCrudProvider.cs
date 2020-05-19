@@ -145,11 +145,30 @@ namespace Dapper.CX.Abstract
             {
                 TIdentity result = await connection.QuerySingleOrDefaultAsync<TIdentity>(cmd);
                 if (getIdentity) SetIdentity(model, result);
+
+                await ExecuteSaveTrigger(connection, SaveAction.Insert, model, txn);
+
                 return result;
             }
             catch (Exception exc)
             {
                 throw new CrudException(cmd, exc);
+            }
+        }
+
+        private async static Task ExecuteSaveTrigger<TModel>(IDbConnection connection, SaveAction saveAction, TModel model, IDbTransaction txn = null)
+        {
+            try
+            {
+                var trigger = model as ITrigger;
+                if (trigger != null)
+                {
+                    await trigger.RowSavedAsync(connection, saveAction, txn);
+                }
+            }
+            catch (Exception exc)
+            {
+                throw new TriggerException(exc, TriggerAction.Save);
             }
         }
 
@@ -168,6 +187,8 @@ namespace Dapper.CX.Abstract
             try
             {
                 await connection.ExecuteAsync(cmd);
+
+                await ExecuteSaveTrigger(connection, SaveAction.Update, model, txn);
 
                 var saveable = changeTracker as IDbSaveable;
                 if (saveable != null)
@@ -191,10 +212,11 @@ namespace Dapper.CX.Abstract
         public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null, IUserBase user = null)
         {
             var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id }, txn);
+            TModel model = default;
 
-            if (user != null && typeof(TModel).Implements(typeof(ITenantIsolated<TIdentity>)))
+            if (user != null && typeof(TModel).ImplementsAny(typeof(ITenantIsolated<TIdentity>), typeof(ITrigger)))
             {
-                var model = await GetAsync<TModel>(connection, id, txn);
+                model = await GetAsync<TModel>(connection, id, txn);
                 await VerifyTenantIsolation(connection, user, model, txn);
             }
 
@@ -203,10 +225,31 @@ namespace Dapper.CX.Abstract
             try
             {
                 await connection.ExecuteAsync(cmd);
+
+                if (model != null)
+                {
+                    await ExecuteDeleteTrigger(connection, model, txn);
+                }                
             }
             catch (Exception exc)
             {
                 throw new CrudException(cmd, exc);
+            }
+        }
+
+        private async static Task ExecuteDeleteTrigger<TModel>(IDbConnection connection, TModel model, IDbTransaction txn = null)
+        {
+            try
+            {
+                var trigger = model as ITrigger;
+                if (trigger != null)
+                {
+                    await trigger.RowDeletedAsync(connection, txn);
+                }
+            }
+            catch (Exception exc)
+            {
+                throw new TriggerException(exc, TriggerAction.Delete);
             }
         }
 

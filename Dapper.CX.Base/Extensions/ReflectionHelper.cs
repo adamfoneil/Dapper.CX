@@ -41,5 +41,10 @@ namespace Dapper.CX.Extensions
         {
             return type.GetInterfaces().Contains(interfaceType);
         }
+
+        internal static bool ImplementsAny(this Type type, params Type[] interfaceTypes)
+        {
+            return type.GetInterfaces().Intersect(interfaceTypes).Any();
+        }
     }
 }
