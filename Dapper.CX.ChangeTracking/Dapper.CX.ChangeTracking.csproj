@@ -8,8 +8,8 @@
     <Copyright>Copyright (c) 2020 Adam O'Neil</Copyright>
     <Description>Track row change history across your database by user, with key-to-text lookups</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <RepositoryUrl>https://github.com/adamosoftware/Dapper.CX</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/adamosoftware/Dapper.CX/wiki/Using-ChangeTracker</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/adamfoneil/Dapper.CX</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/adamfoneil/Dapper.CX/wiki/Using-ChangeTracker</PackageProjectUrl>
     <Version>1.0.3</Version>
     <PackageReleaseNotes>implemented AO.Models</PackageReleaseNotes>
   </PropertyGroup>
