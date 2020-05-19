@@ -1,5 +1,5 @@
-﻿using AO.DbSchema.Attributes;
-using AO.DbSchema.Interfaces;
+﻿using AO.Models;
+using AO.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -40,11 +40,12 @@ namespace Tests.Models
 
         public string WhereId => "[emp].[Id]=@id";
 
-        public Func<IDbConnection, IDbTransaction, Task> OnGetAsync => async (cn, txn) =>
+
+        public async Task GetRelatedAsync(IDbConnection connection, IDbTransaction txn = null)
         {
             this.Something = new string[] { "this", "that", "other" };
             this.SomethingElse = new DateTime[] { DateTime.Today };
             await Task.CompletedTask;
-        };
+        }
     }    
 }

@@ -1,4 +1,4 @@
-﻿using AO.DbSchema.Attributes;
+﻿using AO.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Dapper.CX.ChangeTracking.Models

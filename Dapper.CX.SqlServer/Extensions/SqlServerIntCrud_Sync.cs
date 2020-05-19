@@ -1,5 +1,4 @@
-﻿using AO.DbSchema.Enums;
-using Dapper.CX.Classes;
+﻿using Dapper.CX.Classes;
 using System;
 using System.Data;
 using System.Linq.Expressions;
@@ -26,16 +25,16 @@ namespace Dapper.CX.SqlServer.Extensions.Int
             provider.Delete<TModel>(connection, id, txn);
         }
 
-        public static int Insert<TModel>(this IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true, IDbTransaction txn = null)
+        public static int Insert<TModel>(this IDbConnection connection, TModel model, bool getIdentity = true, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            return provider.Insert(connection, model, onSave, getIdentity, txn);
+            return provider.Insert(connection, model, getIdentity, txn);
         }
 
-        public static void Update<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public static void Update<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            provider.Update(connection, model, changeTracker, onSave, txn);
+            provider.Update(connection, model, changeTracker, txn);
         }
 
         public static void Update<TModel>(this IDbConnection connection, TModel model, params Expression<Func<TModel, object>>[] setColumns)
@@ -50,10 +49,10 @@ namespace Dapper.CX.SqlServer.Extensions.Int
             provider.Update(connection, model, txn, setColumns);
         }
 
-        public static int Save<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public static int Save<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
         {
             var provider = new SqlServerIntCrudProvider();
-            return provider.Save(connection, model, changeTracker, onSave, txn);
+            return provider.Save(connection, model, changeTracker, txn);
         }
     }
 }

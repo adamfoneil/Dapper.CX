@@ -1,7 +1,6 @@
-﻿using AO.DbSchema.Attributes;
-using AO.DbSchema.Attributes.Interfaces;
+﻿using AO.Models;
+using AO.Models.Interfaces;
 using Dapper;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;

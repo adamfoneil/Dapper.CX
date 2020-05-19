@@ -1,5 +1,5 @@
-﻿using AO.DbSchema.Attributes.Interfaces;
-using AO.DbSchema.Attributes.Models;
+﻿using AO.Models;
+using AO.Models.Interfaces;
 using System.Data;
 using System.Threading.Tasks;
 using Tests.Models;

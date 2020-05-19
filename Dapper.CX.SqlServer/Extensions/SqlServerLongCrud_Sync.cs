@@ -1,5 +1,4 @@
-﻿using AO.DbSchema.Enums;
-using Dapper.CX.Classes;
+﻿using Dapper.CX.Classes;
 using System;
 using System.Data;
 using System.Linq.Expressions;
@@ -26,16 +25,16 @@ namespace Dapper.CX.SqlServer.Extensions.Long
             provider.Delete<TModel>(connection, id, txn);
         }
 
-        public static long Insert<TModel>(this IDbConnection connection, TModel model, Action<TModel, SaveAction> onSave = null, bool getIdentity = true, IDbTransaction txn = null)
+        public static long Insert<TModel>(this IDbConnection connection, TModel model, bool getIdentity = true, IDbTransaction txn = null)
         {
             var provider = new SqlServerLongCrudProvider();
-            return provider.Insert(connection, model, onSave, getIdentity, txn);
+            return provider.Insert(connection, model, getIdentity, txn);
         }
 
-        public static void Update<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public static void Update<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
         {
             var provider = new SqlServerLongCrudProvider();
-            provider.Update(connection, model, changeTracker, onSave, txn);
+            provider.Update(connection, model, changeTracker, txn);
         }
 
         public static void Update<TModel>(this IDbConnection connection, TModel model, params Expression<Func<TModel, object>>[] setColumns)
@@ -50,10 +49,10 @@ namespace Dapper.CX.SqlServer.Extensions.Long
             provider.Update(connection, model, txn, setColumns);
         }
 
-        public static long Save<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Action<TModel, SaveAction> onSave = null, IDbTransaction txn = null)
+        public static long Save<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
         {
             var provider = new SqlServerLongCrudProvider();
-            return provider.Save(connection, model, changeTracker, onSave, txn);
+            return provider.Save(connection, model, changeTracker, txn);
         }
     }
 }
