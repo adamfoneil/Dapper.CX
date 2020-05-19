@@ -1,8 +1,8 @@
-﻿using Dapper;
+﻿using AO.Models.Interfaces;
+using Dapper;
 using Dapper.CX.Classes;
 using Dapper.CX.Extensions;
 using Dapper.CX.SqlServer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModelSync.Library.Models;
 using SqlServer.LocalDb;
@@ -49,7 +49,7 @@ namespace Tests.Base
                 var provider = new SqlServerIntCrudProvider();
                 provider.SaveAsync(cn, emp).Wait();
 
-                var ct = new LoggedChangeTracker<Employee>("adamo", emp);
+                var ct = new LoggedChangeTracker<Employee>(new LocalUser("adamo"), emp);
 
                 emp.FirstName = "Javad";
                 emp.Status = Status.Inactive;
@@ -91,7 +91,7 @@ namespace Tests.Base
 
                 int widgetId = provider.Save(cn, w);
 
-                var ct = new LoggedChangeTracker<Widget>("adamo", w);
+                var ct = new LoggedChangeTracker<Widget>(new LocalUser("adamo"), w);
                 w.Price = 21.7m;
                 w.TypeId = ids.Last();
                 provider.SaveAsync(cn, w, ct).Wait();
@@ -99,6 +99,17 @@ namespace Tests.Base
                 Assert.IsTrue(cn.RowExistsAsync("[changes].[ColumnHistory] WHERE [TableName]='Widget' AND [RowId]=@widgetId AND [ColumnName]='Price' AND [OldValue]='23.4' AND [NewValue]='21.7'", new { widgetId }).Result);
                 Assert.IsTrue(cn.RowExistsAsync("[changes].[ColumnHistory] WHERE [TableName]='Widget' AND [RowId]=@widgetId AND [ColumnName]='TypeId' AND [OldValue]='this' AND [NewValue]='other'", new { widgetId }).Result);
             }
+        }
+
+        public class LocalUser : IUserBase
+        {
+            public LocalUser(string userName)
+            {
+                Name = userName;
+            }
+
+            public string Name { get; }
+            public DateTime LocalTime => DateTime.UtcNow;
         }
     }
 }
