@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tests.Models
 {
@@ -30,6 +31,7 @@ namespace Tests.Models
         public bool IsExempt { get; set; }
         public DateTime? Timestamp { get; set; }
         public Status Status { get; set; } = Status.Active;
+        [Column(Order = 10)]
         public OtherEnum? Value { get; set; }
         public int Id { get; set; }
 

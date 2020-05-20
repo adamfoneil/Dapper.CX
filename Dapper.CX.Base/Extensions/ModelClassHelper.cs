@@ -70,7 +70,7 @@ namespace Dapper.CX.Extensions
             string result = propertyInfo.Name;
 
             var attr = propertyInfo.GetCustomAttribute<ColumnAttribute>();
-            if (attr != null) result = attr.Name;
+            if (attr != null && !string.IsNullOrEmpty(attr.Name)) result = attr.Name;
 
             return result;
         }
