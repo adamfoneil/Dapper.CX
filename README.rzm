@@ -6,7 +6,7 @@ Nuget package **Dapper.CX.SqlServer** makes it easy to do CRUD operations on pur
 
 ![img](https://github.com/adamosoftware/Dapper.CX/blob/master/choose-namespace.png)
 
-Here's a simple example using [GetAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L43) and [SaveAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L81) methods assuming a fictional `Appointment` model class and fictional `GetConnection` method:
+Here's a simple example using [GetAsync](#SqlCrudProvider.GetAsync) and [SaveAsync](#SqlCrudProvider.SaveAsync) methods assuming a fictional `Appointment` model class and fictional `GetConnection` method:
 ```csharp
 using (var cn = GetConnection())
 {
@@ -17,7 +17,7 @@ using (var cn = GetConnection())
     await cn.SaveAsync(appt);
 }
 ```
-The `SaveAsync` method performs an insert or update depending on whether the model object [IsNew](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L38) or not. Here's a more sophisticated example showing the [GetWhereAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L58) method and [ChangeTracker](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Classes/ChangeTracker.cs#L10) object. [Learn more](https://github.com/adamosoftware/Dapper.CX/wiki/Using-ChangeTracker) about tracking changes.
+The `SaveAsync` method performs an insert or update depending on whether the model object [IsNew](#SqlCrudProvider.IsNew) or not. Here's a more sophisticated example showing the [GetWhereAsync](#SqlCrudProvider.GetWhereAsync) method and [ChangeTracker](#ChangeTracker) object. [Learn more](https://github.com/adamosoftware/Dapper.CX/wiki/Using-ChangeTracker) about tracking changes.
 ```csharp
 using (var cn = GetConnection())
 {
