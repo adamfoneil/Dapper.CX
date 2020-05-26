@@ -16,13 +16,13 @@ namespace Dapper.CX.Abstract
             if (IsNew(@object))
             {
                 var cmd = GetInsertStatement(typeof(TModel), columnNames);
-                object id = await connection.ExecuteScalarAsync(cmd);
+                object id = await connection.ExecuteScalarAsync(cmd, @object);
                 SetIdentity(@object, ConvertIdentity(id));
             }
             else
             {
                 var cmd = GetUpdateStatement<TModel>(columnNames: columnNames);
-                await connection.ExecuteScalarAsync(cmd);
+                await connection.ExecuteScalarAsync(cmd, @object);
             }
 
             return GetIdentity(@object);
