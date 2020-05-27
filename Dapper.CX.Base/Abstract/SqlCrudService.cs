@@ -54,30 +54,30 @@ namespace Dapper.CX.Abstract
             TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null, 
             Func<IDbConnection, IDbTransaction, Task> txnAction = null)
         {            
-            return await ExecuteInnerAsync<TModel>((cn) => _crudProvider.SaveAsync(cn, model, changeTracker, user: user), txnAction);            
+            return await ExecuteInnerAsync<TModel>((cn, txn) => _crudProvider.SaveAsync(cn, model, changeTracker, txn, user), txnAction);            
         }
 
         public async Task<TIdentity> MergeAsync<TModel>(
             TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null, 
             Func<IDbConnection, IDbTransaction, Task> txnAction = null)
         {
-            return await ExecuteInnerAsync<TModel>((cn) => _crudProvider.MergeAsync(cn, model, changeTracker, user: user), txnAction);
+            return await ExecuteInnerAsync<TModel>((cn, txn) => _crudProvider.MergeAsync(cn, model, changeTracker, txn, user), txnAction);
         }
 
         public async Task<TIdentity> InsertAsync<TModel>(
             TModel model, IUserBase user = null,
             Func<IDbConnection, IDbTransaction, Task> txnAction = null)
         {
-            return await ExecuteInnerAsync<TModel>((cn) => _crudProvider.InsertAsync(cn, model, getIdentity: true, user: user), txnAction);
+            return await ExecuteInnerAsync<TModel>((cn, txn) => _crudProvider.InsertAsync(cn, model, getIdentity: true, txn, user), txnAction);
         }
 
         public async Task UpdateAsync<TModel>(
             TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null,
             Func<IDbConnection, IDbTransaction, Task> txnAction = null)
         {
-            await ExecuteInnerAsync<TModel>(async (cn) => 
+            await ExecuteInnerAsync<TModel>(async (cn, txn) => 
             { 
-                await _crudProvider.UpdateAsync(cn, model, changeTracker, user: user); 
+                await _crudProvider.UpdateAsync(cn, model, changeTracker, txn, user); 
                 return default; 
             }, txnAction);
         }
@@ -86,15 +86,15 @@ namespace Dapper.CX.Abstract
             TIdentity id, IUserBase user = null,
             Func<IDbConnection, IDbTransaction, Task> txnAction = null)
         {
-            await ExecuteInnerAsync<TModel>(async (cn) => 
+            await ExecuteInnerAsync<TModel>(async (cn, txn) => 
             {
-                await _crudProvider.DeleteAsync<TModel>(cn, id, user: user);
+                await _crudProvider.DeleteAsync<TModel>(cn, id, txn, user);
                 return default;
             }, txnAction);
         }
 
         private async Task<TIdentity> ExecuteInnerAsync<TModel>(
-            Func<IDbConnection, Task<TIdentity>> crudAction, 
+            Func<IDbConnection, IDbTransaction, Task<TIdentity>> crudAction, 
             Func<IDbConnection, IDbTransaction, Task> txnAction = null)
         {
             using (var cn = GetConnection())
@@ -103,7 +103,7 @@ namespace Dapper.CX.Abstract
                 {
                     try
                     {
-                        var result = await crudAction.Invoke(cn);
+                        var result = await crudAction.Invoke(cn, txn);
                         if (txnAction != null) await txnAction.Invoke(cn, txn);
                         txn.Commit();
                         return result;
