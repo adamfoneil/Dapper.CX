@@ -2,6 +2,7 @@
 using Dapper.CX.Classes;
 using System;
 using System.Data;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
@@ -17,86 +18,108 @@ namespace Dapper.CX.Abstract
 
         public abstract IDbConnection GetConnection();
 
-        public async Task<TModel> GetAsync<TModel>(TIdentity id, IDbTransaction txn = null, IUserBase user = null)
+        public async Task<TModel> GetAsync<TModel>(TIdentity id, IUserBase user = null)
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.GetAsync<TModel>(cn, id, txn, user);
+                return await _crudProvider.GetAsync<TModel>(cn, id, user: user);
             }
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(object criteria, IDbTransaction txn = null, IUserBase user = null)
+        public async Task<TModel> GetWhereAsync<TModel>(object criteria, IUserBase user = null)
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.GetWhereAsync<TModel>(cn, criteria, txn, user);
+                return await _crudProvider.GetWhereAsync<TModel>(cn, criteria, user: user);
             }
         }
 
-        public async Task<bool> ExistsAsync<TModel>(TIdentity id, IDbTransaction txn = null)
+        public async Task<bool> ExistsAsync<TModel>(TIdentity id)
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.ExistsAsync<TModel>(cn, id, txn);
+                return await _crudProvider.ExistsAsync<TModel>(cn, id);
             }
         }
 
-        public async Task<bool> ExistsWhereAsync<TModel>(object criteria, IDbTransaction txn = null)
+        public async Task<bool> ExistsWhereAsync<TModel>(object criteria)
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.ExistsWhereAsync<TModel>(cn, criteria, txn);
+                return await _crudProvider.ExistsWhereAsync<TModel>(cn, criteria);
             }
         }
 
-        public async Task<TIdentity> SaveAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
+        public async Task<TIdentity> SaveAsync<TModel>(
+            TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null, 
+            Func<IDbConnection, IDbTransaction, Task> txnAction = null)
+        {            
+            return await ExecuteInnerAsync<TModel>((cn) => _crudProvider.SaveAsync(cn, model, changeTracker, user: user), txnAction);            
+        }
+
+        public async Task<TIdentity> MergeAsync<TModel>(
+            TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null, 
+            Func<IDbConnection, IDbTransaction, Task> txnAction = null)
+        {
+            return await ExecuteInnerAsync<TModel>((cn) => _crudProvider.MergeAsync(cn, model, changeTracker, user: user), txnAction);
+        }
+
+        private async Task<TIdentity> ExecuteInnerAsync<TModel>(
+            Func<IDbConnection, Task<TIdentity>> crudAction, 
+            Func<IDbConnection, IDbTransaction, Task> txnAction = null)
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.SaveAsync(cn, model, changeTracker, txn, user);
+                using (var txn = cn.BeginTransaction())
+                {
+                    try
+                    {
+                        var result = await crudAction.Invoke(cn);
+                        if (txnAction != null) await txnAction.Invoke(cn, txn);
+                        txn.Commit();
+                        return result;
+                    }
+                    catch
+                    {
+                        txn.Rollback();
+                        throw;
+                    }
+                }
+            }            
+        }
+
+        public async Task<TIdentity> InsertAsync<TModel>(TModel model, IUserBase user = null)
+        {
+            using (var cn = GetConnection())
+            {
+                return await _crudProvider.InsertAsync(cn, model, getIdentity: true, user: user);
             }
         }
 
-        public async Task<TIdentity> MergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
+        public async Task UpdateAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null)
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.MergeAsync(cn, model, changeTracker, txn, user);
+                await _crudProvider.UpdateAsync(cn, model, changeTracker, user: user);
             }
         }
 
-        public async Task<TIdentity> InsertAsync<TModel>(TModel model, IDbTransaction txn = null, IUserBase user = null)
+        public async Task DeleteAsync<TModel>(TIdentity id, IUserBase user = null)
         {
             using (var cn = GetConnection())
             {
-                return await _crudProvider.InsertAsync(cn, model, getIdentity: true, txn, user);
-            }
-        }
-
-        public async Task UpdateAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
-        {
-            using (var cn = GetConnection())
-            {
-                await _crudProvider.UpdateAsync(cn, model, changeTracker, txn, user);
-            }
-        }
-
-        public async Task DeleteAsync<TModel>(TIdentity id, IDbTransaction txn = null, IUserBase user = null)
-        {
-            using (var cn = GetConnection())
-            {
-                await _crudProvider.DeleteAsync<TModel>(cn, id, txn, user);
+                await _crudProvider.DeleteAsync<TModel>(cn, id, user: user);
             }
         }
 
         #region Try methods
-        public async Task<Result> TrySaveAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
+        public async Task<Result> TrySaveAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null)
         {
             var result = new Result();
 
             try
             {
-                result.Id = await SaveAsync(model, changeTracker, txn, user);
+                result.Id = await SaveAsync(model, changeTracker, user: user);
                 result.IsSuccessful = true;
             }
             catch (Exception exc)
@@ -107,13 +130,13 @@ namespace Dapper.CX.Abstract
             return result;
         }
 
-        public async Task<Result> TryMergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
+        public async Task<Result> TryMergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null)
         {
             var result = new Result();
 
             try
             {
-                result.Id = await MergeAsync(model, changeTracker, txn, user);
+                result.Id = await MergeAsync(model, changeTracker, user: user);
                 result.IsSuccessful = true;
             }
             catch (Exception exc)
@@ -124,13 +147,13 @@ namespace Dapper.CX.Abstract
             return result;
         }
 
-        public async Task<Result> TryInsertAsync<TModel>(TModel model, IDbTransaction txn = null, IUserBase user = null)
+        public async Task<Result> TryInsertAsync<TModel>(TModel model, IUserBase user = null)
         {
             var result = new Result();
 
             try
             {
-                result.Id = await InsertAsync(model, txn, user);
+                result.Id = await InsertAsync(model, user: user);
                 result.IsSuccessful = true;
             }
             catch (Exception exc)
@@ -141,13 +164,13 @@ namespace Dapper.CX.Abstract
             return result;
         }
 
-        public async Task<Result> TryDeleteAsync<TModel>(TIdentity id, IDbTransaction txn = null, IUserBase user = null)
+        public async Task<Result> TryDeleteAsync<TModel>(TIdentity id, IUserBase user = null)
         {
             var result = new Result();
 
             try
             {
-                await DeleteAsync<TModel>(id, txn, user);
+                await DeleteAsync<TModel>(id, user: user);
                 result.IsSuccessful = true;
             }
             catch (Exception exc)
@@ -158,13 +181,13 @@ namespace Dapper.CX.Abstract
             return result;
         }
 
-        public async Task<Result> TryUpdateAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
+        public async Task<Result> TryUpdateAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null)
         {
             var result = new Result();
 
             try
             {
-                await UpdateAsync(model, changeTracker, txn, user);
+                await UpdateAsync(model, changeTracker, user: user);
                 result.IsSuccessful = true;
             }
             catch (Exception exc)
