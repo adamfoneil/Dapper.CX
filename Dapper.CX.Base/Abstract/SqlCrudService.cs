@@ -89,6 +89,7 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        #region Try methods
         public async Task<Result> TrySaveAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
         {
             var result = new Result();
@@ -140,13 +141,13 @@ namespace Dapper.CX.Abstract
             return result;
         }
 
-        public async Task<Result> TryDeleteAsync<TModel>(TIdentity id, IDbTransaction txn = null)
+        public async Task<Result> TryDeleteAsync<TModel>(TIdentity id, IDbTransaction txn = null, IUserBase user = null)
         {
             var result = new Result();
 
             try
             {
-                await DeleteAsync<TModel>(id, txn);
+                await DeleteAsync<TModel>(id, txn, user);
                 result.IsSuccessful = true;
             }
             catch (Exception exc)
@@ -173,6 +174,7 @@ namespace Dapper.CX.Abstract
 
             return result;
         }
+        #endregion
 
         public class Result
         {
