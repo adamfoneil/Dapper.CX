@@ -64,6 +64,35 @@ namespace Dapper.CX.Abstract
             return await ExecuteInnerAsync<TModel>((cn) => _crudProvider.MergeAsync(cn, model, changeTracker, user: user), txnAction);
         }
 
+        public async Task<TIdentity> InsertAsync<TModel>(
+            TModel model, IUserBase user = null,
+            Func<IDbConnection, IDbTransaction, Task> txnAction = null)
+        {
+            return await ExecuteInnerAsync<TModel>((cn) => _crudProvider.InsertAsync(cn, model, getIdentity: true, user: user), txnAction);
+        }
+
+        public async Task UpdateAsync<TModel>(
+            TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null,
+            Func<IDbConnection, IDbTransaction, Task> txnAction = null)
+        {
+            await ExecuteInnerAsync<TModel>(async (cn) => 
+            { 
+                await _crudProvider.UpdateAsync(cn, model, changeTracker, user: user); 
+                return default; 
+            }, txnAction);
+        }
+
+        public async Task DeleteAsync<TModel>(
+            TIdentity id, IUserBase user = null,
+            Func<IDbConnection, IDbTransaction, Task> txnAction = null)
+        {
+            await ExecuteInnerAsync<TModel>(async (cn) => 
+            {
+                await _crudProvider.DeleteAsync<TModel>(cn, id, user: user);
+                return default;
+            }, txnAction);
+        }
+
         private async Task<TIdentity> ExecuteInnerAsync<TModel>(
             Func<IDbConnection, Task<TIdentity>> crudAction, 
             Func<IDbConnection, IDbTransaction, Task> txnAction = null)
@@ -86,30 +115,6 @@ namespace Dapper.CX.Abstract
                     }
                 }
             }            
-        }
-
-        public async Task<TIdentity> InsertAsync<TModel>(TModel model, IUserBase user = null)
-        {
-            using (var cn = GetConnection())
-            {
-                return await _crudProvider.InsertAsync(cn, model, getIdentity: true, user: user);
-            }
-        }
-
-        public async Task UpdateAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null)
-        {
-            using (var cn = GetConnection())
-            {
-                await _crudProvider.UpdateAsync(cn, model, changeTracker, user: user);
-            }
-        }
-
-        public async Task DeleteAsync<TModel>(TIdentity id, IUserBase user = null)
-        {
-            using (var cn = GetConnection())
-            {
-                await _crudProvider.DeleteAsync<TModel>(cn, id, user: user);
-            }
         }
 
         #region Try methods
