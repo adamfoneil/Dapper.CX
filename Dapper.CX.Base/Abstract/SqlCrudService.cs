@@ -25,24 +25,12 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task<ChangeTracker<TModel>> GetTrackedAsync<TModel>(TIdentity id, IDbTransaction txn = null, IUserBase user = null)
-        {
-            var result = await GetAsync<TModel>(id, txn, user);
-            return new ChangeTracker<TModel>(result);
-        }    
-
         public async Task<TModel> GetWhereAsync<TModel>(object criteria, IDbTransaction txn = null, IUserBase user = null)
         {
             using (var cn = GetConnection())
             {
                 return await _crudProvider.GetWhereAsync<TModel>(cn, criteria, txn, user);
             }
-        }
-
-        public async Task<ChangeTracker<TModel>> GetTrackedWhereAsync<TModel>(object criteria, IDbTransaction txn = null, IUserBase user = null)
-        {
-            var result = await GetWhereAsync<TModel>(criteria, txn, user);
-            return new ChangeTracker<TModel>(result);
         }
 
         public async Task<bool> ExistsAsync<TModel>(TIdentity id, IDbTransaction txn = null)
