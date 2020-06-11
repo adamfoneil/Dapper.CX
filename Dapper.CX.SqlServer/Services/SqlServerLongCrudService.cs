@@ -6,8 +6,11 @@ namespace Dapper.CX.SqlServer.Services
 {
     public class SqlServerLongCrudService : SqlCrudService<long>
     {
-        public SqlServerLongCrudService(string connectionString) : base(connectionString, new SqlServerLongCrudProvider())
+        private readonly string _connectionString;
+
+        public SqlServerLongCrudService(string connectionString) : base(new SqlServerLongCrudProvider())
         {
+            _connectionString = connectionString;
         }
 
         public override IDbConnection GetConnection()

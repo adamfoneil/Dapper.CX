@@ -6,8 +6,11 @@ namespace Dapper.CX.SqlServer.Services
 {
     public class SqlServerIntCrudService : SqlCrudService<int>
     {
-        public SqlServerIntCrudService(string connectionString) : base(connectionString, new SqlServerIntCrudProvider())
+        private readonly string _connectionString;
+
+        public SqlServerIntCrudService(string connectionString) : base(new SqlServerIntCrudProvider())
         {
+            _connectionString = connectionString;
         }
 
         public override IDbConnection GetConnection()
