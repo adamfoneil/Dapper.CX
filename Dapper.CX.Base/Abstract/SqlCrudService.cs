@@ -1,6 +1,8 @@
 ﻿using AO.Models.Interfaces;
 using Dapper.CX.Classes;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -50,6 +52,11 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        public async Task<TIdentity> SaveAsync<TModel>(TModel model, string[] columnNames)
+        {
+            return await ExecuteInnerAsync<TModel>((cn, txn) => _crudProvider.SaveAsync(cn, model, columnNames));
+        }
+
         public async Task<TIdentity> SaveAsync<TModel>(
             TModel model, ChangeTracker<TModel> changeTracker = null, IUserBase user = null, 
             Func<IDbConnection, IDbTransaction, Task> txnAction = null)
@@ -80,7 +87,7 @@ namespace Dapper.CX.Abstract
                 await _crudProvider.UpdateAsync(cn, model, changeTracker, txn, user); 
                 return default; 
             }, txnAction);
-        }
+        }        
 
         public async Task DeleteAsync<TModel>(
             TIdentity id, IUserBase user = null,
