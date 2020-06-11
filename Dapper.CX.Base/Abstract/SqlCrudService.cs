@@ -105,9 +105,10 @@ namespace Dapper.CX.Abstract
             Func<IDbConnection, IDbTransaction, Task> txnAction = null)
         {
             using (var cn = GetConnection())
-            {                
+            {
+                if (cn.State == ConnectionState.Closed) cn.Open();
                 using (var txn = cn.BeginTransaction())
-                {
+                {                    
                     try
                     {
                         var result = await crudAction.Invoke(cn, txn);
