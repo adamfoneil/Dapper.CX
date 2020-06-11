@@ -1,10 +1,7 @@
 ﻿using AO.Models.Interfaces;
 using Dapper.CX.Classes;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
@@ -54,7 +51,10 @@ namespace Dapper.CX.Abstract
 
         public async Task<TIdentity> SaveAsync<TModel>(TModel model, string[] columnNames)
         {
-            return await ExecuteInnerAsync<TModel>((cn, txn) => _crudProvider.SaveAsync(cn, model, columnNames));
+            using (var cn = GetConnection())
+            {
+                return await _crudProvider.SaveAsync(cn, model, columnNames);
+            }
         }
 
         public async Task<TIdentity> SaveAsync<TModel>(
@@ -105,7 +105,7 @@ namespace Dapper.CX.Abstract
             Func<IDbConnection, IDbTransaction, Task> txnAction = null)
         {
             using (var cn = GetConnection())
-            {
+            {                
                 using (var txn = cn.BeginTransaction())
                 {
                     try
