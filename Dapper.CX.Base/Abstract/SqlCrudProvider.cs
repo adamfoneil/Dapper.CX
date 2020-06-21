@@ -209,17 +209,15 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null, IUserBase user = null)
+        public async Task DeleteAsync<TModel>(IDbConnection connection, TModel model, IDbTransaction txn = null, IUserBase user = null)
         {
+            if (model == null) throw new ArgumentException(nameof(model));
+
+            var id = GetIdentity(model);
+
+            await AllowDeleteAsync(connection, id, txn, user, model);
+
             var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id }, txn);
-            TModel model = default;
-
-            if (user != null && typeof(TModel).ImplementsAny(typeof(ITenantIsolated<TIdentity>), typeof(ITrigger)))
-            {
-                model = await GetAsync<TModel>(connection, id, txn);
-                await VerifyTenantIsolation(connection, user, model, txn);
-            }
-
             Debug.Print(cmd.CommandText);
 
             try
@@ -229,12 +227,34 @@ namespace Dapper.CX.Abstract
                 if (model != null)
                 {
                     await ExecuteDeleteTrigger(connection, model, txn);
-                }                
+                }
             }
             catch (Exception exc)
             {
                 throw new CrudException(cmd, exc);
             }
+        }
+
+        public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null, IUserBase user = null)
+        {            
+            var model = await AllowDeleteAsync<TModel>(connection, id, txn, user);
+
+            await DeleteAsync(connection, model, txn, user);
+        }
+
+        private async Task<TModel> AllowDeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn, IUserBase user, TModel model = default)
+        {            
+            if (user != null && typeof(TModel).ImplementsAny(typeof(ITenantIsolated<TIdentity>), typeof(ITrigger)))
+            {
+                if (model == null)
+                {
+                    model = await GetAsync<TModel>(connection, id, txn);
+                }
+                
+                await VerifyTenantIsolation(connection, user, model, txn);
+            }
+
+            return model;
         }
 
         private async static Task ExecuteDeleteTrigger<TModel>(IDbConnection connection, TModel model, IDbTransaction txn = null)

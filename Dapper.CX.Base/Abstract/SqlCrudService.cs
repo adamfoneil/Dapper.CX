@@ -87,7 +87,18 @@ namespace Dapper.CX.Abstract
                 await _crudProvider.UpdateAsync(cn, model, changeTracker, txn, user); 
                 return default; 
             }, txnAction);
-        }        
+        }
+
+        public async Task DeleteAsync<TModel>(
+            TModel model, IUserBase user = null,
+            Func<IDbConnection, IDbTransaction, Task> txnAction = null)
+        {
+            await ExecuteInnerAsync<TModel>(async (cn, txn) =>
+            {
+                await _crudProvider.DeleteAsync(cn, model, txn, user);
+                return default;
+            }, txnAction);
+        }
 
         public async Task DeleteAsync<TModel>(
             TIdentity id, IUserBase user = null,
