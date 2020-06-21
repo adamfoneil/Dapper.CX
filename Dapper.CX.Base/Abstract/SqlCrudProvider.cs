@@ -215,7 +215,12 @@ namespace Dapper.CX.Abstract
 
             var id = GetIdentity(model);
 
-            await AllowDeleteAsync(connection, id, txn, user, model);
+            await DeleteAsync<TModel>(connection, id, txn, user);
+        }
+
+        public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null, IUserBase user = null)
+        {            
+            var model = await AllowDeleteAsync<TModel>(connection, id, txn, user);
 
             var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id }, txn);
             Debug.Print(cmd.CommandText);
@@ -233,13 +238,6 @@ namespace Dapper.CX.Abstract
             {
                 throw new CrudException(cmd, exc);
             }
-        }
-
-        public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null, IUserBase user = null)
-        {            
-            var model = await AllowDeleteAsync<TModel>(connection, id, txn, user);
-
-            await DeleteAsync(connection, model, txn, user);
         }
 
         private async Task<TModel> AllowDeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn, IUserBase user, TModel model = default)

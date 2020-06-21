@@ -65,7 +65,7 @@ namespace Tests.Base
         }
 
         [TestMethod]
-        public void Delete()
+        public void DeleteByModel()
         {
             var dummyValue = new string[] { "this", "that" };
             var emp = new Employee() 
@@ -83,6 +83,28 @@ namespace Tests.Base
                 Assert.IsTrue(emp.Something.SequenceEqual(dummyValue));
                 Assert.IsTrue(!provider.ExistsAsync<Employee>(cn, emp.Id).Result);
             }
+        }
+
+        [TestMethod]
+        public void DeleteById()
+        {
+            using (var cn = GetConnection())
+            {
+                var emp = new Employee()
+                {
+                    FirstName = "Loozy",
+                    LastName = "Vorschindle"                    
+                };
+
+                var provider = new SqlServerIntCrudProvider();
+                var id = provider.InsertAsync(cn, emp).Result;
+
+                provider.DeleteAsync<Employee>(cn, id).Wait();
+
+                emp = provider.GetAsync<Employee>(cn, id).Result;
+                Assert.IsNull(emp);
+            }
+
         }
     }
 }
