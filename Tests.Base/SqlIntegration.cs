@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlServer.LocalDb;
 using System.Data;
+using System.Linq;
 using Tests.Models;
 
 namespace Tests.Base
@@ -60,6 +61,27 @@ namespace Tests.Base
             {                
                 var result = provider.Insert(cn, emp, getIdentity: false);
                 Assert.IsTrue(result == default);
+            }
+        }
+
+        [TestMethod]
+        public void Delete()
+        {
+            var dummyValue = new string[] { "this", "that" };
+            var emp = new Employee() 
+            { 
+                FirstName = "Loozy", 
+                LastName = "Vorschindle",
+                Something = dummyValue
+            };
+            var provider = new SqlServerIntCrudProvider();
+
+            using (var cn = GetConnection())
+            {
+                var result = provider.Insert(cn, emp);
+                provider.DeleteAsync(cn, emp).Wait();
+                Assert.IsTrue(emp.Something.SequenceEqual(dummyValue));
+                Assert.IsTrue(!provider.ExistsAsync<Employee>(cn, emp.Id).Result);
             }
         }
     }
