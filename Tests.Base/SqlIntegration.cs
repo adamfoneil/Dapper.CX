@@ -82,6 +82,7 @@ namespace Tests.Base
                 provider.DeleteAsync(cn, emp).Wait();
                 Assert.IsTrue(emp.Something.SequenceEqual(dummyValue));
                 Assert.IsTrue(!provider.ExistsAsync<Employee>(cn, emp.Id).Result);
+                Assert.IsTrue(emp.Value == OtherEnum.Other); // set by ITrigger
             }
         }
 

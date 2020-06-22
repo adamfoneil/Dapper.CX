@@ -1,8 +1,12 @@
 ﻿using AO.Models;
+using AO.Models.Enums;
+using AO.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Tests.Models
 {
@@ -20,7 +24,7 @@ namespace Tests.Models
     }
 
     [Identity(nameof(Id))]
-    public class Employee
+    public class Employee : ITrigger
     {
         [Key]
         public string FirstName { get; set; }
@@ -37,5 +41,16 @@ namespace Tests.Models
 
         public IEnumerable<string> Something { get; set; }
         public IEnumerable<DateTime> SomethingElse { get; set; }
+
+        public async Task RowDeletedAsync(IDbConnection connection, IDbTransaction txn = null)
+        {
+            Value = OtherEnum.Other;
+            await Task.CompletedTask;
+        }
+
+        public async Task RowSavedAsync(IDbConnection connection, SaveAction saveAction, IDbTransaction txn = null)
+        {
+            await Task.CompletedTask;
+        }
     }
 }

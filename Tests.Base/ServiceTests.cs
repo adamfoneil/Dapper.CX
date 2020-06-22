@@ -10,6 +10,17 @@ namespace Tests.Base
     [TestClass]
     public class ServiceTests
     {
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            LocalDb.TryDropDatabase("DapperCX", out _);
+
+            using (var cn = LocalDb.GetConnection("DapperCX"))
+            {
+                LocalDb.ExecuteInitializeStatements(cn, DbObjects.CreateObjects());
+            }
+        }
+
         [TestMethod]
         public void EmployeeBasicActions()
         {

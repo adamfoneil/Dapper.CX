@@ -215,24 +215,30 @@ namespace Dapper.CX.Abstract
 
             var id = GetIdentity(model);
 
-            await DeleteAsync<TModel>(connection, id, txn, user);
+            await AllowDeleteAsync(connection, id, txn, user, model);
+            
+            await DeleteInnerAsync<TModel>(connection, txn, id);
+
+            await ExecuteDeleteTrigger(connection, model, txn);
         }
 
         public async Task DeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn = null, IUserBase user = null)
-        {            
+        {
             var model = await AllowDeleteAsync<TModel>(connection, id, txn, user);
 
+            await DeleteInnerAsync<TModel>(connection, txn, id);
+
+            await ExecuteDeleteTrigger(connection, model, txn);
+        }
+
+        private async Task DeleteInnerAsync<TModel>(IDbConnection connection, IDbTransaction txn, TIdentity id)
+        {
             var cmd = new CommandDefinition(GetDeleteStatement(typeof(TModel)), new { id }, txn);
             Debug.Print(cmd.CommandText);
 
             try
             {
                 await connection.ExecuteAsync(cmd);
-
-                if (model != null)
-                {
-                    await ExecuteDeleteTrigger(connection, model, txn);
-                }
             }
             catch (Exception exc)
             {
