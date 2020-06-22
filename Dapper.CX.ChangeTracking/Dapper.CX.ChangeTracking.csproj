@@ -10,14 +10,14 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/adamfoneil/Dapper.CX</RepositoryUrl>
     <PackageProjectUrl>https://github.com/adamfoneil/Dapper.CX/wiki/Using-ChangeTracker</PackageProjectUrl>
-    <Version>1.0.9</Version>
+    <Version>1.0.10</Version>
     <PackageReleaseNotes></PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AO.Models" Version="1.1.3" />
     <PackageReference Include="AO.ModelSync.Library" Version="2.1.0" />
-    <PackageReference Include="Dapper.CX.Base" Version="1.1.7" />
+    <PackageReference Include="Dapper.CX.Base" Version="1.1.9" />
     <PackageReference Include="Dapper.CX.SqlServer" Version="1.1.7" />
   </ItemGroup>
 
