@@ -131,7 +131,7 @@ namespace Dapper.CX.Abstract
 
         public async Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, bool getIdentity = true, IDbTransaction txn = null, IUserBase user = null)
         {
-            await ValidateInternal(connection, model);
+            await ValidateInternal(connection, model, txn);
 
             AuditRow(model, SaveAction.Insert, user);
 
@@ -174,7 +174,7 @@ namespace Dapper.CX.Abstract
 
         public async Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
         {
-            await ValidateInternal(connection, model);
+            await ValidateInternal(connection, model, txn);
 
             AuditRow(model, SaveAction.Update, user);
 
