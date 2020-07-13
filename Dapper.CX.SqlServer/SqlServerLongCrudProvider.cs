@@ -5,9 +5,6 @@ namespace Dapper.CX.SqlServer
 {
     public class SqlServerLongCrudProvider : SqlServerCrudProvider<long>
     {
-        protected override long ConvertIdentity(object identity)
-        {
-            return Convert.ToInt64(identity);
-        }
+        protected override long ConvertIdentity(object identity) => Convert.ToInt64(identity);
     }
 }

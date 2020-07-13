@@ -2,21 +2,29 @@
 using Dapper.CX.Abstract;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace Dapper.CX.SqlServer.Services
 {
-    public abstract class SqlServerIntCrudService<TUser> : SqlCrudService<int, TUser> where TUser : IUserBase
+    public class SqlServerIntCrudService<TUser> : SqlCrudService<int, TUser> where TUser : IUserBase
     {
         private readonly string _connectionString;        
 
         public SqlServerIntCrudService(string connectionString, string userName) : base(new SqlServerIntCrudProvider(), userName)
         {
             _connectionString = connectionString;            
-        }        
-        
-        public override IDbConnection GetConnection()
+        }
+
+        public override IDbConnection GetConnection() => new SqlConnection(_connectionString);
+
+        protected override TUser QueryUser(IDbConnection connection, string userName)
         {
-            return new SqlConnection(_connectionString);
+            throw new System.NotImplementedException();
+        }
+
+        protected override Task UpdateUserInnerAsync(IDbConnection connection, TUser user)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
