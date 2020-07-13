@@ -1,16 +1,17 @@
-﻿using Dapper.CX.Abstract;
+﻿using AO.Models.Interfaces;
+using Dapper.CX.Abstract;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
 namespace Dapper.CX.SqlServer.Services
 {
-    public class SqlServerLongCrudService : SqlCrudService<long>
+    public abstract class SqlServerLongCrudService<TUser> : SqlCrudService<long, TUser> where TUser : IUserBase
     {
-        private readonly string _connectionString;
+        private readonly string _connectionString;        
 
-        public SqlServerLongCrudService(string connectionString) : base(new SqlServerLongCrudProvider())
+        public SqlServerLongCrudService(string connectionString, string userName) : base(new SqlServerLongCrudProvider(), userName)
         {
-            _connectionString = connectionString;
+            _connectionString = connectionString;            
         }
 
         public override IDbConnection GetConnection()

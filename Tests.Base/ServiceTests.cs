@@ -1,7 +1,9 @@
-﻿using Dapper.CX.Abstract;
+﻿using AO.Models.Interfaces;
+using Dapper.CX.Abstract;
 using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlServer.LocalDb;
+using System;
 using System.Data;
 using Tests.Models;
 
@@ -61,12 +63,29 @@ namespace Tests.Base
         }
     }
 
-    public class TestService : SqlCrudService<int>
+    public class TestService : SqlCrudService<int, DummyUser>
     {
-        public TestService() : base(new SqlServerIntCrudProvider())
+        public TestService() : base(new SqlServerIntCrudProvider(), "adamo")
         {
         }
 
         public override IDbConnection GetConnection() => LocalDb.GetConnection("DapperCX");
+
+        protected override DummyUser QueryUser(IDbConnection connection, string userName)
+        {
+            return new DummyUser(userName);
+        }
+    }
+
+    public class DummyUser : IUserBase
+    {
+        public DummyUser(string userName)
+        {
+            Name = userName;
+        }
+
+        public string Name { get; set; }
+
+        public DateTime LocalTime => DateTime.UtcNow;
     }
 }
