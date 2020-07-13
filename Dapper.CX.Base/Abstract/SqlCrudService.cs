@@ -31,6 +31,16 @@ namespace Dapper.CX.Abstract
 
         protected abstract TUser QueryUser(IDbConnection connection, string userName);
 
+        protected abstract Task UpdateUserInnerAsync(IDbConnection connection, TUser user);
+
+        public async Task UpdateUserAsync(TUser user)
+        {
+            using (var cn = GetConnection())
+            {
+                await UpdateUserInnerAsync(cn, user);
+            }
+        }
+
         public async Task<TModel> GetAsync<TModel>(TIdentity id)
         {
             using (var cn = GetConnection())
