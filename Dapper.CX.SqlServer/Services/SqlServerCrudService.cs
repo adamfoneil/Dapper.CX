@@ -12,6 +12,6 @@ namespace Dapper.CX.SqlServer.Services
         {
         }
 
-        public override IDbConnection GetConnection() => new SqlConnection(_connectionString);        
+        public override IDbConnection GetConnection() => new SqlConnection(_connectionString);
     }
 }

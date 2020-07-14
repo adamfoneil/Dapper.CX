@@ -78,9 +78,9 @@ namespace Dapper.CX.SqlServer
                 if (!kp.Key.Equals(omitIdentityColumn))
                 {
                     result.Add(kp.Key, kp.Value);
-                }                
+                }
             }
-            return result;            
+            return result;
         }
 
         protected override string SelectIdentityCommand => "SELECT SCOPE_IDENTITY();";

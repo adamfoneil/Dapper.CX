@@ -31,7 +31,7 @@ namespace Dapper.CX.Abstract
         /// <summary>
         /// Types supported by this handler when mapping to an object.
         /// </summary>
-        protected abstract Type[] SupportedTypes { get; }      
+        protected abstract Type[] SupportedTypes { get; }
 
         public TIdentity GetIdentity<TModel>(TModel model)
         {
@@ -221,7 +221,7 @@ namespace Dapper.CX.Abstract
             var id = GetIdentity(model);
 
             await AllowDeleteAsync(connection, id, txn, user, model);
-            
+
             await DeleteInnerAsync<TModel>(connection, txn, id);
 
             await ExecuteDeleteTrigger(connection, model, txn);
@@ -252,14 +252,14 @@ namespace Dapper.CX.Abstract
         }
 
         private async Task<TModel> AllowDeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn, IUserBase user, TModel model = default)
-        {            
+        {
             if (user != null && typeof(TModel).ImplementsAny(typeof(ITenantIsolated<TIdentity>), typeof(ITrigger)))
             {
                 if (model == null)
                 {
                     model = await GetAsync<TModel>(connection, id, txn);
                 }
-                
+
                 await VerifyTenantIsolation(connection, user, model, txn);
             }
 
