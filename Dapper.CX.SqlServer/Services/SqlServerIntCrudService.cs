@@ -2,7 +2,6 @@
 using Dapper.CX.Abstract;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Threading.Tasks;
 
 namespace Dapper.CX.SqlServer.Services
 {
@@ -15,16 +14,6 @@ namespace Dapper.CX.SqlServer.Services
             _connectionString = connectionString;            
         }
 
-        public override IDbConnection GetConnection() => new SqlConnection(_connectionString);
-
-        protected override TUser QueryUser(IDbConnection connection, string userName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override Task UpdateUserInnerAsync(IDbConnection connection, TUser user)
-        {
-            throw new System.NotImplementedException();
-        }
+        public override IDbConnection GetConnection() => new SqlConnection(_connectionString);        
     }
 }

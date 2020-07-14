@@ -19,7 +19,7 @@ namespace Dapper.CX.Abstract
             {
                 using (var cn = GetConnection())
                 {
-                    CurrentUser = QueryUser(cn, userName);
+                    CurrentUser = CrudProvider.GetWhere<TUser>(cn, new { userName });
                 }
             }
         }
@@ -27,17 +27,13 @@ namespace Dapper.CX.Abstract
         public abstract IDbConnection GetConnection();
 
         public string UserName { get; }
-        public TUser CurrentUser { get; }
+        public TUser CurrentUser { get; }        
 
-        protected abstract TUser QueryUser(IDbConnection connection, string userName);
-
-        protected abstract Task UpdateUserInnerAsync(IDbConnection connection, TUser user);
-
-        public async Task UpdateUserAsync(TUser user)
+        public async Task UpdateUserAsync()
         {
             using (var cn = GetConnection())
             {
-                await UpdateUserInnerAsync(cn, user);
+                await CrudProvider.UpdateAsync(cn, CurrentUser);
             }
         }
 
