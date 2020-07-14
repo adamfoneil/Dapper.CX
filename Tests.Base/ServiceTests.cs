@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlServer.LocalDb;
 using System;
 using System.Data;
+using System.Data.Common;
 using Tests.Models;
 
 namespace Tests.Base
@@ -65,13 +66,15 @@ namespace Tests.Base
 
     public class TestService : SqlCrudService<int, DummyUser>
     {
-        public TestService() : base(new SqlServerIntCrudProvider(), "adamo")
+        const string dbName = "DapperCX";
+
+        public TestService() : base(LocalDb.GetConnectionString(dbName), new SqlServerIntCrudProvider(), "adamo")
         {
         }
 
-        public override IDbConnection GetConnection() => LocalDb.GetConnection("DapperCX");
+        public override IDbConnection GetConnection() => LocalDb.GetConnection(dbName);
 
-        protected override DummyUser QueryUser(IDbConnection connection, string userName)
+        protected new DummyUser QueryUser(IDbConnection connection, string userName)
         {
             return new DummyUser(userName);
         }

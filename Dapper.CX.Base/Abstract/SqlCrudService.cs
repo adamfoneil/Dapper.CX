@@ -25,10 +25,12 @@ namespace Dapper.CX.Abstract
             {
                 using (var cn = GetConnection())
                 {
-                    CurrentUser = CrudProvider.GetWhere<TUser>(cn, new { UserName });
+                    CurrentUser = QueryUser(cn, UserName);
                 }
             }
         }
+
+        protected virtual TUser QueryUser(IDbConnection connection, string userName) => CrudProvider.GetWhere<TUser>(connection, new { userName });
 
         public abstract IDbConnection GetConnection();
 
