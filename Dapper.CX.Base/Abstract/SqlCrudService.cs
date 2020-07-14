@@ -9,17 +9,23 @@ namespace Dapper.CX.Abstract
     public abstract class SqlCrudService<TIdentity, TUser> where TUser : IUserBase
     {
         protected readonly SqlCrudProvider<TIdentity> CrudProvider;
+        protected readonly string _connectionString;
 
-        public SqlCrudService(SqlCrudProvider<TIdentity> crudProvider, string userName)
-        {            
+        public SqlCrudService(string connectionString, SqlCrudProvider<TIdentity> crudProvider, string userName)
+        {
+            _connectionString = connectionString;
             CrudProvider = crudProvider;
             UserName = userName;
+            QueryCurrentUser();
+        }
 
-            if (!string.IsNullOrEmpty(userName))
+        protected void QueryCurrentUser()
+        {
+            if (!string.IsNullOrEmpty(UserName))
             {
                 using (var cn = GetConnection())
                 {
-                    CurrentUser = CrudProvider.GetWhere<TUser>(cn, new { userName });
+                    CurrentUser = CrudProvider.GetWhere<TUser>(cn, new { UserName });
                 }
             }
         }
@@ -27,7 +33,9 @@ namespace Dapper.CX.Abstract
         public abstract IDbConnection GetConnection();
 
         public string UserName { get; }
-        public TUser CurrentUser { get; }        
+        public TUser CurrentUser { get; private set; }
+
+        public bool HasCurrentUser => CurrentUser != null;
 
         public async Task UpdateUserAsync()
         {

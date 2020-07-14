@@ -13,7 +13,7 @@ namespace Dapper.CX.SqlServer.AspNetCore
             services.AddScoped((sp) =>
             {
                 var http = sp.GetRequiredService<IHttpContextAccessor>();
-                return new SqlServerIntCrudService<TUser>(connectionString, http.HttpContext.User.Identity.Name);                
+                return new SqlServerIntCrudService<TUser>(connectionString, http.HttpContext.User.Identity.Name);
             });
         }
 
