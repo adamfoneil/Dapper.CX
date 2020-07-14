@@ -33,7 +33,7 @@ namespace Tests.SqlServer
 
         protected override SqlCrudProvider<int> GetProvider()
         {
-            return new SqlServerIntCrudProvider();
+            return new SqlServerCrudProvider<int>(id => Convert.ToInt32(id));            
         }
 
         [TestMethod]

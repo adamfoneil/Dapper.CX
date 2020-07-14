@@ -11,7 +11,7 @@ namespace Dapper.CX.Abstract
         protected readonly SqlCrudProvider<TIdentity> CrudProvider;
         protected readonly string _connectionString;
 
-        public SqlCrudService(string connectionString, SqlCrudProvider<TIdentity> crudProvider, string userName)
+        public SqlCrudService(string connectionString, string userName, SqlCrudProvider<TIdentity> crudProvider)
         {
             _connectionString = connectionString;
             CrudProvider = crudProvider;

@@ -22,12 +22,9 @@
     <Compile Include="..\Dapper.CX.Base\Extensions\ConnectionExtensions.cs" Link="Base\Extensions\ConnectionExtensions.cs" />
     <Compile Include="..\Dapper.CX.Base\Extensions\ModelClassHelper.cs" Link="Base\Extensions\ModelClassHelper.cs" />
     <Compile Include="..\Dapper.CX.Base\Extensions\ReflectionHelper.cs" Link="Base\Extensions\ReflectionHelper.cs" />
-    <Compile Include="..\Dapper.CX.SqlServer\Abstract\SqlServerCrudProvider.cs" Link="SqlServer\Abstract\SqlServerCrudProvider.cs" />
-    <Compile Include="..\Dapper.CX.SqlServer\Services\SqlServerIntCrudService.cs" Link="Services\SqlServerIntCrudService.cs" />
-    <Compile Include="..\Dapper.CX.SqlServer\Services\SqlServerLongCrudService.cs" Link="Services\SqlServerLongCrudService.cs" />
+    <Compile Include="..\Dapper.CX.SqlServer\Services\SqlServerCrudService.cs" Link="Services\SqlServerCrudService.cs" />
     <Compile Include="..\Dapper.CX.SqlServer\SqlServerCmd.cs" Link="SqlServer\SqlServerCmd.cs" />
-    <Compile Include="..\Dapper.CX.SqlServer\SqlServerIntCrudProvider.cs" Link="SqlServer\SqlServerIntCrudProvider.cs" />
-    <Compile Include="..\Dapper.CX.SqlServer\SqlServerLongCrudProvider.cs" Link="SqlServer\SqlServerLongCrudProvider.cs" />
+    <Compile Include="..\Dapper.CX.SqlServer\SqlServerCrudProvider.cs" Link="SqlServer\SqlServerCrudProvider.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,7 +37,6 @@
     <Folder Include="Base\Exceptions\" />
     <Folder Include="Base\Extensions\" />
     <Folder Include="Services\" />
-    <Folder Include="SqlServer\Abstract\" />
   </ItemGroup>
 
   <ItemGroup>

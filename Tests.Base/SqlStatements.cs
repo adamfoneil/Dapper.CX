@@ -1,5 +1,6 @@
 using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using Tests.Extensions;
 using Tests.Models;
 
@@ -8,10 +9,12 @@ namespace Tests.Base
     [TestClass]
     public class SqlStatements
     {
+        private SqlServerCrudProvider<int> GetProvider() => new SqlServerCrudProvider<int>(id => Convert.ToInt32(id));
+
         [TestMethod]
         public void InsertWithColumns()
         {
-            var provider = new SqlServerIntCrudProvider();
+            var provider = GetProvider();
             string result = provider.GetInsertStatement(typeof(Employee), new string[] { "FirstName", "LastName" });
             Assert.IsTrue(result.Equals(
                 @"INSERT INTO [Employee] (
@@ -24,7 +27,7 @@ namespace Tests.Base
         [TestMethod]
         public void UpdateWithColumns()
         {
-            var provider = new SqlServerIntCrudProvider();
+            var provider = GetProvider();
             string result = provider.GetUpdateStatement<Employee>(columnNames: new string[] { "FirstName", "LastName" });
             Assert.IsTrue(result.Equals(
                 @"UPDATE [Employee] SET 
@@ -36,7 +39,7 @@ namespace Tests.Base
         [TestMethod]
         public void InsertStatementBase()
         {
-            string sql = new SqlServerIntCrudProvider().GetInsertStatement(typeof(Employee));
+            string sql = GetProvider().GetInsertStatement(typeof(Employee));
             const string result =
                 @"INSERT INTO [Employee] (
                     [FirstName], [LastName], [HireDate], [TermDate], [IsExempt], [Timestamp], [Status], [Value]
@@ -50,7 +53,7 @@ namespace Tests.Base
         [TestMethod]
         public void UpdateStatementBase()
         {
-            string sql = new SqlServerIntCrudProvider().GetUpdateStatement<Employee>();
+            string sql = GetProvider().GetUpdateStatement<Employee>();
             const string result =
                 @"UPDATE [Employee] SET 
                     [FirstName]=@FirstName, [LastName]=@LastName, [HireDate]=@HireDate, [TermDate]=@TermDate, [IsExempt]=@IsExempt, [Timestamp]=@Timestamp, [Status]=@Status, [Value]=@Value

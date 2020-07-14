@@ -68,16 +68,13 @@ namespace Tests.Base
     {
         const string dbName = "DapperCX";
 
-        public TestService() : base(LocalDb.GetConnectionString(dbName), new SqlServerIntCrudProvider(), "adamo")
+        public TestService() : base(LocalDb.GetConnectionString(dbName), "adamo", new SqlServerCrudProvider<int>(id => Convert.ToInt32(id)))
         {
         }
 
         public override IDbConnection GetConnection() => LocalDb.GetConnection(dbName);
 
-        protected new DummyUser QueryUser(IDbConnection connection, string userName)
-        {
-            return new DummyUser(userName);
-        }
+        protected override DummyUser QueryUser(IDbConnection connection, string userName) => new DummyUser(userName);
     }
 
     public class DummyUser : IUserBase

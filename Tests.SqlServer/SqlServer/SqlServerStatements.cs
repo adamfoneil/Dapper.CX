@@ -11,7 +11,7 @@ namespace Tests.SqlServer
     [TestClass]
     public class SqlServerStatements
     {
-        protected SqlCrudProvider<int> GetProvider() => new SqlServerIntCrudProvider();
+        protected SqlCrudProvider<int> GetProvider() => new SqlServerCrudProvider<int>(id => Convert.ToInt32(id));
 
         [TestMethod]
         public void InsertStatement()

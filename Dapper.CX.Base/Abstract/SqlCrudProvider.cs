@@ -17,6 +17,13 @@ namespace Dapper.CX.Abstract
 {
     public abstract partial class SqlCrudProvider<TIdentity>
     {
+        private readonly Func<object, TIdentity> _convertIdentity;
+
+        public SqlCrudProvider(Func<object, TIdentity> convertIdentity)
+        {
+            _convertIdentity = convertIdentity;
+        }
+
         protected abstract string SelectIdentityCommand { get; }
         protected abstract char StartDelimiter { get; }
         protected abstract char EndDelimiter { get; }
@@ -24,15 +31,13 @@ namespace Dapper.CX.Abstract
         /// <summary>
         /// Types supported by this handler when mapping to an object.
         /// </summary>
-        protected abstract Type[] SupportedTypes { get; }
-
-        protected abstract TIdentity ConvertIdentity(object identity);
+        protected abstract Type[] SupportedTypes { get; }      
 
         public TIdentity GetIdentity<TModel>(TModel model)
         {
             var idProperty = typeof(TModel).GetIdentityProperty();
             object idValue = idProperty.GetValue(model);
-            return ConvertIdentity(idValue);
+            return _convertIdentity(idValue);
         }
 
         public bool IsNew<TModel>(TModel model)

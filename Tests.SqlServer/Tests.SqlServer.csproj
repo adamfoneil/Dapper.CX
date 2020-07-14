@@ -7,10 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Dapper.CX.SqlServer\Abstract\SqlServerCrudProvider.cs" Link="Linked\SqlServerCrudProvider.cs" />
     <Compile Include="..\Dapper.CX.SqlServer\SqlServerCmd.cs" Link="Linked\SqlServerCmd.cs" />
-    <Compile Include="..\Dapper.CX.SqlServer\SqlServerIntCrudProvider.cs" Link="Linked\SqlServerIntCrudProvider.cs" />
-    <Compile Include="..\Dapper.CX.SqlServer\SqlServerLongCrudProvider.cs" Link="Linked\SqlServerLongCrudProvider.cs" />
+    <Compile Include="..\Dapper.CX.SqlServer\SqlServerCrudProvider.cs" Link="Linked\SqlServerCrudProvider.cs" />
   </ItemGroup>
 
   <ItemGroup>

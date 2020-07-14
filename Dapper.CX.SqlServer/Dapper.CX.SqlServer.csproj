@@ -49,6 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Abstract\" />
     <Folder Include="Base\Abstract\" />
     <Folder Include="Base\Classes\" />
     <Folder Include="Base\Exceptions\" />

@@ -8,51 +8,43 @@ namespace Dapper.CX.SqlServer.Extensions.Long
     public static partial class SqlServerLongCrud
     {
         public static TModel Get<TModel>(this IDbConnection connection, long id, IDbTransaction txn = null)
-        {
-            var provider = new SqlServerLongCrudProvider();
-            return provider.Get<TModel>(connection, id, txn);
+        {            
+            return GetProvider().Get<TModel>(connection, id, txn);
         }
 
         public static TModel GetWhere<TModel>(this IDbConnection connection, object criteria, IDbTransaction txn = null)
-        {
-            var provider = new SqlServerLongCrudProvider();
-            return provider.GetWhere<TModel>(connection, criteria, txn);
+        {            
+            return GetProvider().GetWhere<TModel>(connection, criteria, txn);
         }
 
         public static void Delete<TModel>(this IDbConnection connection, int id, IDbTransaction txn = null)
-        {
-            var provider = new SqlServerLongCrudProvider();
-            provider.Delete<TModel>(connection, id, txn);
+        {            
+            GetProvider().Delete<TModel>(connection, id, txn);
         }
 
         public static long Insert<TModel>(this IDbConnection connection, TModel model, bool getIdentity = true, IDbTransaction txn = null)
-        {
-            var provider = new SqlServerLongCrudProvider();
-            return provider.Insert(connection, model, getIdentity, txn);
+        {            
+            return GetProvider().Insert(connection, model, getIdentity, txn);
         }
 
         public static void Update<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
-        {
-            var provider = new SqlServerLongCrudProvider();
-            provider.Update(connection, model, changeTracker, txn);
+        {            
+            GetProvider().Update(connection, model, changeTracker, txn);
         }
 
         public static void Update<TModel>(this IDbConnection connection, TModel model, params Expression<Func<TModel, object>>[] setColumns)
-        {
-            var provider = new SqlServerLongCrudProvider();
-            provider.Update(connection, model, setColumns);
+        {            
+            GetProvider().Update(connection, model, setColumns);
         }
 
         public static void Update<TModel>(this IDbConnection connection, TModel model, IDbTransaction txn, params Expression<Func<TModel, object>>[] setColumns)
-        {
-            var provider = new SqlServerLongCrudProvider();
-            provider.Update(connection, model, txn, setColumns);
+        {            
+            GetProvider().Update(connection, model, txn, setColumns);
         }
 
         public static long Save<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null)
-        {
-            var provider = new SqlServerLongCrudProvider();
-            return provider.Save(connection, model, changeTracker, txn);
+        {            
+            return GetProvider().Save(connection, model, changeTracker, txn);
         }
     }
 }

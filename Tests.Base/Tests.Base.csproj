@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Dapper.CX.SqlServer\Abstract\SqlServerCrudProvider.cs" Link="Linked\SqlServerCrudProvider.cs" />
-    <Compile Include="..\Dapper.CX.SqlServer\SqlServerIntCrudProvider.cs" Link="Linked\SqlServerIntCrudProvider.cs" />
+    <Compile Include="..\Dapper.CX.SqlServer\SqlServerCrudProvider.cs" Link="Linked\SqlServerCrudProvider.cs" />
     <Compile Include="..\Tests.SqlServer\Extensions\StringExtensions.cs" Link="Linked\Extensions\StringExtensions.cs" />
     <Compile Include="..\Tests.SqlServer\Models\DbObjects.cs" Link="Linked\Models\DbObjects.cs" />
     <Compile Include="..\Tests.SqlServer\Models\Employee.cs" Link="Linked\Models\Employee.cs" />

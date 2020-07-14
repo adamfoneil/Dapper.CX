@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SampleApp.Data;
 using SampleApp.RazorPages.Data;
+using System;
 
 namespace SampleApp.RazorPages
 {
@@ -33,7 +34,7 @@ namespace SampleApp.RazorPages
             
             services.AddRazorPages();
 
-            services.AddDapperCXInt<UserProfile>(connectionString);
+            services.AddDapperCX<int, UserProfile>(connectionString, (id) => Convert.ToInt32(id));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

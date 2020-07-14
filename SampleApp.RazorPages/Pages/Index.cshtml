@@ -1,6 +1,6 @@
 ﻿@page
 @model IndexModel
-@inject SqlServerIntCrudService<UserProfile> Data;
+@inject SqlServerCrudService<int, UserProfile> Data;
  
 @{
     ViewData["Title"] = "Home page";

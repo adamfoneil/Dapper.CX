@@ -1,10 +1,14 @@
 ﻿using Dapper.CX.Abstract;
 using System;
 
-namespace Dapper.CX.SqlServer.Abstract
+namespace Dapper.CX.SqlServer
 {
-    public abstract class SqlServerCrudProvider<TIdentity> : SqlCrudProvider<TIdentity>
+    public class SqlServerCrudProvider<TIdentity> : SqlCrudProvider<TIdentity>
     {
+        public SqlServerCrudProvider(Func<object, TIdentity> convertIdentity) : base(convertIdentity)
+        {
+        }
+
         protected override char StartDelimiter => '[';
         protected override char EndDelimiter => ']';
         protected override string SelectIdentityCommand => "SELECT SCOPE_IDENTITY();";

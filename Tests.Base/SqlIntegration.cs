@@ -1,6 +1,7 @@
 ﻿using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlServer.LocalDb;
+using System;
 using System.Data;
 using System.Linq;
 using Tests.Models;
@@ -10,6 +11,8 @@ namespace Tests.Base
     [TestClass]
     public class SqlIntegration
     {
+        private SqlServerCrudProvider<int> GetProvider() => new SqlServerCrudProvider<int>(id => Convert.ToInt32(id));
+
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
@@ -30,7 +33,7 @@ namespace Tests.Base
         public void UpdateWithLambda()
         {
             var emp = new Employee() { FirstName = "Janzy", LastName = "Horzenyadle", Id = 249578 };
-            var provider = new SqlServerIntCrudProvider();
+            var provider = GetProvider();
 
             using (var cn = GetConnection())
             {
@@ -42,7 +45,7 @@ namespace Tests.Base
         public void PlainInsertAsync()
         {
             var emp = new Employee() { FirstName = "Janzy", LastName = "Horzenyadle" };
-            var provider = new SqlServerIntCrudProvider();
+            var provider = GetProvider();
 
             using (var cn = GetConnection())
             {                
@@ -55,7 +58,7 @@ namespace Tests.Base
         public void PlainInsert()
         {
             var emp = new Employee() { FirstName = "Janzy", LastName = "Horzenyadle" };
-            var provider = new SqlServerIntCrudProvider();
+            var provider = GetProvider();
 
             using (var cn = GetConnection())
             {                
@@ -74,7 +77,7 @@ namespace Tests.Base
                 LastName = "Vorschindle",
                 Something = dummyValue
             };
-            var provider = new SqlServerIntCrudProvider();
+            var provider = GetProvider();
 
             using (var cn = GetConnection())
             {
@@ -97,7 +100,7 @@ namespace Tests.Base
                     LastName = "Vorschindle"                    
                 };
 
-                var provider = new SqlServerIntCrudProvider();
+                var provider = GetProvider();
                 var id = provider.InsertAsync(cn, emp).Result;
 
                 provider.DeleteAsync<Employee>(cn, id).Wait();

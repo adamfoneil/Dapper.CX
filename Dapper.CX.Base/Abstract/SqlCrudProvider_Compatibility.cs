@@ -17,7 +17,7 @@ namespace Dapper.CX.Abstract
             {
                 var cmd = GetInsertStatement(typeof(TModel), columnNames);
                 object id = await connection.ExecuteScalarAsync(cmd, @object);
-                SetIdentity(@object, ConvertIdentity(id));
+                SetIdentity(@object, _convertIdentity(id));
             }
             else
             {
