@@ -5,7 +5,7 @@ using System.Data;
 
 namespace Dapper.CX.SqlServer.Services
 {
-    public abstract class SqlServerLongCrudService<TUser> : SqlCrudService<long, TUser> where TUser : IUserBase
+    public class SqlServerLongCrudService<TUser> : SqlCrudService<long, TUser> where TUser : IUserBase
     {
         private readonly string _connectionString;        
 
