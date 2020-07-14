@@ -47,6 +47,19 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        public async Task<Result> TryUpdateUserAsync()
+        {
+            try
+            {
+                await UpdateUserAsync();
+                return new Result() { IsSuccessful = true };
+            }
+            catch (Exception exc)
+            {
+                return new Result() { IsSuccessful = false, Exception = exc };
+            }
+        }
+
         public async Task<TModel> GetAsync<TModel>(TIdentity id)
         {
             using (var cn = GetConnection())

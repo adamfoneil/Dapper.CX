@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Adam O'Neil</Authors>
+    <Company>Adam O'Neil</Company>
+    <Description>SQL Server crud service for .NET Core apps</Description>
+    <Copyright>Copyright (c) Adam O'Neil 2020</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/adamfoneil/Dapper.CX</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/adamfoneil/Dapper.CX</RepositoryUrl>
+    <Version>1.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,6 +52,13 @@
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Dapper.QX" Version="1.0.15" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

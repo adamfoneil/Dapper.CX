@@ -1,18 +1,28 @@
 ﻿@page
 @model IndexModel
-@inject SqlServerCrudService<int, UserProfile> Data;
  
 @{
     ViewData["Title"] = "Home page";
+}
+
+@if (TempData.ContainsKey("error"))
+{
+    <div class="alert alert-danger">@TempData["error"]</div>
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 
-    @if (Data.HasCurrentUser)
+    @if (Model.Data.HasCurrentUser)
     {
-        <p>user = @(Data.CurrentUser.DisplayName ?? Data.CurrentUser.UserName), local time @(Data.CurrentUser.LocalTime)</p>
+        <p>user = @(Model.Data.CurrentUser.DisplayName ?? Model.Data.CurrentUser.UserName), local time @(Model.Data.CurrentUser.LocalTime), workspaceId = @(Model.Data.CurrentUser.WorkspaceId ?? 0)</p>
+
+        <form asp-page-handler="SetWorkspace" method="post">
+            <select name="workspaceId" onchange="this.form.submit()" asp-items="@Model.WorkspaceSelect" class="form-control">
+                <option value="">(none)</option>
+            </select>
+        </form>
     }
     
 </div>

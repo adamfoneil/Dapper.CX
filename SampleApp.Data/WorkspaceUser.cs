@@ -2,7 +2,7 @@
 using Models.Conventions;
 using System.ComponentModel.DataAnnotations;
 
-namespace SampleApp.Data
+namespace SampleApp.Models
 {
     public class WorkspaceUser : BaseTable
     {

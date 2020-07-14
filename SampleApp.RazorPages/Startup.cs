@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SampleApp.Data;
+using SampleApp.Models;
 using SampleApp.RazorPages.Data;
 using System;
 

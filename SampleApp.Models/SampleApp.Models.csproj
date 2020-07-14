@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\SampleApp.Data\Conventions\BaseTable.cs" Link="Conventions\BaseTable.cs" />
+    <Compile Include="..\SampleApp.Data\Extensions\Timestamp.cs" Link="Extensions\Timestamp.cs" />
+    <Compile Include="..\SampleApp.Data\Item.cs" Link="Item.cs" />
+    <Compile Include="..\SampleApp.Data\UserProfile.cs" Link="UserProfile.cs" />
+    <Compile Include="..\SampleApp.Data\Workspace.cs" Link="Workspace.cs" />
+    <Compile Include="..\SampleApp.Data\WorkspaceUser.cs" Link="WorkspaceUser.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Conventions\" />
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AO.Models" Version="1.1.3" />
+    <PackageReference Include="Dapper.CX.SqlServer" Version="1.1.10" />
+    <PackageReference Include="Dapper.QX" Version="1.0.15" />
+  </ItemGroup>
+
+</Project>

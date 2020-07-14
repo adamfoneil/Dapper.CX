@@ -3,7 +3,7 @@ using Models.Conventions;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SampleApp.Data
+namespace SampleApp.Models
 {
     public class Item : BaseTable
     {

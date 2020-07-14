@@ -6,11 +6,11 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SampleApp.Data
+namespace SampleApp.Models
 {
     [Table("AspNetUsers")]
     [Identity(nameof(UserId))]
-    public class UserProfile : IUserBase
+    public partial class UserProfile : IUserBase
     {
         public int UserId { get; set; }
 
