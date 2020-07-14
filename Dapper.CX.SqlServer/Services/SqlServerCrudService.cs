@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Dapper.CX.SqlServer.Services
 {
-    public class SqlServerCrudService<TIdentity, TUser> : SqlCrudService<TIdentity, TUser> where TUser : IUserBase
+    public partial class SqlServerCrudService<TIdentity, TUser> : SqlCrudService<TIdentity, TUser> where TUser : IUserBase
     {
         public SqlServerCrudService(string connectionString, string userName, Func<object, TIdentity> convertIdentity) : base(connectionString, userName, new SqlServerCrudProvider<TIdentity>(convertIdentity))
         {
