@@ -2,6 +2,7 @@
 using Dapper.CX.Classes;
 using System;
 using System.Data;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
@@ -44,19 +45,6 @@ namespace Dapper.CX.Abstract
             using (var cn = GetConnection())
             {
                 await CrudProvider.UpdateAsync(cn, CurrentUser);
-            }
-        }
-
-        public async Task<Result> TryUpdateUserAsync()
-        {
-            try
-            {
-                await UpdateUserAsync();
-                return new Result() { IsSuccessful = true };
-            }
-            catch (Exception exc)
-            {
-                return new Result() { IsSuccessful = false, Exception = exc };
             }
         }
 
@@ -177,97 +165,101 @@ namespace Dapper.CX.Abstract
         }
 
         #region Try methods
-        public async Task<Result> TrySaveAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null)
+        public async Task<bool> TryUpdateUserAsync(Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
         {
-            var result = new Result();
-
             try
             {
-                result.Id = await SaveAsync(model, changeTracker);
-                result.IsSuccessful = true;
+                await UpdateUserAsync();
+                if (onSuccess != null) await onSuccess.Invoke();
+                return true;
             }
             catch (Exception exc)
             {
-                result.Exception = exc;
+                if (onException != null) await onException.Invoke(exc);
+                return false;
             }
-
-            return result;
         }
 
-        public async Task<Result> TryMergeAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null)
+        public async Task<bool> TrySaveAsync<TModel>(
+            TModel model, ChangeTracker<TModel> changeTracker = null,
+            Func<TIdentity, Task> onSuccess = null, Func<Exception, Task> onException = null)
         {
-            var result = new Result();
-
             try
             {
-                result.Id = await MergeAsync(model, changeTracker);
-                result.IsSuccessful = true;
+                var result = await SaveAsync(model, changeTracker);
+                if (onSuccess != null) await onSuccess.Invoke(result);
+                return true;
             }
             catch (Exception exc)
             {
-                result.Exception = exc;
-            }
-
-            return result;
+                if (onException != null) await onException.Invoke(exc);
+                return false;
+            }            
         }
 
-        public async Task<Result> TryInsertAsync<TModel>(TModel model)
+        public async Task<bool> TryMergeAsync<TModel>(
+            TModel model, ChangeTracker<TModel> changeTracker = null,
+            Func<TIdentity, Task> onSuccess = null, Func<Exception, Task> onException = null)
         {
-            var result = new Result();
-
             try
             {
-                result.Id = await InsertAsync(model);
-                result.IsSuccessful = true;
+                var result = await MergeAsync(model, changeTracker);
+                if (onSuccess != null) await onSuccess.Invoke(result);
+                return true;
             }
             catch (Exception exc)
             {
-                result.Exception = exc;
+                if (onException != null) await onException.Invoke(exc);
+                return false;
             }
-
-            return result;
         }
 
-        public async Task<Result> TryDeleteAsync<TModel>(TIdentity id)
+        public async Task<bool> TryInsertAsync<TModel>(TModel model, Func<TIdentity, Task> onSuccess = null, Func<Exception, Task> onException = null)
         {
-            var result = new Result();
+            try
+            {
+                var result = await InsertAsync(model);
+                if (onSuccess != null) await onSuccess.Invoke(result);
+                return true;
+            }
+            catch (Exception exc)
+            {
+                if (onException != null) await onException.Invoke(exc);
+                return false;
+            }
+        }
 
+        public async Task<bool> TryDeleteAsync<TModel>(TIdentity id, Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
+        {
             try
             {
                 await DeleteAsync<TModel>(id);
-                result.IsSuccessful = true;
+                if (onSuccess != null) await onSuccess.Invoke();
+                return true;
             }
             catch (Exception exc)
             {
-                result.Exception = exc;
+                if (onException != null) await onException.Invoke(exc);
+                return false;
             }
-
-            return result;
         }
 
-        public async Task<Result> TryUpdateAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null)
-        {
-            var result = new Result();
-
+        public async Task<bool> TryUpdateAsync<TModel>(
+            TModel model, ChangeTracker<TModel> changeTracker = null,
+            Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
+        {            
             try
             {
                 await UpdateAsync(model, changeTracker);
-                result.IsSuccessful = true;
+                if (onSuccess != null) await onSuccess.Invoke();
+                return true;
             }
             catch (Exception exc)
             {
-                result.Exception = exc;
+                if (onException != null) await onException.Invoke(exc);
+                return false;
             }
-
-            return result;
         }
         #endregion
-
-        public class Result
-        {
-            public bool IsSuccessful { get; set; }
-            public TIdentity Id { get; set; }
-            public Exception Exception { get; set; }
-        }
     }
 }
