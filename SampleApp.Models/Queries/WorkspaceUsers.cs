@@ -1,5 +1,4 @@
-﻿using Dapper.QX;
-using Dapper.QX.Abstract;
+﻿using Dapper.QX.Abstract;
 using Dapper.QX.Attributes;
 using Dapper.QX.Interfaces;
 using System;
@@ -37,14 +36,14 @@ namespace SampleApp.Models.Queries
         [Where("[UserId]=@userId")]
         public int? UserId { get; set; }
 
-        [Where("[UserId]<>@excludeUserId")]
-        public int? ExcludeUserId { get; set; }
+        [Where("[Status]=@status")]
+        public UserStatus? Status { get; set; }
 
         protected override IEnumerable<ITestableQuery> GetTestCasesInner()
         {
-            yield return new WorkspaceUsers() {  WorkspaceId = -1 };
+            yield return new WorkspaceUsers() { WorkspaceId = -1 };
             yield return new WorkspaceUsers() { UserId = -1 };
-            yield return new WorkspaceUsers() { ExcludeUserId = -1, WorkspaceId = 1 };
+            yield return new WorkspaceUsers() { Status = UserStatus.Enabled };
         }
     }
 }

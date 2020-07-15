@@ -4,7 +4,6 @@ using Dapper.CX.SqlServer.Extensions.Int;
 using SampleApp.Models.Queries;
 using System.Data;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace SampleApp.Models
@@ -18,10 +17,12 @@ namespace SampleApp.Models
 
         public async Task<ValidateResult> ValidateAsync(IDbConnection connection, IDbTransaction txn = null)
         {
+            var result = new ValidateResult() { IsValid = true };
+
             if (WorkspaceId.HasValue)
             {
                 var validWs =
-                    (await new WorkspaceUsers() { UserId = UserId }
+                    (await new WorkspaceUsers() { UserId = UserId, Status = UserStatus.Enabled }
                     .ExecuteAsync(connection, txn))
                     .Select(wsu => wsu.WorkspaceId);
 
@@ -29,15 +30,12 @@ namespace SampleApp.Models
 
                 if (!validWs.Contains(WorkspaceId.Value))
                 {
-                    return new ValidateResult() 
-                    { 
-                        IsValid = false, 
-                        Message = $"User {UserName} does not belong to workspace '{ws.Name}'" 
-                    };
+                    result.IsValid = false;
+                    result.Message = $"User {UserName} does not belong to workspace '{ws.Name}'";
                 }
             }
 
-            return new ValidateResult() { IsValid = true };
+            return result;
         }
     }
 }
