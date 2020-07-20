@@ -31,6 +31,9 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        /// <summary>
+        /// this is synchronous so it works within services.AddScoped
+        /// </summary>
         protected virtual TUser QueryUser(IDbConnection connection, string userName) => CrudProvider.GetWhere<TUser>(connection, new { userName });
 
         public abstract IDbConnection GetConnection();
