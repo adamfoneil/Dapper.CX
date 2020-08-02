@@ -45,7 +45,7 @@ namespace Dapper.CX.SqlServer.Extensions.Long
 
         public static async Task<long> MergeAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
         {
-            var provider = new SqlServerIntCrudProvider();
+            var provider = new SqlServerLongCrudProvider();
             return await provider.MergeAsync(connection, model, changeTracker, txn, user);
         }
 
