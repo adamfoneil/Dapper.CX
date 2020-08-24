@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
 using SampleApp.Models;
 using SampleApp.RazorPages.Queries;
 using SampleApp.RazorPages.Queries.SelectLists;
@@ -13,15 +12,13 @@ namespace SampleApp.RazorPages.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
-
-        public IndexModel(ILogger<IndexModel> logger, SqlServerCrudService<int, UserProfile> crud)
+        public IndexModel(SqlServerCrudService<int, UserProfile> crud)
         {
-            _logger = logger;
             Data = crud;
         }
 
         public SqlServerCrudService<int, UserProfile> Data { get; }
+
         public SelectList WorkspaceSelect { get; set; }
         public IEnumerable<Item> AllItems { get; set; }
 
