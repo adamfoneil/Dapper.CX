@@ -1,6 +1,5 @@
 ﻿using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SampleApp.Models;
 using SampleApp.RazorPages.Queries;
@@ -10,14 +9,12 @@ using System.Threading.Tasks;
 
 namespace SampleApp.RazorPages.Pages
 {
-    public class IndexModel : PageModel
+    public class IndexModel : BasePageModel
     {
-        public IndexModel(SqlServerCrudService<int, UserProfile> crud)
+        public IndexModel(SqlServerCrudService<int, UserProfile> crud) : base(crud)
         {
-            Data = crud;
         }
-
-        public SqlServerCrudService<int, UserProfile> Data { get; }
+        
 
         public SelectList WorkspaceSelect { get; set; }
         public IEnumerable<Item> AllItems { get; set; }
