@@ -10,7 +10,7 @@ namespace SampleApp.Models
         public ValidateResult Validate()
         {
             return (Name.Equals("zooropa")) ?
-                new ValidateResult() { IsValid = false, Message = "Cannot use the name zooropa." } :
+                new ValidateResult() { IsValid = false, Message = "Can't use the name zooropa." } :
                 new ValidateResult() { IsValid = true };
         }
 
