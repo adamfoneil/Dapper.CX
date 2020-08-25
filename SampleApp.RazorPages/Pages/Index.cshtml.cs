@@ -45,5 +45,17 @@ namespace SampleApp.RazorPages.Pages
 
             return Redirect("/");
         }
+
+        public async Task<RedirectResult> OnPostSaveItemAsync(Item item)
+        {
+            await Data.TrySaveAsync(item, onException: SaveErrorMessage);
+            return Redirect("/");
+        }
+
+        public async Task<RedirectResult> OnPostDeleteItemAsync(int id)
+        {
+            await Data.TryDeleteAsync<Item>(id, onException: SaveErrorMessage);
+            return Redirect("/");
+        }
     }
 }
