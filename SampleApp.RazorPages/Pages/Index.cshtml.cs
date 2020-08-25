@@ -39,8 +39,8 @@ namespace SampleApp.RazorPages.Pages
 
         public async Task<RedirectResult> OnPostSaveWorkspaceAsync(Workspace workspace)
         {
-            await Data.TryUpdateAsync(workspace, 
-                onSuccess: () => SaveSuccessMessage("Updated workspace successfully"),
+            await Data.TrySaveAsync(workspace, 
+                onSuccess: (id) => SaveSuccessMessage("Saved workspace successfully"),
                 onException: SaveErrorMessage);
 
             return Redirect("/");
