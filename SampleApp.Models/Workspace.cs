@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SampleApp.Models
 {
-    public class Workspace : BaseTable
+    public partial class Workspace : BaseTable
     {
         [MaxLength(50)]
         [Key]
