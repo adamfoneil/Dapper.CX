@@ -33,14 +33,16 @@ namespace SampleApp.RazorPages.Pages
         public async Task<RedirectResult> OnPostSetWorkspaceAsync(int workspaceId = 0)
         {
             Data.CurrentUser.WorkspaceId = (workspaceId != 0) ? workspaceId : default(int?);
-            var result = await Data.TryUpdateUserAsync(onException: async (exc) => TempData.Add("error", exc.Message));
+            var result = await Data.TryUpdateUserAsync(onException: SaveErrorMessage);
             return Redirect("/Index");
         }
 
         public async Task<RedirectResult> OnPostSaveWorkspaceAsync(Workspace workspace)
         {
-            await Data.TryUpdateAsync(workspace, onException: async (exc) => TempData.Add("error", exc.Message));
-            //await Data.UpdateAsync(workspace);
+            await Data.TryUpdateAsync(workspace, 
+                onSuccess: () => SaveSuccessMessage("Updated workspace successfully"),
+                onException: SaveErrorMessage);
+
             return Redirect("/");
         }
     }

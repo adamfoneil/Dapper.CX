@@ -11,6 +11,11 @@
     <div class="alert alert-danger">@TempData["error"]</div>
 }
 
+@if (TempData.ContainsKey("success"))
+{
+    <div class="alert alert-success">@TempData["success"]</div>
+}
+
 <div class="text-center">
     <h1 class="display-4">Dapper.CX Sample App</h1>    
 
