@@ -11,6 +11,6 @@ namespace SampleApp.RazorPages
             Data = crud;
         }
 
-        protected SqlServerCrudService<int, UserProfile> Data { get; }
+        public SqlServerCrudService<int, UserProfile> Data { get; }
     }
 }

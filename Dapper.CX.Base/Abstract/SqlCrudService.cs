@@ -2,7 +2,6 @@
 using Dapper.CX.Classes;
 using System;
 using System.Data;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
