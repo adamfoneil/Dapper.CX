@@ -1,5 +1,6 @@
 ﻿@page
 @model IndexModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
  
 @{
     ViewData["Title"] = "Home page";
@@ -22,8 +23,44 @@
                 <option value="">(none)</option>
             </select>
         </form>
+
+        <form asp-page-handler="SaveWorkspace" method="post" class="form-inline mt-3 mb-3">
+            @Html.Hidden("Id", Model.Workspace?.Id ?? 0)
+                            
+            <label class="mr-2">Workspace Name:</label>
+            @Html.TextBox("Name", Model.Workspace?.Name, new { @class = "form-control mr-2", required = "required" })
+                
+            <button class="btn btn-outline-dark">Save</button>            
+        </form>
     }
-    
 </div>
 
+@if (Model.AllItems == null)
+{
+    return;
+}
 
+@{ 
+    var grid = new GridEditor<Item>(this, Xsrf, (item) => item.Id, defaults: new { WorkspaceId = Model.Data?.CurrentUser?.WorkspaceId ?? 0 }); 
+}
+
+<table>
+    <tr>
+        <th>Item Name</th>
+        <th>Description</th>
+        <th>Unit Cost</th>
+        <th>Sale Price</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.AllItems)
+    {
+        <tr id="@grid.RowId(item)">
+            <td>@grid.TextBox(row => row.Name)</td>
+        </tr>
+    }
+</table>
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/gh/adamosoftware/GridEditor.RazorPages@1.0.3/js/GridEditor.min.js"></script>
+}

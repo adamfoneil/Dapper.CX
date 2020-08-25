@@ -18,6 +18,7 @@ namespace SampleApp.RazorPages.Pages
 
         public SelectList WorkspaceSelect { get; set; }
         public IEnumerable<Item> AllItems { get; set; }
+        public Workspace Workspace { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -25,6 +26,7 @@ namespace SampleApp.RazorPages.Pages
             {
                 WorkspaceSelect = await Data.QuerySelectListAsync(new WorkspaceSelect(), Data.CurrentUser.WorkspaceId);
                 AllItems = await Data.QueryAsync(new AllItems() { WorkspaceId = Data.CurrentUser.WorkspaceId ?? 0, IsActive = true });
+                Workspace = await Data.GetAsync<Workspace>(Data.CurrentUser.WorkspaceId ?? 0);
             }
         }
 
@@ -33,6 +35,13 @@ namespace SampleApp.RazorPages.Pages
             Data.CurrentUser.WorkspaceId = (workspaceId != 0) ? workspaceId : default(int?);
             var result = await Data.TryUpdateUserAsync(onException: async (exc) => TempData.Add("error", exc.Message));
             return Redirect("/Index");
+        }
+
+        public async Task<RedirectResult> OnPostSaveWorkspaceAsync(Workspace workspace)
+        {
+            await Data.TryUpdateAsync(workspace, onException: async (exc) => TempData.Add("error", exc.Message));
+            //await Data.UpdateAsync(workspace);
+            return Redirect("/");
         }
     }
 }

@@ -24,6 +24,9 @@ namespace SampleApp.Models
         [Column(TypeName = "money")]
         public decimal SalePrice { get; set; }
 
+        // demo property for ModelSync
+        //public int OnHandQuantity { get; set; }
+
         public bool IsActive { get; set; } = true;
     }
 }
