@@ -23,7 +23,8 @@ namespace Dapper.CX.SqlServer
             typeof(decimal), typeof(decimal?),
             typeof(double), typeof(double?),
             typeof(float), typeof(float?),
-            typeof(TimeSpan), typeof(TimeSpan?)
+            typeof(TimeSpan), typeof(TimeSpan?),
+            typeof(Guid), typeof(Guid?)
         };
     }
 }
