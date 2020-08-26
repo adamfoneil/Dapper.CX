@@ -30,19 +30,9 @@ namespace SampleApp.RazorPages.Services
 
         public override UserProfile GetUser(string userName, IEnumerable<Claim> claims)
         {
-            var parsed = Parse(claims,
-                nameof(UserProfile.WorkspaceId),
-                nameof(UserProfile.WorkspaceName),
-                nameof(UserProfile.TimeZoneId),
-                nameof(UserProfile.DisplayName),
-                nameof(UserProfile.UserId),
-                nameof(UserProfile.Email));
-
-            return new UserProfile()
-            {
-                UserName = userName,
-                WorkspaceId = Convert.ToInt32(parsed[nameof(UserProfile.WorkspaceId)])
-            };
+            var result = Parse(claims);
+            result.UserName = userName;
+            return result;            
         }
 
         public override async Task<UserProfile> QueryUserAsync(string userName)
