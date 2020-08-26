@@ -30,7 +30,8 @@ namespace SampleApp.RazorPages
 
             services
                 .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddClaimsPrincipalFactory<>
             
             services.AddRazorPages();
 

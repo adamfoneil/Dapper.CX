@@ -2,6 +2,7 @@
 using AO.Models.Interfaces;
 using Dapper.CX.SqlServer.Extensions.Int;
 using SampleApp.Models.Queries;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,9 @@ namespace SampleApp.Models
 {
     public partial class UserProfile : IValidate
     {
+        [NotMapped]
+        public string WorkspaceName { get; set; }
+
         public ValidateResult Validate()
         {
             return new ValidateResult() { IsValid = true };
