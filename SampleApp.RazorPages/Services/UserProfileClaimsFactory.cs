@@ -5,10 +5,10 @@ using SampleApp.Models;
 
 namespace SampleApp.RazorPages.Services
 {
-    public class UserProfileClaimsFactory : DbUserClaimFactory<UserProfile>
+    public class UserProfileClaimsFactory : DbUserClaimsFactory<UserProfile>
     {        
         public UserProfileClaimsFactory(
-            DbUserClaimConverter<UserProfile> claimConverter,
+            DbUserClaimsConverter<UserProfile> claimConverter,
             UserManager<IdentityUser> userManager,
             IOptions<IdentityOptions> optionsAccessor) : base(userManager, optionsAccessor, claimConverter)
         {     

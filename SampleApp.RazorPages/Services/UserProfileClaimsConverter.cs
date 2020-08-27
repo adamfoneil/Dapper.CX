@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace SampleApp.RazorPages.Services
 {
-    public class UserProfileClaimConverter : DbUserClaimConverter<UserProfile>
+    public class UserProfileClaimsConverter : DbUserClaimsConverter<UserProfile>
     {
         private readonly string _connectionString;
 
-        public UserProfileClaimConverter(string connectionString)
+        public UserProfileClaimsConverter(string connectionString)
         {
             _connectionString = connectionString;
         }

@@ -36,7 +36,7 @@ namespace SampleApp.RazorPages
 
             services.AddDapperCX(
                 connectionString, 
-                () => new UserProfileClaimConverter(connectionString), 
+                () => new UserProfileClaimsConverter(connectionString), 
                 (id) => Convert.ToInt32(id));
 
             services.AddRazorPages();

@@ -10,14 +10,14 @@ namespace Dapper.CX.SqlServer.Services
     /// Queries properties of a user from the database, and converts select properties into claims.
     /// This makes it so successive page requests don't require a roundtrip to the database to get user profile info
     /// </summary>
-    public class DbUserClaimFactory<TUser> : UserClaimsPrincipalFactory<IdentityUser> where TUser : IUserBase, new()
+    public class DbUserClaimsFactory<TUser> : UserClaimsPrincipalFactory<IdentityUser> where TUser : IUserBase, new()
     {
-        private readonly DbUserClaimConverter<TUser> _claimConverter;
+        private readonly DbUserClaimsConverter<TUser> _claimConverter;
 
-        public DbUserClaimFactory(
+        public DbUserClaimsFactory(
             UserManager<IdentityUser> userManager,
             IOptions<IdentityOptions> optionsAccessor,
-            DbUserClaimConverter<TUser> claimConverter) : base(userManager, optionsAccessor)
+            DbUserClaimsConverter<TUser> claimConverter) : base(userManager, optionsAccessor)
         {
             _claimConverter = claimConverter;
         }

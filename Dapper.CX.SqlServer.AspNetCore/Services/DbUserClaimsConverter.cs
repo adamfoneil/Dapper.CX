@@ -9,7 +9,7 @@ namespace Dapper.CX.SqlServer.Services
     /// <summary>
     /// service for converting Claims to a TUser and back
     /// </summary>
-    public abstract class DbUserClaimConverter<TUser> where TUser : new()
+    public abstract class DbUserClaimsConverter<TUser> where TUser : new()
     {
         public abstract Task<TUser> QueryUserAsync(string userName);
 
@@ -23,7 +23,7 @@ namespace Dapper.CX.SqlServer.Services
             {
                 [typeof(string)] = (value) => value,
                 [typeof(int)] = (value) => Convert.ToInt32(value),
-                [typeof(int?)] = (value) => !string.IsNullOrEmpty(value) ? Convert.ToInt32(value) : 0
+                [typeof(int?)] = (value) => !string.IsNullOrEmpty(value) ? Convert.ToInt32(value) : 0                
             };
 
             var result = new TUser();
