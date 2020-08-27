@@ -13,9 +13,9 @@ namespace Dapper.CX.SqlServer.Services
     {
         public abstract Task<TUser> QueryUserAsync(string userName);
 
-        public abstract IEnumerable<Claim> GetClaims(TUser user);
+        public abstract IEnumerable<Claim> GetClaimsFromUser(TUser user);
 
-        public abstract TUser GetUser(string userName, IEnumerable<Claim> claims);
+        public abstract TUser GetUserFromClaims(string userName, IEnumerable<Claim> claims);
 
         protected static TUser Parse(IEnumerable<Claim> claims)
         {

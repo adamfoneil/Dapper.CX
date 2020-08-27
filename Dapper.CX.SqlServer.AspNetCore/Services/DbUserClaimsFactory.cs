@@ -26,7 +26,7 @@ namespace Dapper.CX.SqlServer.Services
         {            
             var result = await base.GenerateClaimsAsync(user);
             var dbUser = await _claimConverter.QueryUserAsync(user.UserName);
-            var claims = _claimConverter.GetClaims(dbUser);
+            var claims = _claimConverter.GetClaimsFromUser(dbUser);
             result.AddClaims(claims);
             return result;
         }

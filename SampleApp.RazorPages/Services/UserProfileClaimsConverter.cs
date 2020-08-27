@@ -18,7 +18,7 @@ namespace SampleApp.RazorPages.Services
             _connectionString = connectionString;
         }
 
-        public override IEnumerable<Claim> GetClaims(UserProfile user)
+        public override IEnumerable<Claim> GetClaimsFromUser(UserProfile user)
         {
             yield return new Claim(nameof(UserProfile.WorkspaceId), (user.WorkspaceId ?? 0).ToString());
             yield return new Claim(nameof(UserProfile.WorkspaceName), user.WorkspaceName);
@@ -28,7 +28,7 @@ namespace SampleApp.RazorPages.Services
             yield return new Claim(nameof(UserProfile.Email), user.Email);
         }
 
-        public override UserProfile GetUser(string userName, IEnumerable<Claim> claims)
+        public override UserProfile GetUserFromClaims(string userName, IEnumerable<Claim> claims)
         {
             var result = Parse(claims);
             result.UserName = userName;

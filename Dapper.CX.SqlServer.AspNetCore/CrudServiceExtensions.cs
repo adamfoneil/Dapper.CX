@@ -18,7 +18,7 @@ namespace Dapper.CX.SqlServer.AspNetCore
             {
                 var http = sp.GetRequiredService<IHttpContextAccessor>();
                 var claimConverter = sp.GetRequiredService<DbUserClaimsConverter<TUser>>();
-                var user = claimConverter.GetUser(http.HttpContext.User.Identity.Name, http.HttpContext.User.Claims);
+                var user = claimConverter.GetUserFromClaims(http.HttpContext.User.Identity.Name, http.HttpContext.User.Claims);
                 return new SqlServerCrudService<TIdentity, TUser>(connectionString, user, convertIdentity);
             });
         }
