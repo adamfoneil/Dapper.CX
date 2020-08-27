@@ -24,15 +24,15 @@ namespace SampleApp.RazorPages.Pages
         {
             if (Data.HasCurrentUser)
             {
-                WorkspaceSelect = await Data.QuerySelectListAsync(new WorkspaceSelect(), Data.CurrentUser.WorkspaceId);
-                AllItems = await Data.QueryAsync(new AllItems() { WorkspaceId = Data.CurrentUser.WorkspaceId ?? 0, IsActive = true });
-                Workspace = await Data.GetAsync<Workspace>(Data.CurrentUser.WorkspaceId ?? 0);
+                WorkspaceSelect = await Data.QuerySelectListAsync(new WorkspaceSelect(), Data.User.WorkspaceId);
+                AllItems = await Data.QueryAsync(new AllItems() { WorkspaceId = Data.User.WorkspaceId ?? 0, IsActive = true });
+                Workspace = await Data.GetAsync<Workspace>(Data.User.WorkspaceId ?? 0);
             }
         }
 
         public async Task<RedirectResult> OnPostSetWorkspaceAsync(int workspaceId = 0)
         {
-            Data.CurrentUser.WorkspaceId = (workspaceId != 0) ? workspaceId : default(int?);
+            Data.User.WorkspaceId = (workspaceId != 0) ? workspaceId : default(int?);
             var result = await Data.TryUpdateUserAsync(onException: SaveErrorMessage);
             return Redirect("/Index");
         }

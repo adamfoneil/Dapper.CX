@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AO.Models.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -9,13 +10,13 @@ namespace Dapper.CX.SqlServer.Services
     /// Queries properties of a user from the database, and converts select properties into claims.
     /// This makes it so successive page requests don't require a roundtrip to the database to get user profile info
     /// </summary>
-    public class DbUserClaimFactory<TUser> : UserClaimsPrincipalFactory<IdentityUser>
+    public class DbUserClaimFactory<TUser> : UserClaimsPrincipalFactory<IdentityUser> where TUser : IUserBase, new()
     {
         private readonly DbUserClaimConverter<TUser> _claimConverter;
 
         public DbUserClaimFactory(
             UserManager<IdentityUser> userManager,
-            IOptions<IdentityOptions> optionsAccessor, 
+            IOptions<IdentityOptions> optionsAccessor,
             DbUserClaimConverter<TUser> claimConverter) : base(userManager, optionsAccessor)
         {
             _claimConverter = claimConverter;

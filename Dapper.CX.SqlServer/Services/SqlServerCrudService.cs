@@ -8,7 +8,7 @@ namespace Dapper.CX.SqlServer.Services
 {
     public partial class SqlServerCrudService<TIdentity, TUser> : SqlCrudService<TIdentity, TUser> where TUser : IUserBase
     {
-        public SqlServerCrudService(string connectionString, string userName, Func<object, TIdentity> convertIdentity) : base(connectionString, userName, new SqlServerCrudProvider<TIdentity>(convertIdentity))
+        public SqlServerCrudService(string connectionString, TUser user, Func<object, TIdentity> convertIdentity) : base(connectionString, user, new SqlServerCrudProvider<TIdentity>(convertIdentity))
         {
         }
 

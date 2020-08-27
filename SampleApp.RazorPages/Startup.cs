@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SampleApp.Models;
 using SampleApp.RazorPages.Data;
+using SampleApp.RazorPages.Services;
 using System;
 
 namespace SampleApp.RazorPages
@@ -31,11 +32,14 @@ namespace SampleApp.RazorPages
             services
                 .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddClaimsPrincipalFactory<>
-            
-            services.AddRazorPages();
+                .AddClaimsPrincipalFactory<UserProfileClaimsFactory>();
 
-            services.AddDapperCX<int, UserProfile>(connectionString, (id) => Convert.ToInt32(id));
+            services.AddDapperCX(
+                connectionString, 
+                () => new UserProfileClaimConverter(connectionString), 
+                (id) => Convert.ToInt32(id));
+
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

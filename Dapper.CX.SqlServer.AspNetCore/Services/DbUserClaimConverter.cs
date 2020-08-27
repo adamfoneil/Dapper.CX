@@ -22,7 +22,8 @@ namespace Dapper.CX.SqlServer.Services
             var supportedTypes = new Dictionary<Type, Func<string, object>>()
             {
                 [typeof(string)] = (value) => value,
-                [typeof(int)] = (value) => Convert.ToInt32(value)
+                [typeof(int)] = (value) => Convert.ToInt32(value),
+                [typeof(int?)] = (value) => !string.IsNullOrEmpty(value) ? Convert.ToInt32(value) : 0
             };
 
             var result = new TUser();
@@ -33,13 +34,12 @@ namespace Dapper.CX.SqlServer.Services
                 .Where(c => propertyNames.Contains(c.Type))
                 .ToDictionary(c => c.Type);
 
-            foreach (var pi in props)
+            foreach (var pi in props.Where(pi => claimValues.ContainsKey(pi.Name)))
             {
                 pi.SetValue(result, supportedTypes[pi.PropertyType].Invoke(claimValues[pi.Name].Value));
             }
 
             return result;
         }
-            
     }
 }
