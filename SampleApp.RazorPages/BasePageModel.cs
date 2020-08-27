@@ -9,9 +9,9 @@ namespace SampleApp.RazorPages
 {
     public class BasePageModel : PageModel
     {
-        public BasePageModel(SqlServerCrudService<int, UserProfile> crud)
+        public BasePageModel(SqlServerCrudService<int, UserProfile> data)
         {
-            Data = crud;
+            Data = data;
         }
 
         public SqlServerCrudService<int, UserProfile> Data { get; }

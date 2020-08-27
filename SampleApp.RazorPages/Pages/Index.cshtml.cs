@@ -15,14 +15,13 @@ namespace SampleApp.RazorPages.Pages
         {
         }
         
-
         public SelectList WorkspaceSelect { get; set; }
         public IEnumerable<Item> AllItems { get; set; }
         public Workspace Workspace { get; set; }
 
         public async Task OnGetAsync()
         {
-            if (Data.HasCurrentUser)
+            if (Data.HasUser)
             {
                 WorkspaceSelect = await Data.QuerySelectListAsync(new WorkspaceSelect(), Data.User.WorkspaceId);
                 AllItems = await Data.QueryAsync(new AllItems() { WorkspaceId = Data.User.WorkspaceId ?? 0, IsActive = true });

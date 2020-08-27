@@ -22,7 +22,7 @@ namespace Dapper.CX.Abstract
         
         public TUser User { get; }
 
-        public bool HasCurrentUser => User != null;
+        public bool HasUser => User != null;
 
         public async Task UpdateUserAsync()
         {
