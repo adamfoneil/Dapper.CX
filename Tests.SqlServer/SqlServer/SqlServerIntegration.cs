@@ -228,43 +228,5 @@ namespace Tests.SqlServer
             }
         }
 
-        [TestMethod]
-        public void AddRemoveRoles()
-        {
-            const string userName = "test.user";
-
-            var service = new SqlServerCrudService<int, SampleUserProfile>(LocalDb.GetConnectionString("DapperCX"), new SampleUserProfile()
-            {
-                Name = userName
-            }, (value) => Convert.ToInt32(value));
-
-            using (var cn = GetConnection())
-            {
-                cn.Execute("DELETE [dbo].[AspNetUsers] WHERE [UserName]=@userName", new { userName });
-                new SqlServerCmd("dbo.AspNetUsers")
-                {
-                    ["Id"] = Guid.NewGuid(),
-                    ["UserName"] = userName,
-                    ["EmailConfirmed"] = 1,
-                    ["PhoneNumberConfirmed"] = 0,
-                    ["LockoutEnabled"] = 0,
-                    ["AccessFailedCount"] = 0,
-                    ["TwoFactorEnabled"] = 0
-                }.InsertAsync(cn).Wait();
-            }
-
-            service.AddRoleAsync("Whatever").Wait();
-            Assert.IsTrue(service.QueryHasRoleAsync("Whatever").Result);
-
-            service.RemoveRoleAsync("Whatever").Wait();
-            Assert.IsTrue(!service.QueryHasRoleAsync("Whatever").Result);
-        }
-    }
-
-    public class SampleUserProfile : IUserBase
-    {
-        public string Name { get; set; }
-
-        public DateTime LocalTime => DateTime.UtcNow;
-    }
+    } 
 }
