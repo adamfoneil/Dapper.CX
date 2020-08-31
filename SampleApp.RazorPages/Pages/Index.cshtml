@@ -21,6 +21,12 @@
 
     @if (Model.Data.HasUser)
     {
+        if (!Model.Data.User.IsEnabled)
+        {
+            <p>user is disabled in the workspace</p>
+            return;
+        }
+
         <p>user = @(Model.Data.User.DisplayName ?? Model.Data.User.Name), local time @(Model.Data.User.LocalTime), workspaceId = @(Model.Data.User.WorkspaceId ?? 0)</p>
 
         @if (Model.Data.User.HasRole("Admin"))

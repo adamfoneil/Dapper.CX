@@ -24,7 +24,8 @@ namespace Dapper.CX.SqlServer.Services
             {
                 [typeof(string)] = (value) => value,
                 [typeof(int)] = (value) => Convert.ToInt32(value),
-                [typeof(int?)] = (value) => !string.IsNullOrEmpty(value) ? Convert.ToInt32(value) : 0                
+                [typeof(int?)] = (value) => !string.IsNullOrEmpty(value) ? Convert.ToInt32(value) : 0,
+                [typeof(bool)] = (value) => Convert.ToBoolean(value)
             };
 
             var result = new TUser();
