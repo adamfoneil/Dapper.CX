@@ -30,6 +30,18 @@ namespace Tests.Models
                     [Whatever] nvarchar(50) NULL,
                     [Id] int identity(1,1) PRIMARY KEY
                 )");
+
+            yield return new InitializeStatement(
+                "dbo.AspNetRoles", "DROP TABLE %obj%",
+                @"CREATE TABLE [dbo].[AspNetRoles](
+	                [Id] [nvarchar](450) NOT NULL,
+	                [Name] [nvarchar](256) NULL,
+	                [NormalizedName] [nvarchar](256) NULL,
+	                [ConcurrencyStamp] [nvarchar](max) NULL,
+                 CONSTRAINT [PK_AspNetRoles] PRIMARY KEY CLUSTERED 
+                (
+	                [Id] ASC
+                ))");
         }
     }
 }

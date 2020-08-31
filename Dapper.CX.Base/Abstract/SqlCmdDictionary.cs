@@ -24,6 +24,13 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        public SqlCmdDictionary(string tableName, IEnumerable<string> columnNames = null) : this(columnNames)
+        {
+            TableName = tableName;
+            IdentityColumn = null;
+            IdentityInsert = true;
+        }
+
         public SqlCmdDictionary(string tableName, string identityColumn, IEnumerable<string> columnNames = null) : this(columnNames)
         {
             TableName = tableName;
@@ -98,6 +105,12 @@ namespace Dapper.CX.Abstract
         public async Task<TIdentity> InsertAsync<TIdentity>(IDbConnection connection)
         {
             return await ExecuteInsertAsync<TIdentity>(connection);
+        }
+
+        public async Task InsertAsync(IDbConnection connection)
+        {
+            IdentityInsert = true;
+            await ExecuteInsertAsync<int>(connection);
         }
 
         /// <summary>

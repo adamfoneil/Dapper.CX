@@ -208,5 +208,22 @@ namespace Tests.SqlServer
             }
         }
 
+        [TestMethod]
+        public void CmdDictionaryInsertGuid()
+        {
+            const string sampleRole = "Sample Role";
+
+            using (var cn = GetConnection())
+            {
+                cn.Execute("DELETE [dbo].[AspNetRoles] WHERE [Name]=@sampleRole", new { sampleRole });
+
+                new SqlServerCmd("dbo.AspNetRoles")
+                {
+                    ["Name"] = sampleRole,
+                    ["NormalizedName"] = sampleRole,
+                    ["Id"] = Guid.NewGuid()
+                }.InsertAsync(cn).Wait();
+            }
+        }
     }
 }

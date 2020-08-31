@@ -18,6 +18,10 @@ namespace Dapper.CX.SqlServer
         {
         }
 
+        public SqlServerCmd(string tableName, IEnumerable<string> columnNames = null) : base(tableName, columnNames)
+        {
+        }
+
         public static async Task<SqlServerCmd> FromTableSchemaAsync(IDbConnection connection, string schemaName, string tableName, IEnumerable<string> keyColumns)
         {
             string identityCol = await connection.QuerySingleOrDefaultAsync<string>(
