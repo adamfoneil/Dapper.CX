@@ -3,6 +3,7 @@ using AO.Models.Enums;
 using AO.Models.Interfaces;
 using SampleApp.Data.Extensions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -33,6 +34,8 @@ namespace SampleApp.Models
         public string Name => UserName;
 
         public DateTime LocalTime => Timestamp.Local(TimeZoneId);
+
+        public HashSet<string> Roles { get; set; }
 
         // AO pwd = Oopsie.Daisy!456
     }

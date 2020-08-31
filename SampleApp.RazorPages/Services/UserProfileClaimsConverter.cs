@@ -2,8 +2,8 @@
 using Dapper.CX.SqlServer.Services;
 using Microsoft.Data.SqlClient;
 using SampleApp.Models;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -12,6 +12,8 @@ namespace SampleApp.RazorPages.Services
     public class UserProfileClaimsConverter : DbUserClaimsConverter<UserProfile>
     {
         private readonly string _connectionString;
+
+        private const string roleClaim = "role_name";
 
         public UserProfileClaimsConverter(string connectionString)
         {
@@ -26,12 +28,20 @@ namespace SampleApp.RazorPages.Services
             yield return new Claim(nameof(UserProfile.DisplayName), user.DisplayName);
             yield return new Claim(nameof(UserProfile.UserId), user.UserId.ToString());
             yield return new Claim(nameof(UserProfile.Email), user.Email);
+
+            foreach (var role in user.Roles) yield return new Claim(roleClaim, role);
         }
 
         public override UserProfile GetUserFromClaims(string userName, IEnumerable<Claim> claims)
         {
             var result = Parse(claims);
             result.UserName = userName;
+
+            foreach (var claim in claims.Where(c => c.Type.Equals(roleClaim)))
+            {
+                result.Roles.Add(claim.Value);
+            }
+
             return result;            
         }
 
@@ -39,12 +49,21 @@ namespace SampleApp.RazorPages.Services
         {
             using (var cn = new SqlConnection(_connectionString))
             {
-                return await cn.QuerySingleAsync<UserProfile>(
+                var result = await cn.QuerySingleAsync<UserProfile>(
                     @"SELECT [u].*, [ws].[Name] AS [WorkspaceName]
                     FROM [dbo].[AspNetUsers] [u] 
                     LEFT JOIN [dbo].[Workspace] [ws] ON [u].[WorkspaceId]=[ws].[Id]
                     WHERE [UserName]=@userName",
                     new { userName });
+
+                result.Roles = (await cn.QueryAsync<string>(
+                    @"SELECT [r].[Name]
+                    FROM [dbo].[AspNetRoles] [r]
+                    INNER JOIN [dbo].[AspNetUserRoles] [ur] ON [r].[Id]=[ur].[RoleId]
+                    INNER JOIN [dbo].[AspNetUsers] [u] ON [ur].[UserId]=[u].[Id]
+                    WHERE [u].[UserName]=@userName", new { userName })).ToHashSet();
+
+                return result;
             }
         }
     }
