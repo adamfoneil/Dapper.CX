@@ -1,6 +1,7 @@
 ﻿using AO.Models.Interfaces;
 using Dapper.CX.Abstract;
 using Dapper.CX.Classes;
+using Dapper.CX.Extensions;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Data;
@@ -25,17 +26,45 @@ namespace Dapper.CX.SqlServer.Services
 
                 await new SqlServerCmd("dbo.AspNetUserRoles")
                 {
-                    ["#UserId"] = userId,
-                    ["#RoleId"] = roleId
+                    ["UserId"] = userId,
+                    ["RoleId"] = roleId
                 }.InsertAsync(cn);
+            }
+        }
+
+        public async Task<bool> QueryHasRoleAsync(string roleName)
+        {
+            using (var cn = GetConnection())
+            {
+                var userId = await GetUserIdAsync(cn);
+
+                return await cn.RowExistsAsync(
+                    @"[dbo].[AspNetUserRoles] [ur] INNER JOIN [dbo].[AspNetRoles] [r] ON [ur].[RoleId]=[r].[Id]
+                    WHERE [ur].[UserId]=@userId AND [r].[Name]=@roleName", new { userId, roleName });
+            }
+        }
+
+        public async Task RemoveRoleAsync(string roleName)
+        {
+            using (var cn = GetConnection())
+            {
+                var userId = await GetUserIdAsync(cn);
+
+                await cn.ExecuteAsync(
+                    @"DELETE [ur]
+                    FROM [dbo].[AspNetUserRoles] [ur]
+                    INNER JOIN [dbo].[AspNetRoles] [r] ON [ur].[RoleId]=[r].[Id]
+                    WHERE [ur].[UserId]=@userId AND [r].[Name]=@roleName", new { userId, roleName });
             }
         }
 
         private async Task<Guid> GetUserIdAsync(IDbConnection cn)
         {
-            return await cn.QuerySingleAsync<Guid>(
+            var result = await cn.QuerySingleAsync<string>(
                 "SELECT [Id] FROM [dbo].[AspNetUsers] WHERE [UserName]=@userName", 
                 new { userName = User.Name });
+
+            return Guid.Parse(result);
         }
 
         private async Task<Guid> FindOrCreateRoleAsync(IDbConnection cn, string roleName)
