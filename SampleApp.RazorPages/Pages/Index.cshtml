@@ -19,9 +19,14 @@
 <div class="text-center">
     <h1 class="display-4">Dapper.CX Sample App</h1>    
 
-    @if (Model.Data.HasCurrentUser)
+    @if (Model.Data.HasUser)
     {
         <p>user = @(Model.Data.User.DisplayName ?? Model.Data.User.Name), local time @(Model.Data.User.LocalTime), workspaceId = @(Model.Data.User.WorkspaceId ?? 0)</p>
+
+        @if (Model.Data.User.HasRole("Admin"))
+        {
+            <p>I'm an admin!</p>
+        }
 
         <form asp-page-handler="SetWorkspace" method="post">
             <select name="workspaceId" onchange="this.form.submit()" asp-items="@Model.WorkspaceSelect" class="form-control">

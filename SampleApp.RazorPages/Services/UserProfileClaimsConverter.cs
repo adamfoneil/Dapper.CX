@@ -37,10 +37,8 @@ namespace SampleApp.RazorPages.Services
             var result = Parse(claims);
             result.UserName = userName;
 
-            foreach (var claim in claims.Where(c => c.Type.Equals(roleClaim)))
-            {
-                result.Roles.Add(claim.Value);
-            }
+            result.Roles = new HashSet<string>();
+            foreach (var claim in claims.Where(c => c.Type.Equals(roleClaim))) result.Roles.Add(claim.Value);
 
             return result;            
         }
