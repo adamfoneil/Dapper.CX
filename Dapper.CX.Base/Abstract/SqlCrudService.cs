@@ -22,15 +22,21 @@ namespace Dapper.CX.Abstract
         
         public TUser User { get; }
 
-        public bool HasUser => User != null;
+        public bool HasUser => !string.IsNullOrEmpty(User?.Name);
 
         public async Task UpdateUserAsync()
         {
             using (var cn = GetConnection())
             {
                 await CrudProvider.UpdateAsync(cn, User);
+                if (OnUserUpdatedAsync != null)
+                {
+                    await OnUserUpdatedAsync.Invoke(User);
+                }
             }
         }
+
+        public Func<TUser, Task> OnUserUpdatedAsync { get; set; }
 
         public async Task<TModel> GetAsync<TModel>(TIdentity id)
         {

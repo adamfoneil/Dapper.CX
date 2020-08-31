@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -30,8 +31,11 @@ namespace Dapper.CX.SqlServer.Services
             var props = typeof(TUser).GetProperties().Where(pi => supportedTypes.ContainsKey(pi.PropertyType));
             HashSet<string> propertyNames = props.Select(pi => pi.Name).ToHashSet();
 
+            // assumes claim types are unique -- not sure how wise that is
             var claimValues = claims
                 .Where(c => propertyNames.Contains(c.Type))
+                //.ToLookup(c => c.Type)
+                //.ToDictionary(c => c.Key, c => c.Last());
                 .ToDictionary(c => c.Type);
 
             foreach (var pi in props.Where(pi => claimValues.ContainsKey(pi.Name)))
@@ -40,6 +44,15 @@ namespace Dapper.CX.SqlServer.Services
             }
 
             return result;
+        }
+
+        public async Task UpdateClaimsAsync(
+            string userName, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signinManager, 
+            IEnumerable<Claim> oldClaims)
+        {            
+            var identityUser = await userManager.FindByNameAsync(userName);
+            await userManager.RemoveClaimsAsync(identityUser, oldClaims);
+            await signinManager.RefreshSignInAsync(identityUser);
         }
     }
 }
