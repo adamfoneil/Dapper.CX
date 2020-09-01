@@ -1,12 +1,14 @@
 ﻿@page "/Items/{id?}"
 @model SampleApp.RazorPages.Pages.ItemsModel
-@{
-}
 
 <partial name="~/Pages/Shared/_SaveResult.cshtml"/>
 
+@section Scripts {
+    <script src="~/js/Items.js" asp-append-version="true"></script>
+} 
+
 <form method="get">
-    <select name="Id" onchange="this.form.submit()" asp-items="@Model.ItemSelect" class="form-control">
+    <select name="Id" id="gotoItem" asp-items="@Model.ItemSelect" class="form-control">
         <option value="">(select)</option>
     </select>
 </form>
@@ -19,13 +21,13 @@
 
 <hr/>
 
-<form method="post" class="mt-4">    
+<form method="post" class="mt-4" asp-page-handler="SaveItem">    
     <input type="hidden" name="Id" value="@Model.Item.Id"/>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Item Name:</label>
         <div class="col-sm-10">
-            @Html.TextBox("Name", Model.Item.Name, new { @class = "form-control" })
+            @Html.TextBox("Name", Model.Item.Name, new { @class = "form-control", required = "required" })
         </div>        
     </div>
 

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SampleApp.Models
 {
-    public class Item : BaseTable
+    public partial class Item : BaseTable
     {
         [References(typeof(Workspace))]
         [Key]

@@ -9,14 +9,24 @@ namespace Dapper.CX.SqlServer.AspNetCore.Extensions
 {
     public static class SqlCrudServiceExtensions
     {
-        public static async Task<IActionResult> SaveAndRedirectAsync<TModel, TIdentity, TUser>(
-            this SqlServerCrudService<TIdentity, TUser> crudService, TModel model, Func<TIdentity, IActionResult> redirect, 
+        public static async Task<RedirectResult> SaveAndRedirectAsync<TModel, TIdentity, TUser>(
+            this SqlServerCrudService<TIdentity, TUser> crudService, TModel model, Func<TModel, Exception, RedirectResult> redirect, 
             ChangeTracker<TModel> changeTracker = null, Action<TModel> beforeSave = null,
-            Func<TIdentity, Task> onSuccess = null, Func<Exception, Task> onException = null) where TUser : IUserBase
+            Func<TModel, Task> onSuccess = null, Func<TModel, Exception, Task> onException = null) where TUser : IUserBase
         {
             beforeSave?.Invoke(model);
-            var result = await crudService.TrySaveAsync(model, changeTracker, onSuccess, onException);
-            return redirect.Invoke(result);
+
+            try
+            {
+                var result = await crudService.SaveAsync(model, changeTracker);
+                onSuccess?.Invoke(model);
+                return redirect.Invoke(model, null);
+            }
+            catch (Exception exc)
+            {
+                onException?.Invoke(model, exc);
+                return redirect.Invoke(model, exc);
+            }
         }
     }
 }

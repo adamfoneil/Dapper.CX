@@ -8,7 +8,7 @@ namespace Dapper.CX.Abstract
 {
     public abstract class SqlCrudService<TIdentity, TUser> where TUser : IUserBase
     {
-        protected readonly SqlCrudProvider<TIdentity> CrudProvider;
+        public readonly SqlCrudProvider<TIdentity> CrudProvider;
         protected readonly string _connectionString;
 
         public SqlCrudService(string connectionString, TUser user, SqlCrudProvider<TIdentity> crudProvider)
@@ -183,7 +183,7 @@ namespace Dapper.CX.Abstract
             catch (Exception exc)
             {
                 if (onException != null) await onException.Invoke(exc);
-                return default;
+                return CrudProvider.GetIdentity(model);
             }
         }
 

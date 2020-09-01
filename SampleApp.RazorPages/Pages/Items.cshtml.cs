@@ -32,10 +32,10 @@ namespace SampleApp.RazorPages.Pages
             }, Id);
         }
 
-        public async Task<IActionResult> OnPostAsync(Item item) => 
-            await Data.SaveAndRedirectAsync(item, (id) => Redirect($"/Items/{id}"), 
+        public async Task<RedirectResult> OnPostSaveItemAsync(Item item) => 
+            await Data.SaveAndRedirectAsync(item, (model, exc) => (model.Id != 0) ? Redirect($"/Items/{model.Id}") : Redirect("/Items"), 
                 beforeSave: (model) => model.WorkspaceId = Data.User.WorkspaceId ?? 0,
                 onSuccess: (id) => SaveSuccessMessage($"Item {id} updated successfully."), 
-                onException: (exc) => SaveErrorMessage(exc));
+                onException: (model, exc) => SaveErrorMessage(exc));
     }
 }
