@@ -6,15 +6,7 @@
     ViewData["Title"] = "Home page";
 }
 
-@if (TempData.ContainsKey("error"))
-{
-    <div class="alert alert-danger">@TempData["error"]</div>
-}
-
-@if (TempData.ContainsKey("success"))
-{
-    <div class="alert alert-success">@TempData["success"]</div>
-}
+<partial name="~/Pages/Shared/_SaveResult.cshtml"/>
 
 <div class="text-center">
     <h1 class="display-4">Dapper.CX Sample App</h1>    

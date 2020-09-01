@@ -170,7 +170,7 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task<bool> TrySaveAsync<TModel>(
+        public async Task<TIdentity> TrySaveAsync<TModel>(
             TModel model, ChangeTracker<TModel> changeTracker = null,
             Func<TIdentity, Task> onSuccess = null, Func<Exception, Task> onException = null)
         {
@@ -178,13 +178,13 @@ namespace Dapper.CX.Abstract
             {
                 var result = await SaveAsync(model, changeTracker);
                 if (onSuccess != null) await onSuccess.Invoke(result);
-                return true;
+                return result;
             }
             catch (Exception exc)
             {
                 if (onException != null) await onException.Invoke(exc);
-                return false;
-            }            
+                return default;
+            }
         }
 
         public async Task<bool> TryMergeAsync<TModel>(
