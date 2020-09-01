@@ -14,11 +14,8 @@ namespace SampleApp.Models
         [NotMapped]
         public string WorkspaceName { get; set; }
 
-        /// <summary>
-        /// indicates whether user is enabled in the workspace
-        /// </summary>
         [NotMapped]
-        public bool IsEnabled { get; set; }
+        public bool IsWorkspaceEnabled { get; set; }
 
         public ValidateResult Validate()
         {

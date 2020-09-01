@@ -21,7 +21,7 @@
 
     @if (Model.Data.HasUser)
     {
-        if (!Model.Data.User.IsEnabled)
+        if (!Model.Data.User.IsWorkspaceEnabled)
         {
             <p>user is disabled in the workspace</p>
             return;

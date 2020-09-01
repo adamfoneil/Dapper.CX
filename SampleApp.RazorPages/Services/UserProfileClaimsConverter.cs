@@ -28,7 +28,7 @@ namespace SampleApp.RazorPages.Services
             yield return new Claim(nameof(UserProfile.DisplayName), user.DisplayName);
             yield return new Claim(nameof(UserProfile.UserId), user.UserId.ToString());
             yield return new Claim(nameof(UserProfile.Email), user.Email);
-            yield return new Claim(nameof(UserProfile.IsEnabled), user.IsEnabled.ToString());
+            yield return new Claim(nameof(UserProfile.IsWorkspaceEnabled), user.IsWorkspaceEnabled.ToString());
 
             foreach (var role in user.Roles) yield return new Claim(roleClaim, role);
         }
@@ -49,7 +49,7 @@ namespace SampleApp.RazorPages.Services
             using (var cn = new SqlConnection(_connectionString))
             {
                 var result = await cn.QuerySingleAsync<UserProfile>(
-                    @"SELECT [u].*, [ws].[Name] AS [WorkspaceName], CASE [wu].[Status] WHEN 2 THEN 1 ELSE 0 END AS [IsEnabled]
+                    @"SELECT [u].*, [ws].[Name] AS [WorkspaceName], CASE [wu].[Status] WHEN 2 THEN 1 ELSE 0 END AS [IsWorkspaceEnabled]
                     FROM [dbo].[AspNetUsers] [u] 
                     LEFT JOIN [dbo].[Workspace] [ws] ON [u].[WorkspaceId]=[ws].[Id]
                     LEFT JOIN [dbo].[WorkspaceUser] [wu] ON [u].[UserId]=[wu].[UserId] AND [wu].[WorkspaceId]=[u].[WorkspaceId]
