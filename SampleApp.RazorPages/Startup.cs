@@ -35,7 +35,7 @@ namespace SampleApp.RazorPages
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddClaimsPrincipalFactory<UserProfileClaimsFactory>();
 
-            services.AddDapperCX(() => new UserProfileClaimsConverter(connectionString), connectionString, (id) => Convert.ToInt32(id));
+            services.AddDapperCX(connectionString, (id) => Convert.ToInt32(id), () => new UserProfileClaimsConverter(connectionString));
 
             services.AddRazorPages();
         }

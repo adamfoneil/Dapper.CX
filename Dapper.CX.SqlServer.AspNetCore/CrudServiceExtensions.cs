@@ -10,9 +10,9 @@ namespace Dapper.CX.SqlServer.AspNetCore
     public static class CrudServiceExtensions
     {
         public static void AddDapperCX<TIdentity, TUser>(
-            this IServiceCollection services, 
-            Func<DbUserClaimsConverter<TUser>> claimsConverterFactory,
-            string connectionString, Func<object, TIdentity> convertIdentity) 
+            this IServiceCollection services,
+            string connectionString,
+            Func<object, TIdentity> convertIdentity, Func<DbUserClaimsConverter<TUser>> claimsConverterFactory)
             where TUser : IUserBase, new()            
         {
             services.AddSingleton(claimsConverterFactory.Invoke());
