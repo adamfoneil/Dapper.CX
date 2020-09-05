@@ -1,4 +1,5 @@
 using Dapper.CX.SqlServer.AspNetCore;
+using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -34,10 +35,7 @@ namespace SampleApp.RazorPages
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddClaimsPrincipalFactory<UserProfileClaimsFactory>();
 
-            services.AddDapperCX(
-                connectionString, 
-                () => new UserProfileClaimsConverter(connectionString), 
-                (id) => Convert.ToInt32(id));
+            services.AddDapperCX(() => new UserProfileClaimsConverter(connectionString), connectionString, (id) => Convert.ToInt32(id));
 
             services.AddRazorPages();
         }

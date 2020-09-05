@@ -11,23 +11,26 @@ namespace Dapper.CX.SqlServer.AspNetCore
     {
         public static void AddDapperCX<TIdentity, TUser>(
             this IServiceCollection services, 
-            string connectionString, Func<DbUserClaimsConverter<TUser>> claimConverterFactory, Func<object, TIdentity> convertIdentity) where TUser : IUserBase, new()            
+            Func<DbUserClaimsConverter<TUser>> claimsConverterFactory,
+            string connectionString, Func<object, TIdentity> convertIdentity) 
+            where TUser : IUserBase, new()            
         {
-            services.AddSingleton(claimConverterFactory.Invoke());
+            services.AddSingleton(claimsConverterFactory.Invoke());
             services.AddHttpContextAccessor();
             services.AddScoped((sp) =>
             {
                 var signinManager = sp.GetRequiredService<SignInManager<IdentityUser>>();                
                 var userManager = sp.GetRequiredService<UserManager<IdentityUser>>();
+                var claimsFactory = signinManager.ClaimsFactory as DbUserClaimsFactory<TUser>;
+                var http = sp.GetRequiredService<IHttpContextAccessor>();                          
+                var claimsConverter = claimsFactory.ClaimsConverter;
+                var user = claimsConverter.GetUserFromClaims(http.HttpContext.User.Identity.Name, http.HttpContext.User.Claims);
 
-                var http = sp.GetRequiredService<IHttpContextAccessor>();
-                var claimConverter = sp.GetRequiredService<DbUserClaimsConverter<TUser>>();
-                var user = claimConverter.GetUserFromClaims(http.HttpContext.User.Identity.Name, http.HttpContext.User.Claims);
                 return new SqlServerCrudService<TIdentity, TUser>(connectionString, user, convertIdentity)
                 {
                     OnUserUpdatedAsync = async (user) =>
                     {                        
-                        await claimConverter.UpdateClaimsAsync(user.Name, userManager, signinManager, http.HttpContext.User.Claims);
+                        await claimsConverter.UpdateClaimsAsync(user.Name, userManager, signinManager, http.HttpContext.User.Claims);
                     }
                 };
             });
