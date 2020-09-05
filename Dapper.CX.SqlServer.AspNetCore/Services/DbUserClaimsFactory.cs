@@ -12,21 +12,21 @@ namespace Dapper.CX.SqlServer.Services
     /// </summary>
     public class DbUserClaimsFactory<TUser> : UserClaimsPrincipalFactory<IdentityUser> where TUser : IUserBase, new()
     {
-        private readonly DbUserClaimsConverter<TUser> _claimConverter;
-
         public DbUserClaimsFactory(
             UserManager<IdentityUser> userManager,
             IOptions<IdentityOptions> optionsAccessor,
-            DbUserClaimsConverter<TUser> claimConverter) : base(userManager, optionsAccessor)
+            DbUserClaimsConverter<TUser> claimsConverter) : base(userManager, optionsAccessor)
         {
-            _claimConverter = claimConverter;
+            ClaimsConverter = claimsConverter;
         }
+
+        public DbUserClaimsConverter<TUser> ClaimsConverter { get; }
         
         protected async override Task<ClaimsIdentity> GenerateClaimsAsync(IdentityUser user)
         {            
             var result = await base.GenerateClaimsAsync(user);
-            var dbUser = await _claimConverter.QueryUserAsync(user.UserName);
-            var claims = _claimConverter.GetClaimsFromUser(dbUser);
+            var dbUser = await ClaimsConverter.QueryUserAsync(user.UserName);
+            var claims = ClaimsConverter.GetClaimsFromUser(dbUser);
             result.AddClaims(claims);
             return result;
         }
