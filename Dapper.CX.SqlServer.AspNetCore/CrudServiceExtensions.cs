@@ -1,4 +1,5 @@
 ﻿using AO.Models.Interfaces;
+using Dapper.CX.SqlServer.AspNetCore.Classes;
 using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -33,6 +34,16 @@ namespace Dapper.CX.SqlServer.AspNetCore
                         await claimsConverter.UpdateClaimsAsync(user.Name, userManager, signinManager, http.HttpContext.User.Claims);
                     }
                 };
+            });
+        }
+
+        public static void AddDapperCX<TIdentity>(
+            this IServiceCollection services, 
+            string connectionString, Func<object, TIdentity> convertIdentity, string systemUserName = "system")
+        {
+            services.AddScoped((sp) =>
+            {
+                return new SqlServerCrudService<TIdentity, SystemUser>(connectionString, new SystemUser(systemUserName), convertIdentity);
             });
         }
     }

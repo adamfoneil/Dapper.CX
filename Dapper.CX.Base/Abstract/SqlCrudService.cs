@@ -1,5 +1,6 @@
 ﻿using AO.Models.Interfaces;
 using Dapper.CX.Classes;
+using Dapper.CX.SqlServer.AspNetCore.Classes;
 using System;
 using System.Data;
 using System.Threading.Tasks;
@@ -26,6 +27,8 @@ namespace Dapper.CX.Abstract
 
         public async Task UpdateUserAsync()
         {
+            if (User is SystemUser) throw new Exception("Can't update a SystemUser account.");
+
             using (var cn = GetConnection())
             {
                 await CrudProvider.UpdateAsync(cn, User);
