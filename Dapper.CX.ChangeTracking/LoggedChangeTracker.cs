@@ -43,7 +43,7 @@ namespace Dapper.CX.Classes
                 {
                     int version = await IncrementRowVersionAsync(connection, tableName, rowId, txn);
 
-                    var textLookup = Instance as AO.Models.Interfaces.ITextLookup;
+                    var textLookup = Instance as ITextLookup;
 
                     foreach (var kp in GetModifiedProperties())
                     {

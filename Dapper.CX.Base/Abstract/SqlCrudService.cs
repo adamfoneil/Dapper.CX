@@ -1,6 +1,5 @@
 ﻿using AO.Models.Interfaces;
 using Dapper.CX.Classes;
-using Dapper.CX.SqlServer.AspNetCore.Classes;
 using System;
 using System.Data;
 using System.Threading.Tasks;

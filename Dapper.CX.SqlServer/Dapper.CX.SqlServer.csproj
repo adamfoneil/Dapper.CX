@@ -23,6 +23,7 @@
     <Compile Include="..\Dapper.CX.Base\Abstract\SqlCrudService.cs" Link="Base\Abstract\SqlCrudService.cs" />
     <Compile Include="..\Dapper.CX.Base\Classes\ChangeTracker.cs" Link="Base\Classes\ChangeTracker.cs" />
     <Compile Include="..\Dapper.CX.Base\Classes\SqlExpression.cs" Link="Base\Classes\SqlExpression.cs" />
+    <Compile Include="..\Dapper.CX.Base\Classes\SystemUser.cs" Link="Base\Classes\SystemUser.cs" />
     <Compile Include="..\Dapper.CX.Base\Exceptions\ChangeTrackerSaveException.cs" Link="Base\Exceptions\ChangeTrackerSaveException.cs" />
     <Compile Include="..\Dapper.CX.Base\Exceptions\CrudException.cs" Link="Base\Exceptions\CrudException.cs" />
     <Compile Include="..\Dapper.CX.Base\Exceptions\IdentityException.cs" Link="Base\Exceptions\IdentityException.cs" />
@@ -36,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AO.Models" Version="1.1.3" />
+    <PackageReference Include="AO.Models" Version="1.1.4" />
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
   </ItemGroup>

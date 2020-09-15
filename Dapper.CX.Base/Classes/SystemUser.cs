@@ -1,7 +1,7 @@
 ﻿using AO.Models.Interfaces;
 using System;
 
-namespace Dapper.CX.SqlServer.AspNetCore.Classes
+namespace Dapper.CX.Classes
 {
     public class SystemUser : IUserBase
     {

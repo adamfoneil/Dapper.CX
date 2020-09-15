@@ -1,5 +1,5 @@
 ﻿using AO.Models.Interfaces;
-using Dapper.CX.SqlServer.AspNetCore.Classes;
+using Dapper.CX.Classes;
 using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

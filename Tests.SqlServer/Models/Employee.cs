@@ -42,13 +42,18 @@ namespace Tests.Models
         public IEnumerable<string> Something { get; set; }
         public IEnumerable<DateTime> SomethingElse { get; set; }
 
-        public async Task RowDeletedAsync(IDbConnection connection, IDbTransaction txn = null)
+        public async Task RowDeletedAsync(IDbConnection connection, IDbTransaction txn = null, IUserBase user = null)
         {
             Value = OtherEnum.Other;
             await Task.CompletedTask;
         }
 
-        public async Task RowSavedAsync(IDbConnection connection, SaveAction saveAction, IDbTransaction txn = null)
+        public async Task RowSavedAsync(IDbConnection connection, SaveAction saveAction, IDbTransaction txn = null, IUserBase user = null)
+        {
+            await Task.CompletedTask;
+        }
+
+        public async Task RowSavingAsync(IDbConnection connection, SaveAction saveAction, IDbTransaction txn = null, IUserBase user = null)
         {
             await Task.CompletedTask;
         }
