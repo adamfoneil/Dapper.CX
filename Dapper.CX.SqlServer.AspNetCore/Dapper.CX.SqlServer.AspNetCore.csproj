@@ -10,7 +10,8 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/adamfoneil/Dapper.CX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamfoneil/Dapper.CX</RepositoryUrl>
-    <Version>1.2.3-beta</Version>
+    <Version>1.2.4-beta</Version>
+    <PackageReleaseNotes>removed CX ext methods due to ambiguity downstream</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
