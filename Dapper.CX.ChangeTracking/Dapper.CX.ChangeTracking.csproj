@@ -15,10 +15,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Dapper.CX.Base\Interfaces\IChangeTracker.cs" Link="Interfaces\IChangeTracker.cs" />
+    <Compile Include="..\Dapper.CX.Base\Interfaces\ISqlCrudProvider.cs" Link="Interfaces\ISqlCrudProvider.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AO.Models" Version="1.1.4" />
     <PackageReference Include="AO.ModelSync.Library" Version="2.1.2" />
-    <PackageReference Include="Dapper.CX.Base" Version="1.1.10" />
-    <PackageReference Include="Dapper.CX.SqlServer" Version="1.1.11" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +29,10 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
   </ItemGroup>
 
 </Project>

@@ -3,6 +3,7 @@ using AO.Models.Interfaces;
 using Dapper.CX.Classes;
 using Dapper.CX.Exceptions;
 using Dapper.CX.Extensions;
+using Dapper.CX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
 {
-    public abstract partial class SqlCrudProvider<TIdentity>
+    public abstract partial class SqlCrudProvider<TIdentity> : ISqlCrudProvider<TIdentity>
     {
         private readonly Func<object, TIdentity> _convertIdentity;
 

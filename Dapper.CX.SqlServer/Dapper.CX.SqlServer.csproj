@@ -22,6 +22,7 @@
     <Compile Include="..\Dapper.CX.Base\Abstract\SqlCrudProvider_Sync.cs" Link="Base\Abstract\SqlCrudProvider_Sync.cs" />
     <Compile Include="..\Dapper.CX.Base\Abstract\SqlCrudService.cs" Link="Base\Abstract\SqlCrudService.cs" />
     <Compile Include="..\Dapper.CX.Base\Classes\ChangeTracker.cs" Link="Base\Classes\ChangeTracker.cs" />
+    <Compile Include="..\Dapper.CX.Base\Classes\LoggedChangeTracker.cs" Link="Base\Classes\LoggedChangeTracker.cs" />
     <Compile Include="..\Dapper.CX.Base\Classes\SqlExpression.cs" Link="Base\Classes\SqlExpression.cs" />
     <Compile Include="..\Dapper.CX.Base\Classes\SystemUser.cs" Link="Base\Classes\SystemUser.cs" />
     <Compile Include="..\Dapper.CX.Base\Exceptions\ChangeTrackerSaveException.cs" Link="Base\Exceptions\ChangeTrackerSaveException.cs" />
@@ -34,10 +35,13 @@
     <Compile Include="..\Dapper.CX.Base\Extensions\ConnectionExtensions.cs" Link="Base\Extensions\ConnectionExtensions.cs" />
     <Compile Include="..\Dapper.CX.Base\Extensions\ModelClassHelper.cs" Link="Base\Extensions\ModelClassHelper.cs" />
     <Compile Include="..\Dapper.CX.Base\Extensions\ReflectionHelper.cs" Link="Base\Extensions\ReflectionHelper.cs" />
+    <Compile Include="..\Dapper.CX.Base\Interfaces\ISqlCrudProvider.cs" Link="Base\Interfaces\ISqlCrudProvider.cs" />
+    <Compile Include="..\Dapper.CX.Base\Models\ColumnHistory.cs" Link="Base\Models\ColumnHistory.cs" />
+    <Compile Include="..\Dapper.CX.Base\Models\RowVersion.cs" Link="Base\Models\RowVersion.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AO.Models" Version="1.1.4" />
+    <PackageReference Include="AO.Models" Version="1.1.7" />
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
   </ItemGroup>
@@ -55,6 +59,8 @@
     <Folder Include="Base\Classes\" />
     <Folder Include="Base\Exceptions\" />
     <Folder Include="Base\Extensions\" />
+    <Folder Include="Base\Interfaces\" />
+    <Folder Include="Base\Models\" />
   </ItemGroup>
 
 </Project>

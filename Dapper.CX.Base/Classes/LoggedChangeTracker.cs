@@ -1,28 +1,31 @@
 ﻿using AO.Models.Interfaces;
-using Dapper.CX.ChangeTracking.Models;
+using Dapper.CX.Models;
+using Dapper.CX.Extensions;
 using Dapper.CX.Interfaces;
-using ModelSync.Library.Models;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Classes
 {
-    public class LoggedChangeTracker<TModel> : Dictionary<string, object>, IDbSaveable
+    public class LoggedChangeTracker<TModel> : ChangeTracker<TModel>, IDbSaveable
     {
         private static bool _initialized = false;
 
         private readonly IUserBase _user;
         private readonly string _nullText;
         private readonly ISqlCrudProvider<long> _crudProvider;
+        private readonly ISqlObjectCreator _objectCreator;
 
-        public LoggedChangeTracker(ISqlCrudProvider<long> crudProvider, IUserBase user, TModel @object, string nullText = "<null>") : base(@object)
+        public LoggedChangeTracker(
+            ISqlObjectCreator objectCreator, ISqlCrudProvider<long> crudProvider, IUserBase user, 
+            TModel @object, string nullText = "<null>") : base(@object)
         {
             _user = user;
             _nullText = nullText;
             _crudProvider = crudProvider;
+            _objectCreator = objectCreator;
         }
 
         private enum ValueType
@@ -118,11 +121,16 @@ namespace Dapper.CX.Classes
         {
             if (_initialized) return;
 
-            await DataModel.CreateTablesAsync(new Type[]
+            var statements = await _objectCreator.GetStatementsAsync(connection, new Type[]
             {
                 typeof(ColumnHistory),
                 typeof(RowVersion)
-            }, connection);
+            });
+
+            foreach (var statement in statements)
+            {
+                await connection.ExecuteAsync(statement);
+            }
 
             _initialized = true;
         }

@@ -1,16 +1,16 @@
 ﻿using AO.Models.Interfaces;
 using Dapper;
-using Dapper.CX.Classes;
-using Dapper.CX.Extensions;
 using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ModelSync.Library.Models;
 using SqlServer.LocalDb;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Tests.ChangeTracking.Models;
 using Tests.Models;
+using Dapper.CX.Extensions;
+using Dapper.CX.Classes;
+using ModelSync.Models;
 
 namespace Tests.Base
 {
@@ -46,10 +46,9 @@ namespace Tests.Base
                 try { cn.Execute("TRUNCATE TABLE [changes].[ColumnHistory]"); } catch { /* do nothing */ }
                 cn.Execute("DELETE [dbo].[Employee] WHERE [FirstName]=@firstName AND [LastName]=@lastName", emp);
 
-                var provider = new SqlServerIntCrudProvider();
+                var provider = new SqlServerCrudProvider<int>((id) => Convert.ToInt32(id));
                 provider.SaveAsync(cn, emp).Wait();
-
-                var ct = new LoggedChangeTracker<Employee>(new LocalUser("adamo"), emp);
+                LoggedChangeTracker<Employee> ct = GetLoggedChangeTracker(emp);
 
                 emp.FirstName = "Javad";
                 emp.Status = Status.Inactive;
@@ -59,6 +58,11 @@ namespace Tests.Base
                 Assert.IsTrue(cn.RowExistsAsync("[changes].[ColumnHistory] WHERE [TableName]='Employee' AND [RowId]=1 AND [Version]=1 AND [ColumnName]='FirstName' AND [OldValue]='Yavad' AND [NewValue]='Javad'").Result);
                 Assert.IsTrue(cn.RowExistsAsync("[changes].[ColumnHistory] WHERE [TableName]='Employee' AND [RowId]=1 AND [Version]=1 AND [ColumnName]='Status' AND [OldValue]='Active' AND [NewValue]='Inactive'").Result);
             }
+        }
+
+        private static LoggedChangeTracker<TModel> GetLoggedChangeTracker<TModel>(TModel model)
+        {
+            return new LoggedChangeTracker<TModel>(new DataModel(), new SqlServerCrudProvider<long>((id) => Convert.ToInt64(id)), new LocalUser("adamo"), model);
         }
 
         [TestMethod]
@@ -75,7 +79,7 @@ namespace Tests.Base
                 cn.Execute("DELETE [dbo].[Widget]");
                 cn.Execute("DELETE [dbo].[WidgetType]");
 
-                var provider = new SqlServerIntCrudProvider();
+                var provider = new SqlServerCrudProvider<int>((id) => Convert.ToInt32(id));
                 HashSet<int> ids = new HashSet<int>();
                 Array.ForEach(new[] { "this", "that", "other" }, (name) =>
                 {
@@ -91,7 +95,7 @@ namespace Tests.Base
 
                 int widgetId = provider.Save(cn, w);
 
-                var ct = new LoggedChangeTracker<Widget>(new LocalUser("adamo"), w);
+                var ct = GetLoggedChangeTracker(w);
                 w.Price = 21.7m;
                 w.TypeId = ids.Last();
                 provider.SaveAsync(cn, w, ct).Wait();

@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.SqlServer", "Tests.Sq
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Base", "Tests.Base\Tests.Base.csproj", "{0DADBD92-3F4B-4E95-B20C-FFE100F3CB2E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.CX.ChangeTracking", "Dapper.CX.ChangeTracking\Dapper.CX.ChangeTracking.csproj", "{D1649392-A811-43DD-BF83-9CF41BC6E3B2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.ChangeTracking", "Tests.ChangeTracking\Tests.ChangeTracking.csproj", "{A81F04C5-8BC5-451A-93AC-186DBA7DBAE2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.CX.SqlServer.AspNetCore", "Dapper.CX.SqlServer.AspNetCore\Dapper.CX.SqlServer.AspNetCore.csproj", "{8C201AEA-FE9B-4DEC-9D58-B3ECC8691E73}"
@@ -45,10 +43,6 @@ Global
 		{0DADBD92-3F4B-4E95-B20C-FFE100F3CB2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DADBD92-3F4B-4E95-B20C-FFE100F3CB2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DADBD92-3F4B-4E95-B20C-FFE100F3CB2E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D1649392-A811-43DD-BF83-9CF41BC6E3B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1649392-A811-43DD-BF83-9CF41BC6E3B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1649392-A811-43DD-BF83-9CF41BC6E3B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1649392-A811-43DD-BF83-9CF41BC6E3B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A81F04C5-8BC5-451A-93AC-186DBA7DBAE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A81F04C5-8BC5-451A-93AC-186DBA7DBAE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A81F04C5-8BC5-451A-93AC-186DBA7DBAE2}.Release|Any CPU.ActiveCfg = Release|Any CPU

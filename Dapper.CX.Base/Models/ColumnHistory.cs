@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Dapper.CX.ChangeTracking.Models
+namespace Dapper.CX.Models
 {
     [Identity(nameof(Id))]    
     [Schema("changes")]
