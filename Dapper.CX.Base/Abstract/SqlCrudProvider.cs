@@ -1,4 +1,5 @@
-﻿using AO.Models.Enums;
+﻿using AO.Models.Attributes;
+using AO.Models.Enums;
 using AO.Models.Interfaces;
 using Dapper.CX.Classes;
 using Dapper.CX.Exceptions;
@@ -91,10 +92,29 @@ namespace Dapper.CX.Abstract
                 return await InsertAsync(connection, model, getIdentity: true, txn, user);
             }
             else
-            {
+            {                
                 await UpdateAsync(connection, model, changeTracker, txn, user);
                 return GetIdentity(model);
             }
+        }
+
+        private async Task<ChangeTracker<TModel>> InitChangeTrackingAsync<TModel>(IDbConnection connection, IDbTransaction txn, TModel model, IUserBase user, ChangeTracker<TModel> changeTracker)
+        {
+            if (changeTracker != null) return changeTracker;
+
+            if (typeof(TModel).HasAttribute(out TrackChangesAttribute attr))
+            {
+                var identity = GetIdentity(model);
+                var existing = await GetAsync<TModel>(connection, identity, txn);
+                var result = new LoggedChangeTracker<TModel, TIdentity>(this, user, existing);
+                foreach (var ignore in attr.IgnoreProperties)
+                {
+                    if (result.ContainsKey(ignore)) result.Remove(ignore);
+                }
+                return result;
+            }
+
+            return null;
         }
 
         public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> keyProperties, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
@@ -180,6 +200,8 @@ namespace Dapper.CX.Abstract
 
         public async Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
         {
+            changeTracker = await InitChangeTrackingAsync(connection, txn, model, user, changeTracker);
+
             await ValidateInternal(connection, model, txn);
 
             AuditRow(model, SaveAction.Update, user);

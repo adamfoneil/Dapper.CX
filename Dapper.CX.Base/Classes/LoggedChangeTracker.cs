@@ -9,23 +9,19 @@ using System.Threading.Tasks;
 
 namespace Dapper.CX.Classes
 {
-    public class LoggedChangeTracker<TModel> : ChangeTracker<TModel>, IDbSaveable
+    public class LoggedChangeTracker<TModel, TIdentity> : ChangeTracker<TModel>, IDbSaveable
     {
         private static bool _initialized = false;
 
         private readonly IUserBase _user;
         private readonly string _nullText;
-        private readonly ISqlCrudProvider<long> _crudProvider;
-        private readonly ISqlObjectCreator _objectCreator;
+        private readonly ISqlCrudProvider<TIdentity> _crudProvider;
 
-        public LoggedChangeTracker(
-            ISqlObjectCreator objectCreator, ISqlCrudProvider<long> crudProvider, IUserBase user, 
-            TModel @object, string nullText = "<null>") : base(@object)
+        public LoggedChangeTracker(ISqlCrudProvider<TIdentity> crudProvider, IUserBase user, TModel @object, string nullText = "<null>") : base(@object)
         {
             _user = user;
             _nullText = nullText;
-            _crudProvider = crudProvider;
-            _objectCreator = objectCreator;
+            _crudProvider = crudProvider;  
         }
 
         private enum ValueType
@@ -37,8 +33,6 @@ namespace Dapper.CX.Classes
 
         public async Task SaveAsync(IDbConnection connection)
         {
-            await InitializeAsync(connection);
-
             string tableName = typeof(TModel).GetTableName();
             long rowId = GetRowId();
 
@@ -117,11 +111,11 @@ namespace Dapper.CX.Classes
             return Convert.ToInt64(value);
         }
 
-        private async Task InitializeAsync(IDbConnection connection)
+        public async Task InitializeAsync(IDbConnection connection, ISqlObjectCreator objectCreator)
         {
             if (_initialized) return;
 
-            var statements = await _objectCreator.GetStatementsAsync(connection, new Type[]
+            var statements = await objectCreator.GetStatementsAsync(connection, new Type[]
             {
                 typeof(ColumnHistory),
                 typeof(RowVersion)

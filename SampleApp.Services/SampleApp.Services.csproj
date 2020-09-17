@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AO.Models" Version="1.1.7" />
+    <PackageReference Include="AO.Models" Version="1.1.8" />
     <PackageReference Include="Dapper.CX.SqlServer" Version="1.1.11" />
     <PackageReference Include="Dapper.QX" Version="1.0.17" />
   </ItemGroup>

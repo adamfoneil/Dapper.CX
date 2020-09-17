@@ -11,6 +11,8 @@ using Tests.Models;
 using Dapper.CX.Extensions;
 using Dapper.CX.Classes;
 using ModelSync.Models;
+using System.Data;
+using System.Runtime.InteropServices;
 
 namespace Tests.Base
 {
@@ -48,7 +50,7 @@ namespace Tests.Base
 
                 var provider = new SqlServerCrudProvider<int>((id) => Convert.ToInt32(id));
                 provider.SaveAsync(cn, emp).Wait();
-                LoggedChangeTracker<Employee> ct = GetLoggedChangeTracker(emp);
+                LoggedChangeTracker<Employee, long> ct = GetLoggedChangeTracker(cn, emp);           
 
                 emp.FirstName = "Javad";
                 emp.Status = Status.Inactive;
@@ -60,9 +62,11 @@ namespace Tests.Base
             }
         }
 
-        private static LoggedChangeTracker<TModel> GetLoggedChangeTracker<TModel>(TModel model)
+        private static LoggedChangeTracker<TModel, long> GetLoggedChangeTracker<TModel>(IDbConnection cn, TModel model)
         {
-            return new LoggedChangeTracker<TModel>(new DataModel(), new SqlServerCrudProvider<long>((id) => Convert.ToInt64(id)), new LocalUser("adamo"), model);
+            var result = new LoggedChangeTracker<TModel, long>(new SqlServerCrudProvider<long>((id) => Convert.ToInt64(id)), new LocalUser("adamo"), model);
+            result.InitializeAsync(cn, new DataModel()).Wait();
+            return result;
         }
 
         [TestMethod]
@@ -95,7 +99,7 @@ namespace Tests.Base
 
                 int widgetId = provider.Save(cn, w);
 
-                var ct = GetLoggedChangeTracker(w);
+                var ct = GetLoggedChangeTracker(cn, w);
                 w.Price = 21.7m;
                 w.TypeId = ids.Last();
                 provider.SaveAsync(cn, w, ct).Wait();
