@@ -10,7 +10,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/adamfoneil/Dapper.CX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamfoneil/Dapper.CX</RepositoryUrl>
-    <Version>1.2.5-beta</Version>
+    <Version>1.2.6-beta</Version>
     <PackageReleaseNotes>removed CX ext methods due to ambiguity downstream</PackageReleaseNotes>
   </PropertyGroup>
 
@@ -56,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AO.Models" Version="1.1.8" />
+    <PackageReference Include="AO.Models" Version="1.1.9" />
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Dapper.QX" Version="1.0.17" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />

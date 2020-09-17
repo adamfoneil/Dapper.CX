@@ -107,7 +107,7 @@ namespace Dapper.CX.Abstract
                 var identity = GetIdentity(model);
                 var existing = await GetAsync<TModel>(connection, identity, txn);
                 var result = new LoggedChangeTracker<TModel, TIdentity>(this, user, existing);
-                foreach (var ignore in attr.IgnoreProperties)
+                foreach (var ignore in attr.GetIgnoreProperties())
                 {
                     if (result.ContainsKey(ignore)) result.Remove(ignore);
                 }
