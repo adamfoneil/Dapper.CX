@@ -1,4 +1,5 @@
-﻿using Dapper.CX.SqlServer.Services;
+﻿using Dapper.CX.SqlServer.AspNetCore.Extensions;
+using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SampleApp.Models;
