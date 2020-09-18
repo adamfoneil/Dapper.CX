@@ -10,14 +10,9 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/adamfoneil/Dapper.CX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamfoneil/Dapper.CX</RepositoryUrl>
-    <Version>1.2.7-beta</Version>
+    <Version>1.2.8-beta</Version>
     <PackageReleaseNotes>removed CX components to resolve ambiguities, replaced with CX package dependency</PackageReleaseNotes>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\Dapper.CX.SqlServer\SqlServerCmd.cs" Link="SqlServer\SqlServerCmd.cs" />
-    <Compile Include="..\Dapper.CX.SqlServer\SqlServerCrudProvider.cs" Link="SqlServer\SqlServerCrudProvider.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
