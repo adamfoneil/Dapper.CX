@@ -4,6 +4,9 @@ using System;
 
 namespace SampleApp.RazorPages.Services
 {
+    /// <summary>
+    /// sample derived crud service class for use with custom serviceFactory AddDapperCX overload
+    /// </summary>
     public class DataAccess : SqlServerCrudService<int, UserProfile>
     {
         public DataAccess(
