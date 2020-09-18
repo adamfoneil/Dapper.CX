@@ -352,7 +352,7 @@ namespace Dapper.CX.Abstract
         {
             try
             {
-                await DeleteAsync(connection, id);
+                await DeleteAsync<TModel>(connection, id);
                 if (onSuccess != null) await onSuccess.Invoke();
                 return true;
             }

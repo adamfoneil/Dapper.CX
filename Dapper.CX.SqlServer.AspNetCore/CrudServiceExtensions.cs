@@ -12,17 +12,23 @@ namespace Dapper.CX.SqlServer.AspNetCore
 {
     public static class CrudServiceExtensions
     {
+        /// <summary>
+        /// Dapper.CX config method that lets you use your own derived SqlServerCrudService class
+        /// </summary>
         public static void AddDapperCX<TIdentity, TUser>(
             this IServiceCollection services,
             Func<DbUserClaimsConverter<TUser>> claimsConverterFactory,
             Func<IServiceProvider, SqlServerCrudService<TIdentity, TUser>> serviceFactory)
             where TUser : IUserBase, new()
         {
-            services.AddSingleton(claimsConverterFactory.Invoke());
             services.AddHttpContextAccessor();
+            services.AddSingleton(claimsConverterFactory.Invoke());            
             services.AddScoped((sp) => serviceFactory.Invoke(sp));
         }
 
+        /// <summary>
+        /// Dapper.CX config method that uses the built-in SqlServerCrudService class
+        /// </summary>
         public static void AddDapperCX<TIdentity, TUser>(
             this IServiceCollection services,
             string connectionString,
@@ -30,26 +36,40 @@ namespace Dapper.CX.SqlServer.AspNetCore
             Func<DbUserClaimsConverter<TUser>> claimsConverterFactory)
             where TUser : IUserBase, new()            
         {
-            services.AddSingleton(claimsConverterFactory.Invoke());
             services.AddHttpContextAccessor();
+            services.AddSingleton(claimsConverterFactory.Invoke());            
             services.AddScoped((sp) =>
             {
                 var context = sp.GetDapperCXContext<TUser>();
-                var result = new SqlServerCrudService<TIdentity, TUser>(connectionString, context.user, convertIdentity);
-                result.OnUserUpdatedAsync = async (user) =>
+                return new SqlServerCrudService<TIdentity, TUser>(connectionString, context.user, convertIdentity)
                 {
-                    await context.claimsConverter.UpdateClaimsAsync(user.Name, context.userManager, context.signinManager, context.claims);
-                };
-
-                return result;
+                    OnUserUpdatedAsync = async (user) =>
+                    {
+                        await context.claimsConverter.UpdateClaimsAsync(user.Name, context.userManager, context.signinManager, context.claims);
+                    }
+                };                
             });
         }
 
         /// <summary>
-        /// helper method that extracts the usual things from the service provider to configure Dapper.CX during startup
+        /// simplest Dapper.CX use case, with no user profile integation
+        /// </summary>
+        public static void AddDapperCX<TIdentity>(
+            this IServiceCollection services, 
+            string connectionString, Func<object, TIdentity> convertIdentity, string systemUserName = "system")
+        {
+            services.AddScoped((sp) =>
+            {
+                return new SqlServerCrudService<TIdentity, SystemUser>(connectionString, new SystemUser(systemUserName), convertIdentity);
+            });
+        }
+
+        /// <summary>
+        /// Helper method that extracts the useful things from the service provider to configure Dapper.CX during startup.
+        /// This is intended for use in your own serviceFactory method so you can implement user profile integration
         /// </summary>
         public static (
-            TUser user, 
+            TUser user,
             DbUserClaimsConverter<TUser> claimsConverter,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signinManager,
@@ -61,24 +81,13 @@ namespace Dapper.CX.SqlServer.AspNetCore
             var claimsFactory = signinManager.ClaimsFactory as DbUserClaimsFactory<TUser>;
             var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
             var claimsConverter = claimsFactory.ClaimsConverter;
-            return 
-                (
-                    claimsConverter.GetUserFromClaims(http.HttpContext.User.Identity.Name, http.HttpContext.User.Claims),                    
-                    claimsConverter,
-                    userManager,
-                    signinManager,
-                    http.HttpContext.User.Claims
-                );
-        }
-
-        public static void AddDapperCX<TIdentity>(
-            this IServiceCollection services, 
-            string connectionString, Func<object, TIdentity> convertIdentity, string systemUserName = "system")
-        {
-            services.AddScoped((sp) =>
-            {
-                return new SqlServerCrudService<TIdentity, SystemUser>(connectionString, new SystemUser(systemUserName), convertIdentity);
-            });
+            return (
+                claimsConverter.GetUserFromClaims(http.HttpContext.User.Identity.Name, http.HttpContext.User.Claims),
+                claimsConverter,
+                userManager,
+                signinManager,
+                http.HttpContext.User.Claims
+            );
         }
     }
 }
