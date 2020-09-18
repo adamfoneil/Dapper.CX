@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace Dapper.CX.SqlServer.AspNetCore
 {
@@ -12,29 +14,61 @@ namespace Dapper.CX.SqlServer.AspNetCore
     {
         public static void AddDapperCX<TIdentity, TUser>(
             this IServiceCollection services,
+            Func<DbUserClaimsConverter<TUser>> claimsConverterFactory,
+            Func<IServiceProvider, SqlServerCrudService<TIdentity, TUser>> serviceFactory)
+            where TUser : IUserBase, new()
+        {
+            services.AddSingleton(claimsConverterFactory.Invoke());
+            services.AddHttpContextAccessor();
+            services.AddScoped((sp) => serviceFactory.Invoke(sp));
+        }
+
+        public static void AddDapperCX<TIdentity, TUser>(
+            this IServiceCollection services,
             string connectionString,
-            Func<object, TIdentity> convertIdentity, Func<DbUserClaimsConverter<TUser>> claimsConverterFactory)
+            Func<object, TIdentity> convertIdentity, 
+            Func<DbUserClaimsConverter<TUser>> claimsConverterFactory)
             where TUser : IUserBase, new()            
         {
             services.AddSingleton(claimsConverterFactory.Invoke());
             services.AddHttpContextAccessor();
             services.AddScoped((sp) =>
             {
-                var signinManager = sp.GetRequiredService<SignInManager<IdentityUser>>();                
-                var userManager = sp.GetRequiredService<UserManager<IdentityUser>>();
-                var claimsFactory = signinManager.ClaimsFactory as DbUserClaimsFactory<TUser>;
-                var http = sp.GetRequiredService<IHttpContextAccessor>();                          
-                var claimsConverter = claimsFactory.ClaimsConverter;
-                var user = claimsConverter.GetUserFromClaims(http.HttpContext.User.Identity.Name, http.HttpContext.User.Claims);
-
-                return new SqlServerCrudService<TIdentity, TUser>(connectionString, user, convertIdentity)
+                var context = sp.GetDapperCXContext<TUser>();
+                var result = new SqlServerCrudService<TIdentity, TUser>(connectionString, context.user, convertIdentity);
+                result.OnUserUpdatedAsync = async (user) =>
                 {
-                    OnUserUpdatedAsync = async (user) =>
-                    {                        
-                        await claimsConverter.UpdateClaimsAsync(user.Name, userManager, signinManager, http.HttpContext.User.Claims);
-                    }
+                    await context.claimsConverter.UpdateClaimsAsync(user.Name, context.userManager, context.signinManager, context.claims);
                 };
+
+                return result;
             });
+        }
+
+        /// <summary>
+        /// helper method that extracts the usual things from the service provider to configure Dapper.CX during startup
+        /// </summary>
+        public static (
+            TUser user, 
+            DbUserClaimsConverter<TUser> claimsConverter,
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signinManager,
+            IEnumerable<Claim> claims
+        ) GetDapperCXContext<TUser>(this IServiceProvider serviceProvider) where TUser : IUserBase, new()
+        {
+            var signinManager = serviceProvider.GetRequiredService<SignInManager<IdentityUser>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var claimsFactory = signinManager.ClaimsFactory as DbUserClaimsFactory<TUser>;
+            var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+            var claimsConverter = claimsFactory.ClaimsConverter;
+            return 
+                (
+                    claimsConverter.GetUserFromClaims(http.HttpContext.User.Identity.Name, http.HttpContext.User.Claims),                    
+                    claimsConverter,
+                    userManager,
+                    signinManager,
+                    http.HttpContext.User.Claims
+                );
         }
 
         public static void AddDapperCX<TIdentity>(

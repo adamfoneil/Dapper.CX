@@ -209,15 +209,22 @@ namespace Dapper.CX.Abstract
         }
 
         public async Task DeleteAsync<TModel>(
+            IDbConnection connection,
             TIdentity id, Func<IDbConnection, IDbTransaction, Task> txnAction = null)
         {
-            using (var connection = GetConnection())
+            await ExecuteInnerAsync<TModel>(connection, async (cn, txn) =>
             {
-                await ExecuteInnerAsync<TModel>(connection, async (cn, txn) =>
-                {
-                    await CrudProvider.DeleteAsync<TModel>(cn, id, txn, User);
-                    return default;
-                }, txnAction);
+                await CrudProvider.DeleteAsync<TModel>(cn, id, txn, User);
+                return default;
+            }, txnAction);
+        }
+
+        public async Task DeleteAsync<TModel>(
+            TIdentity id, Func<IDbConnection, IDbTransaction, Task> txnAction = null)
+        {
+            using (var cn = GetConnection())
+            {
+                await DeleteAsync<TModel>(cn, id, txnAction);
             }
         }
 
@@ -338,6 +345,29 @@ namespace Dapper.CX.Abstract
             using (var cn = GetConnection())
             {
                 return await TryInsertAsync(cn, model, onSuccess, onException);
+            }
+        }
+
+        public async Task<bool> TryDeleteAsync<TModel>(IDbConnection connection, TIdentity id, Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
+        {
+            try
+            {
+                await DeleteAsync(connection, id);
+                if (onSuccess != null) await onSuccess.Invoke();
+                return true;
+            }
+            catch (Exception exc)
+            {
+                if (onException != null) await onException.Invoke(exc);
+                return false;
+            }
+        }
+
+        public async Task<bool> TryDeleteAsync<TModel>(TIdentity id, Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
+        {
+            using (var cn = GetConnection())
+            {
+                return await TryDeleteAsync<TModel>(cn, id, onSuccess, onException);
             }
         }
 

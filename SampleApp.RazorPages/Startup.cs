@@ -35,7 +35,19 @@ namespace SampleApp.RazorPages
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddClaimsPrincipalFactory<UserProfileClaimsFactory>();
 
-            services.AddDapperCX(connectionString, (id) => Convert.ToInt32(id), () => new UserProfileClaimsConverter(connectionString));
+            /*
+            services.AddDapperCX(
+                connectionString, 
+                (id) => Convert.ToInt32(id), 
+                () => new UserProfileClaimsConverter(connectionString));*/
+
+            services.AddDapperCX(
+                () => new UserProfileClaimsConverter(connectionString),
+                (sp) =>
+                {
+                    var context = sp.GetDapperCXContext<UserProfile>();
+                    return new DataAccess(connectionString, context.user, (id) => Convert.ToInt32(id));
+                });
 
             services.AddRazorPages();
         }
