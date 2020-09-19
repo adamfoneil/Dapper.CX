@@ -1,4 +1,5 @@
 using Dapper.CX.SqlServer.AspNetCore;
+using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -33,33 +34,29 @@ namespace SampleApp.RazorPages
                 .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddClaimsPrincipalFactory<UserProfileClaimsFactory>();
-
+            
             /*
+            this one works, but is not exactly what I want because it doesn't use the derived type DataAccess
             services.AddDapperCX(
                 connectionString, 
                 (id) => Convert.ToInt32(id), 
                 () => new UserProfileClaimsConverter(connectionString));*/
 
-            services.AddDapperCX<DataAccess>(
-                () => new UserProfileClaimsConverter(connectionString),
-                (sp) =>
+            services.AddHttpContextAccessor();
+            services.AddSingleton(new UserProfileClaimsConverter(connectionString));
+            services.AddScoped((sp) => // this is the service instance I want, but for some reason this delegate is being skipped by runtime
+            {              
+                var context = sp.GetDapperCXContext<UserProfile>();
+                return new DataAccess(connectionString, context.user, (id) => Convert.ToInt32(id))
                 {
-                    return GetService(sp, connectionString);
-                });
-
+                    OnUserUpdatedAsync = async (user) =>
+                    {
+                        await context.claimsConverter.UpdateClaimsAsync(user.Name, context.userManager, context.signinManager, context.claims);
+                    }
+                };
+            });
+           
             services.AddRazorPages();
-        }
-
-        private static DataAccess GetService(IServiceProvider sp, string connectionString)
-        {
-            var context = sp.GetDapperCXContext<UserProfile>();
-            return new DataAccess(connectionString, context.user, (id) => Convert.ToInt32(id))
-            {
-                OnUserUpdatedAsync = async (user) =>
-                {
-                    await context.claimsConverter.UpdateClaimsAsync(user.Name, context.userManager, context.signinManager, context.claims);
-                }
-            };
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

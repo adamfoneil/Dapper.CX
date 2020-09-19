@@ -1,6 +1,5 @@
 ﻿using AO.Models.Interfaces;
 using Dapper.CX.Classes;
-using Dapper.CX.Interfaces;
 using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -21,13 +20,14 @@ namespace Dapper.CX.SqlServer.AspNetCore
             Func<DbUserClaimsConverter<TUser>> claimsConverterFactory,
             Func<IServiceProvider, TService> serviceFactory)
             where TUser : IUserBase, new()
-            where TService : class, new()
+            where TService : SqlServerCrudService<TIdentity, TUser>, new()
         {
             services.AddHttpContextAccessor();
-            services.AddSingleton(claimsConverterFactory.Invoke());            
+            services.AddSingleton(claimsConverterFactory.Invoke());     
             services.AddScoped((sp) => serviceFactory.Invoke(sp));
         }
 
+        
         /// <summary>
         /// Dapper.CX config method that uses the built-in SqlServerCrudService class
         /// </summary>
@@ -56,7 +56,7 @@ namespace Dapper.CX.SqlServer.AspNetCore
         /// <summary>
         /// simplest Dapper.CX use case, with no user profile integation
         /// </summary>
-        public static void AddDapperCX<TIdentity>(
+        public static void AddDapperCXBasic<TIdentity>(
             this IServiceCollection services, 
             string connectionString, Func<object, TIdentity> convertIdentity, string systemUserName = "system")
         {
@@ -64,7 +64,7 @@ namespace Dapper.CX.SqlServer.AspNetCore
             {
                 return new SqlServerCrudService<TIdentity, SystemUser>(connectionString, new SystemUser(systemUserName), convertIdentity);
             });
-        }
+        }        
 
         /// <summary>
         /// Helper method that extracts the useful things from the service provider to configure Dapper.CX during startup.
