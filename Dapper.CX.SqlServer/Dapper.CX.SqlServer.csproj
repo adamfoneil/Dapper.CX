@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.2.0-beta</Version>
+    <Version>1.2.1-beta</Version>
     <Authors>Adam O'Neil</Authors>
     <Company>Adam O'Neil</Company>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -36,6 +36,7 @@
     <Compile Include="..\Dapper.CX.Base\Extensions\ModelClassHelper.cs" Link="Base\Extensions\ModelClassHelper.cs" />
     <Compile Include="..\Dapper.CX.Base\Extensions\ReflectionHelper.cs" Link="Base\Extensions\ReflectionHelper.cs" />
     <Compile Include="..\Dapper.CX.Base\Interfaces\ISqlCrudProvider.cs" Link="Base\Interfaces\ISqlCrudProvider.cs" />
+    <Compile Include="..\Dapper.CX.Base\Interfaces\ISqlCrudService.cs" Link="Base\Interfaces\ISqlCrudService.cs" />
     <Compile Include="..\Dapper.CX.Base\Models\ColumnHistory.cs" Link="Base\Models\ColumnHistory.cs" />
     <Compile Include="..\Dapper.CX.Base\Models\RowVersion.cs" Link="Base\Models\RowVersion.cs" />
   </ItemGroup>

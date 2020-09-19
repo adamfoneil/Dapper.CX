@@ -1,12 +1,13 @@
 ﻿using AO.Models.Interfaces;
 using Dapper.CX.Classes;
+using Dapper.CX.Interfaces;
 using System;
 using System.Data;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
 {
-    public abstract class SqlCrudService<TIdentity, TUser> where TUser : IUserBase
+    public abstract class SqlCrudService<TIdentity, TUser> : ISqlCrudService<TIdentity, TUser> where TUser : IUserBase
     {
         public readonly SqlCrudProvider<TIdentity> CrudProvider;
         protected readonly string _connectionString;
