@@ -1,6 +1,7 @@
 ﻿using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SampleApp.Models;
+using SampleApp.RazorPages.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,12 +10,12 @@ namespace SampleApp.RazorPages
 {
     public class BasePageModel : PageModel
     {
-        public BasePageModel(SqlServerCrudService<int, UserProfile> data)
+        public BasePageModel(DataAccess data)
         {
             Data = data;
         }
 
-        public SqlServerCrudService<int, UserProfile> Data { get; }
+        public DataAccess Data { get; }
 
         protected async Task SaveSuccessMessage(string message)
         {

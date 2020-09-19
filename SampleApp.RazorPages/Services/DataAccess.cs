@@ -9,8 +9,7 @@ namespace SampleApp.RazorPages.Services
     /// </summary>
     public class DataAccess : SqlServerCrudService<int, UserProfile>
     {
-        public DataAccess(
-            string connectionString, UserProfile user, Func<object, int> convertIdentity) : base(connectionString, user, convertIdentity)
+        public DataAccess(string connectionString, UserProfile user, Func<object, int> convertIdentity) : base(connectionString, user, convertIdentity)
         {
         }
     }

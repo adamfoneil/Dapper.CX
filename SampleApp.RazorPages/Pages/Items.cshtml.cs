@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SampleApp.Models;
+using SampleApp.RazorPages.Services;
 using System.Threading.Tasks;
 
 namespace SampleApp.RazorPages.Pages
@@ -11,7 +12,7 @@ namespace SampleApp.RazorPages.Pages
     [Authorize]
     public class ItemsModel : BasePageModel
     {
-        public ItemsModel(SqlServerCrudService<int, UserProfile> data) : base(data)
+        public ItemsModel(DataAccess data) : base(data)
         {
         }
 

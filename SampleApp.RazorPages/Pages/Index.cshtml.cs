@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SampleApp.Models;
 using SampleApp.RazorPages.Queries;
 using SampleApp.RazorPages.Queries.SelectLists;
+using SampleApp.RazorPages.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ namespace SampleApp.RazorPages.Pages
 {
     public class IndexModel : BasePageModel
     {
-        public IndexModel(SqlServerCrudService<int, UserProfile> crud) : base(crud)
+        public IndexModel(DataAccess data) : base(data)
         {
         }
         
