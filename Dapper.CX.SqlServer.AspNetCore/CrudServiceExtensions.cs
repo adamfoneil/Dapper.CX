@@ -1,5 +1,6 @@
 ﻿using AO.Models.Interfaces;
 using Dapper.CX.Classes;
+using Dapper.CX.Interfaces;
 using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -15,11 +16,12 @@ namespace Dapper.CX.SqlServer.AspNetCore
         /// <summary>
         /// Dapper.CX config method that lets you use your own derived SqlServerCrudService class
         /// </summary>
-        public static void AddDapperCX<TIdentity, TUser>(
+        public static void AddDapperCX<TIdentity, TUser, TService>(
             this IServiceCollection services,
             Func<DbUserClaimsConverter<TUser>> claimsConverterFactory,
-            Func<IServiceProvider, SqlServerCrudService<TIdentity, TUser>> serviceFactory)
+            Func<IServiceProvider, TService> serviceFactory)
             where TUser : IUserBase, new()
+            where TService : class, new()
         {
             services.AddHttpContextAccessor();
             services.AddSingleton(claimsConverterFactory.Invoke());            
