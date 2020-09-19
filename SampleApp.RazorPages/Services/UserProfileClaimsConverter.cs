@@ -14,6 +14,7 @@ namespace SampleApp.RazorPages.Services
         private readonly string _connectionString;
 
         private const string roleClaim = "role_name";
+        private const string wsIdClaim = "ws_id";
 
         public UserProfileClaimsConverter(string connectionString)
         {
@@ -31,6 +32,7 @@ namespace SampleApp.RazorPages.Services
             yield return new Claim(nameof(UserProfile.IsWorkspaceEnabled), user.IsWorkspaceEnabled.ToString());
 
             foreach (var role in user.Roles) yield return new Claim(roleClaim, role);
+            foreach (var id in user.WorkspaceIds) yield return new Claim(wsIdClaim, id.ToString());
         }
 
         public override UserProfile GetUserFromClaims(string userName, IEnumerable<Claim> claims)
@@ -40,6 +42,8 @@ namespace SampleApp.RazorPages.Services
 
             result.Roles = new HashSet<string>();
             foreach (var claim in claims.Where(c => c.Type.Equals(roleClaim))) result.Roles.Add(claim.Value);
+
+            result.WorkspaceIds = claims.Where(c => c.Type.Equals(wsIdClaim)).Select(c => int.Parse(c.Value)).ToArray();
 
             return result;            
         }
@@ -62,6 +66,12 @@ namespace SampleApp.RazorPages.Services
                     INNER JOIN [dbo].[AspNetUserRoles] [ur] ON [r].[Id]=[ur].[RoleId]
                     INNER JOIN [dbo].[AspNetUsers] [u] ON [ur].[UserId]=[u].[Id]
                     WHERE [u].[UserName]=@userName", new { userName })).ToHashSet();
+
+                result.WorkspaceIds = (await cn.QueryAsync<int>(
+                    @"SELECT [wu].[WorkspaceId] 
+                    FROM [dbo].[WorkspaceUser] [wu]
+                    INNER JOIN [dbo].[AspNetUsers] [u] ON [wu].[UserId]=[u].[UserId]
+                    WHERE [u].[UserName]=@userName AND [wu].[Status]=2", new { userName })).ToArray();
 
                 return result;
             }

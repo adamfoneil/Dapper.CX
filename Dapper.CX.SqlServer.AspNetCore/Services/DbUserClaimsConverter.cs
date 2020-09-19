@@ -32,13 +32,13 @@ namespace Dapper.CX.SqlServer.Services
             var props = typeof(TUser).GetProperties().Where(pi => supportedTypes.ContainsKey(pi.PropertyType));
             HashSet<string> propertyNames = props.Select(pi => pi.Name).ToHashSet();
 
-            // assumes claim types are unique -- not sure how wise that is
+            // for duplicate claim types, assume the last one. If this is bad behavior in your app, 
+            // then you can manually parse claims in your GetUserFromClaims implementation
             var claimValues = claims
                 .Where(c => propertyNames.Contains(c.Type))
-                //.ToLookup(c => c.Type)
-                //.ToDictionary(c => c.Key, c => c.Last());
-                .ToDictionary(c => c.Type);
-
+                .ToLookup(c => c.Type)
+                .ToDictionary(c => c.Key, c => c.Last());
+                
             foreach (var pi in props.Where(pi => claimValues.ContainsKey(pi.Name)))
             {
                 pi.SetValue(result, supportedTypes[pi.PropertyType].Invoke(claimValues[pi.Name].Value));

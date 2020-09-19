@@ -37,6 +37,8 @@ namespace SampleApp.Models
 
         public HashSet<string> Roles { get; set; }
 
+        public int[] WorkspaceIds { get; set; }
+
         public bool HasRole(string roleName) => Roles?.Contains(roleName) ?? false;
 
         // AO pwd = Oopsie.Daisy!456
