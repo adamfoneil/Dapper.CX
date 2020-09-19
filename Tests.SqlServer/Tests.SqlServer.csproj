@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Dapper.CX.SqlServer\Services\SqlServerCrudService.cs" Link="Linked\SqlServerCrudService.cs" />
+    <Compile Include="..\Dapper.CX.SqlServer\Services\DapperCX.cs" Link="Linked\DapperCX.cs" />
     <Compile Include="..\Dapper.CX.SqlServer\SqlServerCmd.cs" Link="Linked\SqlServerCmd.cs" />
     <Compile Include="..\Dapper.CX.SqlServer\SqlServerCrudProvider.cs" Link="Linked\SqlServerCrudProvider.cs" />
   </ItemGroup>
