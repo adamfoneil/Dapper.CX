@@ -1,5 +1,4 @@
 using Dapper.CX.SqlServer.AspNetCore;
-using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SampleApp.Models;
 using SampleApp.RazorPages.Data;
 using SampleApp.RazorPages.Services;
 using System;
@@ -34,8 +32,7 @@ namespace SampleApp.RazorPages
                 .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddClaimsPrincipalFactory<UserProfileClaimsFactory>();
-
-            /*this one works, but is not exactly what I want because it doesn't use the derived type DataAccess */
+            
             services.AddDapperCX(
                 connectionString, 
                 (id) => Convert.ToInt32(id), 
