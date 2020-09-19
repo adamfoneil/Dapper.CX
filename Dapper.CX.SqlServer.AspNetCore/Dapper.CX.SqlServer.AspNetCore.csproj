@@ -10,7 +10,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/adamfoneil/Dapper.CX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamfoneil/Dapper.CX</RepositoryUrl>
-    <Version>1.2.8-beta</Version>
+    <Version>1.2.9-beta</Version>
     <PackageReleaseNotes>removed CX components to resolve ambiguities, replaced with CX package dependency</PackageReleaseNotes>
   </PropertyGroup>
 
@@ -21,7 +21,7 @@
   <ItemGroup>
     <PackageReference Include="AO.Models" Version="1.1.9" />
     <PackageReference Include="Dapper" Version="2.0.35" />
-    <PackageReference Include="Dapper.CX.SqlServer" Version="1.2.1-beta" />
+    <PackageReference Include="Dapper.CX.SqlServer" Version="1.2.2-beta" />
     <PackageReference Include="Dapper.QX" Version="1.0.17" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
   </ItemGroup>

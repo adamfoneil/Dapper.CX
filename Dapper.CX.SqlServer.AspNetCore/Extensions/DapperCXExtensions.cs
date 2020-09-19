@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace Dapper.CX.SqlServer.AspNetCore.Extensions
 {
-    public static class SqlCrudServiceExtensions
+    public static class DapperCXExtensions
     {
         public static async Task<RedirectResult> SaveAndRedirectAsync<TModel, TIdentity, TUser>(
-            this SqlServerCrudService<TIdentity, TUser> crudService, TModel model, Func<TModel, Exception, RedirectResult> redirect, 
+            this DapperCX<TIdentity, TUser> crudService, TModel model, Func<TModel, Exception, RedirectResult> redirect, 
             ChangeTracker<TModel> changeTracker = null, Action<TModel> beforeSave = null,
             Func<TModel, Task> onSuccess = null, Func<TModel, Exception, Task> onException = null) where TUser : IUserBase
         {
@@ -33,7 +33,7 @@ namespace Dapper.CX.SqlServer.AspNetCore.Extensions
         }
 
         public static async Task<IEnumerable<TResult>> QueryAsync<TResult, TIdentity, TUser>(
-            this SqlServerCrudService<TIdentity, TUser> crudService,
+            this DapperCX<TIdentity, TUser> crudService,
             Query<TResult> query) where TUser : IUserBase
         {
             using (var cn = crudService.GetConnection())
@@ -43,7 +43,7 @@ namespace Dapper.CX.SqlServer.AspNetCore.Extensions
         }
 
         public static async Task<TResult> QuerySingleAsync<TResult, TIdentity, TUser>(
-            this SqlServerCrudService<TIdentity, TUser> crudService,
+            this DapperCX<TIdentity, TUser> crudService,
             Query<TResult> query) where TUser : IUserBase
         {
             using (var cn = crudService.GetConnection())
@@ -53,7 +53,7 @@ namespace Dapper.CX.SqlServer.AspNetCore.Extensions
         }
 
         public static async Task<TResult> QuerySingleOrDefaultAsync<TResult, TIdentity, TUser>(
-            this SqlServerCrudService<TIdentity, TUser> crudService,
+            this DapperCX<TIdentity, TUser> crudService,
             Query<TResult> query) where TUser : IUserBase
         {
             using (var cn = crudService.GetConnection())
@@ -63,7 +63,7 @@ namespace Dapper.CX.SqlServer.AspNetCore.Extensions
         }
 
         public static async Task<SelectList> QuerySelectListAsync<TIdentity, TUser>(
-            this SqlServerCrudService<TIdentity, TUser> crudService,
+            this DapperCX<TIdentity, TUser> crudService,
             Query<SelectListItem> query, object selectedValue = null) where TUser : IUserBase
         {
             using (var cn = crudService.GetConnection())

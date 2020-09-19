@@ -10,12 +10,12 @@ namespace SampleApp.RazorPages
 {
     public class BasePageModel : PageModel
     {
-        public BasePageModel(DataAccess data)
+        public BasePageModel(DapperCX<int, UserProfile> data)
         {
             Data = data;
         }
 
-        public DataAccess Data { get; }
+        public DapperCX<int, UserProfile> Data { get; }
 
         protected async Task SaveSuccessMessage(string message)
         {
