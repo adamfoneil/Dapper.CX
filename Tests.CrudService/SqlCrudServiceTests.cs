@@ -1,3 +1,4 @@
+using Dapper.CX.Models;
 using Dapper.CX.SqlServer;
 using Dapper.CX.SqlServer.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,8 +26,10 @@ namespace Tests.CrudService
                 typeof(Item),
                 typeof(Workspace),
                 typeof(WorkspaceUser),
-                typeof(UserProfile)
-            }, LocalDb.GetConnection(dbName)).Wait();
+                typeof(UserProfile),
+                typeof(ColumnHistory),
+                typeof(RowVersion)
+            }, LocalDb.GetConnection(dbName)).Wait();            
 
             using (var cn = LocalDb.GetConnection(dbName))
             {
@@ -148,6 +151,38 @@ namespace Tests.CrudService
             Assert.IsTrue(savedItem.ModifiedBy.Equals(userName));
         }
 
+        [TestMethod]
+        public void MergeAsync()
+        {
+            var service = GetService();
 
+            var id = service.MergeAsync(new Item()
+            {
+                WorkspaceId = 1,
+                Name = "item four",
+                UnitCost = 16.5m,
+                SalePrice = 19.35m
+            }).Result;
+
+            Assert.IsFalse(id.Equals(default));
+        }
+
+        [TestMethod]
+        public void DeleteAsync()
+        {
+            var service = GetService();
+
+            var id = service.MergeAsync(new Item()
+            {
+                WorkspaceId = 1,
+                Name = "item five",
+                UnitCost = 16.5m,
+                SalePrice = 19.35m
+            }).Result;
+
+            service.DeleteAsync<Item>(id).Wait();
+
+            Assert.IsTrue(!service.ExistsAsync<Item>(id).Result);
+        }
     }
 }
