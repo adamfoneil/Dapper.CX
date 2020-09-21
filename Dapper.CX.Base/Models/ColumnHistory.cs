@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Dapper.CX.Models
 {
-    [Identity(nameof(Id))]    
+    [Identity(nameof(Id))]
     [Schema("changes")]
     public class ColumnHistory
     {
@@ -30,7 +30,7 @@ namespace Dapper.CX.Models
         [MaxLength(100)]
         [Required]
         [Key]
-        public string ColumnName { get; set; }        
+        public string ColumnName { get; set; }
 
         [Required]
         public string OldValue { get; set; }

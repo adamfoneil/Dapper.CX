@@ -92,7 +92,7 @@ namespace Dapper.CX.Abstract
                 return await InsertAsync(connection, model, getIdentity: true, txn, user);
             }
             else
-            {                
+            {
                 await UpdateAsync(connection, model, changeTracker, txn, user);
                 return GetIdentity(model);
             }

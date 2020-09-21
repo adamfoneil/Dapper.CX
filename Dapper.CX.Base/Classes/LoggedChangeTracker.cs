@@ -1,7 +1,7 @@
 ﻿using AO.Models.Interfaces;
-using Dapper.CX.Models;
 using Dapper.CX.Extensions;
 using Dapper.CX.Interfaces;
+using Dapper.CX.Models;
 using System;
 using System.Data;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace Dapper.CX.Classes
         {
             _user = user;
             _nullText = nullText;
-            _crudProvider = crudProvider;  
+            _crudProvider = crudProvider;
         }
 
         private enum ValueType
@@ -49,12 +49,12 @@ namespace Dapper.CX.Classes
                         var rawOldValue = this[kp.Key];
                         var rawNewValue = kp.Value.GetValue(Instance);
 
-                        var valueType = 
+                        var valueType =
                             (kp.Value.PropertyType.IsEnum) ? ValueType.Enum :
                             (textLookup?.GetLookupProperties()?.Contains(kp.Key) ?? false) ? ValueType.Lookup :
                             ValueType.Raw;
-                        
-                        var oldValue = 
+
+                        var oldValue =
                             (valueType == ValueType.Enum) ? rawOldValue?.ToString() :
                             (valueType == ValueType.Lookup) ? await textLookup.GetTextFromKeyAsync(connection, txn, kp.Key, rawOldValue) :
                             rawOldValue;
@@ -81,12 +81,12 @@ namespace Dapper.CX.Classes
 
                     txn.Commit();
                 }
-                catch 
+                catch
                 {
                     txn.Rollback();
                     throw;
                 }
-            }            
+            }
         }
 
         private async Task<int> IncrementRowVersionAsync(IDbConnection connection, string tableName, long rowId, IDbTransaction txn)
@@ -94,7 +94,7 @@ namespace Dapper.CX.Classes
             var rowVersion = await _crudProvider.GetWhereAsync<RowVersion>(connection, new { tableName, rowId }, txn) ?? new RowVersion()
             {
                 TableName = tableName,
-                RowId = rowId                
+                RowId = rowId
             };
 
             rowVersion.Version++;
