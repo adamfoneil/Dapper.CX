@@ -320,7 +320,7 @@ namespace Dapper.CX.Abstract
         {
             using (var cn = GetConnection())
             {
-                return await TryMergeAsync<TModel>(cn, model, changeTracker, onSuccess, onException);
+                return await TryMergeAsync(cn, model, changeTracker, onSuccess, onException);
             }
         }
 
