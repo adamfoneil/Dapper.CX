@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AO.Models" Version="1.1.9" />
+    <PackageReference Include="AO.Models" Version="1.1.12" />
   </ItemGroup>
 
 </Project>

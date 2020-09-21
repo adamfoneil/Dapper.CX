@@ -31,60 +31,73 @@ namespace Dapper.CX.Classes
             Raw
         }
 
-        public async Task SaveAsync(IDbConnection connection)
+        public async Task SaveAsync(IDbConnection connection, IDbTransaction txn)
         {
             string tableName = typeof(TModel).GetTableName();
             long rowId = GetRowId();
 
-            using (var txn = connection.BeginTransaction())
+            if (txn != null)
             {
-                try
+                // need to use the existing transaction, and don't commit at the end
+                await writeChangeHistoryAsync(txn);
+            }
+            else
+            {
+                // you can start your own transaction, and be sure to commit
+                using (var innerTxn = connection.BeginTransaction())
                 {
-                    int version = await IncrementRowVersionAsync(connection, tableName, rowId, txn);
-
-                    var textLookup = Instance as ITextLookup;
-
-                    foreach (var kp in GetModifiedProperties())
+                    try
                     {
-                        var rawOldValue = this[kp.Key];
-                        var rawNewValue = kp.Value.GetValue(Instance);
-
-                        var valueType =
-                            (kp.Value.PropertyType.IsEnum) ? ValueType.Enum :
-                            (textLookup?.GetLookupProperties()?.Contains(kp.Key) ?? false) ? ValueType.Lookup :
-                            ValueType.Raw;
-
-                        var oldValue =
-                            (valueType == ValueType.Enum) ? rawOldValue?.ToString() :
-                            (valueType == ValueType.Lookup) ? await textLookup.GetTextFromKeyAsync(connection, txn, kp.Key, rawOldValue) :
-                            rawOldValue;
-
-                        var newValue =
-                            (valueType == ValueType.Enum) ? rawNewValue?.ToString() :
-                            (valueType == ValueType.Lookup) ? await textLookup.GetTextFromKeyAsync(connection, txn, kp.Key, rawNewValue) :
-                            rawNewValue;
-
-                        var history = new ColumnHistory()
-                        {
-                            UserName = _user.Name,
-                            Timestamp = _user.LocalTime,
-                            TableName = tableName,
-                            RowId = rowId,
-                            Version = version,
-                            ColumnName = kp.Key,
-                            OldValue = oldValue?.ToString() ?? _nullText,
-                            NewValue = newValue?.ToString() ?? _nullText
-                        };
-
-                        await _crudProvider.SaveAsync(connection, history, txn: txn);
+                        await writeChangeHistoryAsync(innerTxn);
+                        innerTxn.Commit();
                     }
-
-                    txn.Commit();
+                    catch
+                    {
+                        innerTxn.Rollback();
+                        throw;
+                    }                    
                 }
-                catch
+            }
+
+            async Task writeChangeHistoryAsync(IDbTransaction innerTxn)
+            {
+                int version = await IncrementRowVersionAsync(connection, tableName, rowId, innerTxn);
+
+                var textLookup = Instance as ITextLookup;
+
+                foreach (var kp in GetModifiedProperties())
                 {
-                    txn.Rollback();
-                    throw;
+                    var rawOldValue = this[kp.Key];
+                    var rawNewValue = kp.Value.GetValue(Instance);
+
+                    var valueType =
+                        (kp.Value.PropertyType.IsEnum) ? ValueType.Enum :
+                        (textLookup?.GetLookupProperties()?.Contains(kp.Key) ?? false) ? ValueType.Lookup :
+                        ValueType.Raw;
+
+                    var oldValue =
+                        (valueType == ValueType.Enum) ? rawOldValue?.ToString() :
+                        (valueType == ValueType.Lookup) ? await textLookup.GetTextFromKeyAsync(connection, innerTxn, kp.Key, rawOldValue) :
+                        rawOldValue;
+
+                    var newValue =
+                        (valueType == ValueType.Enum) ? rawNewValue?.ToString() :
+                        (valueType == ValueType.Lookup) ? await textLookup.GetTextFromKeyAsync(connection, innerTxn, kp.Key, rawNewValue) :
+                        rawNewValue;
+
+                    var history = new ColumnHistory()
+                    {
+                        UserName = _user.Name,
+                        Timestamp = _user.LocalTime,
+                        TableName = tableName,
+                        RowId = rowId,
+                        Version = version,
+                        ColumnName = kp.Key,
+                        OldValue = oldValue?.ToString() ?? _nullText,
+                        NewValue = newValue?.ToString() ?? _nullText
+                    };
+
+                    await _crudProvider.SaveAsync(connection, history, txn: innerTxn);
                 }
             }
         }

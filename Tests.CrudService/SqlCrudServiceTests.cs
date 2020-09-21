@@ -145,8 +145,8 @@ namespace Tests.CrudService
             var savedItem = service.GetAsync<Item>(id).Result;            
             savedItem.UnitCost = 18;
             savedItem.SalePrice = 28;
-
             service.SaveAsync(savedItem).Wait();
+
             savedItem = service.GetAsync<Item>(id).Result;
             Assert.IsTrue(savedItem.ModifiedBy.Equals(userName));
         }

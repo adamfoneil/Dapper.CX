@@ -2,6 +2,7 @@
 using Dapper.CX.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -11,7 +12,7 @@ namespace Dapper.CX.Classes
     {
         private readonly Dictionary<string, PropertyInfo> _properties;
 
-        protected readonly TModel Instance;
+        public TModel Instance { get; set; }
 
         public ChangeTracker(TModel @object)
         {
@@ -53,11 +54,14 @@ namespace Dapper.CX.Classes
 
         private bool IsModified(KeyValuePair<string, PropertyInfo> kp, TModel @object)
         {
+            // when using logged change tracker, there might be ignored properties that we need to manually exclude here
+            if (!ContainsKey(kp.Key)) return false;
+
             var value = kp.Value.GetValue(@object);
             return
                 (value == null ^ this[kp.Key] == null) ? true :
                 (value == null && this[kp.Key] == null) ? false :
-                !value.Equals(this[kp.Key]);
+                !value.Equals(this[kp.Key]);            
         }
     }
 }

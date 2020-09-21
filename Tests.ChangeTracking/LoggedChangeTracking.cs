@@ -1,18 +1,17 @@
 ﻿using AO.Models.Interfaces;
 using Dapper;
+using Dapper.CX.Classes;
+using Dapper.CX.Extensions;
 using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModelSync.Models;
 using SqlServer.LocalDb;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Tests.ChangeTracking.Models;
 using Tests.Models;
-using Dapper.CX.Extensions;
-using Dapper.CX.Classes;
-using ModelSync.Models;
-using System.Data;
-using System.Runtime.InteropServices;
 
 namespace Tests.Base
 {

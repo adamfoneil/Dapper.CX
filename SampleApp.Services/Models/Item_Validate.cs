@@ -1,4 +1,5 @@
 ﻿using AO.Models;
+using AO.Models.Attributes;
 using AO.Models.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace SampleApp.Models
 {
+    [TrackChanges]
     public partial class Item : IValidate
     {
         public ValidateResult Validate()

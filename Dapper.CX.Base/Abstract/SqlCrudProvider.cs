@@ -106,7 +106,11 @@ namespace Dapper.CX.Abstract
             {
                 var identity = GetIdentity(model);
                 var existing = await GetAsync<TModel>(connection, identity, txn);
+                if (existing == null) return null;
+
                 var result = new LoggedChangeTracker<TModel, TIdentity>(this, user, existing);
+                result.Instance = model;
+
                 foreach (var ignore in attr.GetIgnoreProperties())
                 {
                     if (result.ContainsKey(ignore)) result.Remove(ignore);
@@ -223,7 +227,7 @@ namespace Dapper.CX.Abstract
                 {
                     try
                     {
-                        await saveable.SaveAsync(connection);
+                        await saveable.SaveAsync(connection, txn);
                     }
                     catch (Exception exc)
                     {
