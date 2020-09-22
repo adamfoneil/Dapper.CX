@@ -1,35 +1,12 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/90etxh1r0aycv1j9?svg=true)](https://ci.appveyor.com/project/adamosoftware/dapper-cx) 
 [![Nuget](https://img.shields.io/nuget/v/Dapper.CX.SqlServer?label=SqlServer)](https://www.nuget.org/packages/Dapper.CX.SqlServer/)
-[![Nuget](https://img.shields.io/nuget/v/Dapper.CX.ChangeTracking?label=ChangeTracking)](https://www.nuget.org/packages/Dapper.CX.ChangeTracking/)
+[![Nuget](https://img.shields.io/nuget/v/Dapper.CX.SqlServer.AspNetCore?label=AspNetCore)](https://www.nuget.org/packages/Dapper.CX.SqlServer.AspNetCore/)
 
-Nuget package **Dapper.CX.SqlServer** makes it easy to do CRUD operations on pure POCO model classes via `IDbConnection` extension methods. See [method reference](https://github.com/adamosoftware/Dapper.CX/wiki/Crud-method-reference). The only model class requirement is that they have a property called `Id` or the class has an [Identity](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Attributes/IdentityAttribute.cs) attribute that indicates what its identity property is. `int` and `long` identity types are supported. So, after installing the package and you start calling the extension methods, choose either the `Extensions.Int` or `Extensions.Long` namespace:
+Dapper.CX is a CRUD extension library for SQL Server made with Dapper. The only model class requirement is that they have a property called `Id` or the class has an [Identity](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Attributes/IdentityAttribute.cs) attribute that indicates what its identity property is. `int` and `long` identity types are supported. You can use Dapper.CX in two ways:
 
-![img](https://github.com/adamosoftware/Dapper.CX/blob/master/choose-namespace.png)
+- as an injected service, [learn more](https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection). This is intended for .NET Core apps.
+- as `IDbConnection` extension methods, [learn more](https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-Extension-Methods). This is simpler to use than the service, but is not as elegant from a dependency standpoint.
 
-Here's a simple example using [GetAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L43) and [SaveAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L81) methods assuming a fictional `Appointment` model class and fictional `GetConnection` method:
-```csharp
-using (var cn = GetConnection())
-{
-    var appt = await cn.GetAsync<Appointment>(id);
-    
-    // make your changes
-    
-    await cn.SaveAsync(appt);
-}
-```
-The `SaveAsync` method performs an insert or update depending on whether the model object [IsNew](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L38) or not. Here's a more sophisticated example showing the [GetWhereAsync](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L58) method and [ChangeTracker](https://github.com/adamosoftware/Dapper.CX/blob/master/Dapper.CX.Base/Classes/ChangeTracker.cs#L10) object. [Learn more](https://github.com/adamosoftware/Dapper.CX/wiki/Using-ChangeTracker) about tracking changes.
-```csharp
-using (var cn = GetConnection())
-{
-    var appt = await cn.GetWhereAsync<Appointment>(new { clientId = 4343, date = new DateTime(2020, 3, 1) });
-    var ct = new ChangeTracker<Appointment>(appt);
-    
-    // make your changes
-    
-    // with a change tracker object, only modified properties are included in update statement 
-    await cn.SaveAsync(appt, ct);  
-}
-```
 Wiki links: [Why Dapper.CX?](https://github.com/adamosoftware/Dapper.CX/wiki), [Reference](https://github.com/adamosoftware/Dapper.CX/wiki/Crud-method-reference). Note that Dapper.CX doesn't create tables. Please see my [ModelSync](https://github.com/adamosoftware/ModelSync) project for info on that.
 
 ## Customizing behaviors with interfaces
