@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Dapper.CX.SqlServer.AspNetCore\Queries\ColumnHistories.cs" Link="Linked\Queries\ColumnHistories.cs" />
     <Compile Include="..\SampleApp.Models\Conventions\BaseTable.cs" Link="Linked\Conventions\BaseTable.cs" />
     <Compile Include="..\SampleApp.Models\Extensions\Timestamp.cs" Link="Linked\Extensions\Timestamp.cs" />
     <Compile Include="..\SampleApp.Models\Item.cs" Link="Linked\Item.cs" />

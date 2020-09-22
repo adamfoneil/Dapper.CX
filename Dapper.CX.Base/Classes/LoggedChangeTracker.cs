@@ -124,7 +124,7 @@ namespace Dapper.CX.Classes
             return Convert.ToInt64(value);
         }
 
-        public async Task InitializeAsync(IDbConnection connection, ISqlObjectCreator objectCreator)
+        public static async Task InitializeAsync(IDbConnection connection, ISqlObjectCreator objectCreator)
         {
             if (_initialized) return;
 

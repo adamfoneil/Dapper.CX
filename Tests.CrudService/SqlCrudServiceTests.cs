@@ -1,11 +1,14 @@
+using Dapper;
 using Dapper.CX.Models;
 using Dapper.CX.SqlServer;
+using Dapper.CX.SqlServer.AspNetCore.Queries;
 using Dapper.CX.SqlServer.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModelSync.Models;
 using SampleApp.Models;
 using SqlServer.LocalDb;
 using System;
+using System.Linq;
 
 namespace Tests.CrudService
 {
@@ -149,6 +152,9 @@ namespace Tests.CrudService
 
             savedItem = service.GetAsync<Item>(id).Result;
             Assert.IsTrue(savedItem.ModifiedBy.Equals(userName));
+
+            var changes = new ColumnHistories<Item>() { RowId = savedItem.Id }.Execute(service.GetConnection);
+            Assert.IsTrue(changes.Any());
         }
 
         [TestMethod]

@@ -63,8 +63,9 @@ namespace Tests.Base
 
         private static LoggedChangeTracker<TModel, long> GetLoggedChangeTracker<TModel>(IDbConnection cn, TModel model)
         {
-            var result = new LoggedChangeTracker<TModel, long>(new SqlServerCrudProvider<long>((id) => Convert.ToInt64(id)), new LocalUser("adamo"), model);
-            result.InitializeAsync(cn, new DataModel()).Wait();
+            LoggedChangeTracker<TModel, long>.InitializeAsync(cn, new DataModel()).Wait();
+
+            var result = new LoggedChangeTracker<TModel, long>(new SqlServerCrudProvider<long>((id) => Convert.ToInt64(id)), new LocalUser("adamo"), model);            
             return result;
         }
 
