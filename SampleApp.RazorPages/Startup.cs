@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ModelSync.Models;
 using SampleApp.RazorPages.Data;
 using SampleApp.RazorPages.Services;
 using System;
@@ -39,6 +40,8 @@ namespace SampleApp.RazorPages
                 () => new UserProfileClaimsConverter(connectionString));           
 
             services.AddRazorPages();
+
+            services.AddChangeTracking(connectionString, new DataModel());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

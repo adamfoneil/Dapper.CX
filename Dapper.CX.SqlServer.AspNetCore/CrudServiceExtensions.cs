@@ -1,8 +1,10 @@
 ﻿using AO.Models.Interfaces;
 using Dapper.CX.Classes;
+using Dapper.CX.Models;
 using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -49,6 +51,20 @@ namespace Dapper.CX.SqlServer.AspNetCore
                 return new DapperCX<TIdentity, SystemUser>(connectionString, new SystemUser(systemUserName), convertIdentity);
             });
         }        
+
+        public static void AddChangeTracking(this IServiceCollection services, string connectionString, ISqlObjectCreator objectCreator)
+        {
+            using (var cn = new SqlConnection(connectionString))
+            {
+                var commands = objectCreator.GetStatementsAsync(cn, new Type[]
+                {
+                    typeof(ColumnHistory),
+                    typeof(RowVersion)
+                }).Result;
+
+                foreach (var cmd in commands) cn.Execute(cmd);
+            }
+        }
 
         /// <summary>
         /// Helper method that extracts the useful things from the service provider to configure Dapper.CX during startup.
