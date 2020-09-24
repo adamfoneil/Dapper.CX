@@ -4,7 +4,7 @@
 
 Dapper.CX is a CRUD library for SQL Server made with Dapper. It works with POCO classes, where the only model class requirement is that they have a property called `Id` or an [Identity](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Attributes/IdentityAttribute.cs) attribute on the class that indicates what its identity property is. `int` and `long` identity types are supported. You can use Dapper.CX in two ways:
 
-- as an injected service, [learn more](https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection). This is intended for .NET Core apps to use dependency injection along with tight user profile integration.
+- as an injected service, [learn more](https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection). This is intended for .NET Core apps to use dependency injection along with user profile integration.
 - as `IDbConnection` extension methods, [learn more](https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-Extension-Methods). This is simpler to use than the service, but is not as elegant from a dependency standpoint.
 
 Wiki links: [Why Dapper.CX?](https://github.com/adamosoftware/Dapper.CX/wiki), [Reference](https://github.com/adamosoftware/Dapper.CX/wiki/Crud-method-reference). Note that Dapper.CX doesn't create tables. Please see my [ModelSync](https://github.com/adamosoftware/ModelSync) project for info on that.
