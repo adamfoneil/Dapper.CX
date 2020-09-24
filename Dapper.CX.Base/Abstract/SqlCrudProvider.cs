@@ -110,11 +110,12 @@ namespace Dapper.CX.Abstract
 
                 var result = new LoggedChangeTracker<TModel, TIdentity>(this, user, existing);
                 result.Instance = model;
-
+                
                 foreach (var ignore in attr.GetIgnoreProperties())
                 {
                     if (result.ContainsKey(ignore)) result.Remove(ignore);
                 }
+
                 return result;
             }
 

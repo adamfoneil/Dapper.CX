@@ -1,8 +1,8 @@
-﻿using AO.Models.Enums;
+﻿using AO.Models.Attributes;
+using AO.Models.Enums;
 using Dapper.CX.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -11,6 +11,7 @@ namespace Dapper.CX.Classes
     public class ChangeTracker<TModel> : Dictionary<string, object>
     {
         private readonly Dictionary<string, PropertyInfo> _properties;
+        private readonly IEnumerable<string> _ignoreProps;
 
         public TModel Instance { get; set; }
 
@@ -25,6 +26,7 @@ namespace Dapper.CX.Classes
                 !pi.GetIndexParameters().Any() &&
                 !pi.Name.Equals(identityName)).ToArray();
 
+            _ignoreProps = props.Where(pi => pi.HasAttribute<NoChangeTrackingAttribute>()).Select(pi => pi.Name);
             _properties = props.ToDictionary(pi => pi.Name);
 
             foreach (var pi in props) Add(pi.GetColumnName(), pi.GetValue(@object));
@@ -40,7 +42,7 @@ namespace Dapper.CX.Classes
                 .ToArray();
         }
 
-        protected IEnumerable<KeyValuePair<string, PropertyInfo>> GetModifiedProperties(SaveAction? saveAction = null)
+        protected IEnumerable<KeyValuePair<string, PropertyInfo>> GetModifiedProperties(SaveAction? saveAction = null, bool loggableOnly = false)
         {
             Func<KeyValuePair<string, PropertyInfo>, bool> filter = (kp) => IsModified(kp, Instance);
 
@@ -49,7 +51,16 @@ namespace Dapper.CX.Classes
                 filter = (kp) => IsModified(kp, Instance) && kp.Value.AllowSaveAction(saveAction.Value);
             }
 
-            return _properties.Where(kp => filter(kp));
+            return _properties.Where(kp => filter(kp) && isLogged(kp));
+
+            bool isLogged(KeyValuePair<string, PropertyInfo> kp)
+            {
+                // if not excluding ignore props, then include this property
+                if (!loggableOnly) return true;
+
+                // otherwise, don't log ignored properties
+                return !_ignoreProps.Contains(kp.Key);
+            }
         }
 
         private bool IsModified(KeyValuePair<string, PropertyInfo> kp, TModel @object)

@@ -65,7 +65,7 @@ namespace Dapper.CX.Classes
 
                 var textLookup = Instance as ITextLookup;
 
-                foreach (var kp in GetModifiedProperties())
+                foreach (var kp in GetModifiedProperties(loggableOnly: true))
                 {
                     var rawOldValue = this[kp.Key];
                     var rawNewValue = kp.Value.GetValue(Instance);

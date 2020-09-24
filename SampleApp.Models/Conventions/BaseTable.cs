@@ -1,4 +1,5 @@
 ﻿using AO.Models;
+using AO.Models.Attributes;
 using AO.Models.Enums;
 using AO.Models.Interfaces;
 using System;
@@ -14,16 +15,20 @@ namespace Models.Conventions
         [MaxLength(50)]
         [Required]
         [SaveAction(SaveAction.Insert)]
+        [NoChangeTracking]
         public string CreatedBy { get; set; }
 
         [SaveAction(SaveAction.Insert)]
+        [NoChangeTracking]
         public DateTime DateCreated { get; set; }
 
         [SaveAction(SaveAction.Update)]
         [MaxLength(50)]
+        [NoChangeTracking]
         public string ModifiedBy { get; set; }
 
         [SaveAction(SaveAction.Update)]
+        [NoChangeTracking]
         public DateTime? DateModified { get; set; }
 
         public void Stamp(SaveAction saveAction, IUserBase user)
