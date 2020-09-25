@@ -21,8 +21,8 @@ public async Task<IActionResult> OnPostSaveAsync(Employee employee)
 
 public async Task<IActionResult> OnPostDeleteAsync(int id)
 {
-  await Data.DeleteAsync<Employee>(id);
-  return Redirect("/Employees");
+    await Data.DeleteAsync<Employee>(id);
+    return Redirect("/Employees");
 }
 ```
 
@@ -31,20 +31,20 @@ When using the extension methods, it's almost the same thing, but you must open 
 ```csharp
 public async Task<IActionResult> OnPostSaveAsync(Employee employee)
 {
-   using (var cn = GetConnection())
-   {
-      await cn.SaveAsync(employee);
-      return Redirect("/Employees");
-   }
+    using (var cn = GetConnection())
+    {
+        await cn.SaveAsync(employee);
+        return Redirect("/Employees");
+    }
 }
 
 public async Task<IActionResult> OnPostDeleteAsync(int id)
 {
-  using (var cn = GetConnection())
-  {
-    await cn.DeleteAsync<Employee>(id);
-    return Redirect("/Employees");
-  }
+    using (var cn = GetConnection())
+    {
+        await cn.DeleteAsync<Employee>(id);
+        return Redirect("/Employees");
+    }
 }
 ```
 
