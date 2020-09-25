@@ -13,6 +13,13 @@ Wiki links: [Why Dapper.CX?](https://github.com/adamosoftware/Dapper.CX/wiki), [
 When using the injected service, you'd write CRUD code that looks like this. This example assumes a fictional `Employee` model class. There are several advantages of using the injected service. One, it integrates nicely with the authenticated user to check permissions or perform audit and change tracking. Two, you can omit the `using` block that you otherwise need when interacting with a connection. Three, there are some handy overloads that bundle exception handling and more. Here's [how to implement the injected service](https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection) along with a CRUD [method reference](https://github.com/adamfoneil/Dapper.CX/wiki/SqlCrudService-reference).
 
 ```csharp
+public Employee ViewRecord { get; set; }
+
+public async Task<IActionResult> OnGetAsync(int id)
+{
+    ViewRecord = await Data.GetAsync<Employee>(id);
+}
+
 public async Task<IActionResult> OnPostSaveAsync(Employee employee)
 {
     await Data.SaveAsync(employee);
@@ -29,6 +36,16 @@ public async Task<IActionResult> OnPostDeleteAsync(int id)
 When using the extension methods, it's almost the same thing, but you must open a database connection first. This example assumes a fictional `GetConnection` method that opens a SQL Server connection.
 
 ```csharp
+public Employee ViewRecord { get; set; }
+
+public async Task<IActionResult> OnGetAsync(int id)
+{
+    using (var cn = GetConnection())
+    {
+        ViewRecord = await cn.GetAsync<Employee>(id);
+    }    
+}
+
 public async Task<IActionResult> OnPostSaveAsync(Employee employee)
 {
     using (var cn = GetConnection())
