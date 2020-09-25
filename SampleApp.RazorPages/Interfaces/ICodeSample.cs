@@ -17,6 +17,7 @@ namespace SampleApp.RazorPages.Interfaces
         public string Url { get; set; }
         public string Comments { get; set; }
         public string Language { get; set; } = "csharp";
+        public string ImportElementId { get; set; }
 
         public string GetFilename() => Path.GetFileName(Url);
     }

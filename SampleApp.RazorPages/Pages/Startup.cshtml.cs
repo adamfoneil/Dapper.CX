@@ -20,7 +20,8 @@ namespace SampleApp.RazorPages.Pages
             new CodeSample()
             {
                 Title = "Claims Converter",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Services/UserProfileClaimsConverter.cs"
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Services/UserProfileClaimsConverter.cs",
+                ImportElementId = "claims-converter"
             },
             new CodeSample()
             {

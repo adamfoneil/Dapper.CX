@@ -10,7 +10,11 @@
             <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#code-sample-@index">@sample.Title - @sample.GetFilename()</button>
         </div>
         <div class="card-body collapse" id="code-sample-@index" data-parent="#accordion">
-            <pre><code class="code-sample @sample.Language" data-url="@sample.Url"></code></pre>
+            @if (sample.ImportElementId != null)
+            {
+                <div id="@sample.ImportElementId-target"></div>
+            }            
+            <pre><code class="code-sample @sample.Language" data-url="@sample.Url" data-import-element="@sample.ImportElementId"></code></pre>
         </div>
     </div>        
 }
