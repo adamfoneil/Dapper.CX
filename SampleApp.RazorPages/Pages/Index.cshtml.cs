@@ -16,16 +16,14 @@ namespace SampleApp.RazorPages.Pages
         {
         }
         
-        public SelectList WorkspaceSelect { get; set; }
-        public IEnumerable<Item> AllItems { get; set; }
+        public SelectList WorkspaceSelect { get; set; }        
         public Workspace Workspace { get; set; }
 
         public async Task OnGetAsync()
         {
             if (Data.HasUser)
             {
-                WorkspaceSelect = await Data.QuerySelectListAsync(new WorkspaceSelect(), Data.User.WorkspaceId);
-                AllItems = await Data.QueryAsync(new AllItems() { WorkspaceId = Data.User.WorkspaceId ?? 0, IsActive = true });
+                WorkspaceSelect = await Data.QuerySelectListAsync(new WorkspaceSelect(), Data.User.WorkspaceId);                
                 Workspace = await Data.GetAsync<Workspace>(Data.User.WorkspaceId ?? 0);
             }
         }
@@ -43,18 +41,6 @@ namespace SampleApp.RazorPages.Pages
                 onSuccess: (id) => SaveSuccessMessage("Saved workspace successfully"),
                 onException: SaveErrorMessage);
 
-            return Redirect("/");
-        }
-
-        public async Task<RedirectResult> OnPostSaveItemAsync(Item item)
-        {
-            await Data.TrySaveAsync(item, onException: SaveErrorMessage);
-            return Redirect("/");
-        }
-
-        public async Task<RedirectResult> OnPostDeleteItemAsync(int id)
-        {
-            await Data.TryDeleteAsync<Item>(id, onException: SaveErrorMessage);
             return Redirect("/");
         }
     }

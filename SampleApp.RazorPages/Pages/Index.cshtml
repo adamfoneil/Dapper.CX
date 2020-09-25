@@ -1,6 +1,6 @@
 ﻿@page
 @model IndexModel
-@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+
  
 @{
     ViewData["Title"] = "Home page";
@@ -40,45 +40,3 @@
         </form>
     }
 </div>
-
-@if (Model.AllItems == null)
-{
-    return;
-}
-
-@{ 
-    var grid = new GridEditor<Item>(this, Xsrf, (item) => item.Id, defaults: new { WorkspaceId = Model.Data?.User?.WorkspaceId ?? 0 }); 
-}
-
-<table class="table mt-4">
-    <tr>
-        <th>Item Name</th>
-        <th>Description</th>
-        <th>Unit Cost</th>
-        <th>Sale Price</th>
-        <th></th>
-    </tr>
-    @foreach (var item in Model.AllItems)
-    {
-        <tr id="@grid.RowId(item)">
-            <td>@grid.TextBox(row => row.Name, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(row => row.Description, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(row => row.UnitCost, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(row => row.SalePrice, new { @class = "form-control" })</td>
-            <td>@grid.Controls()</td>
-        </tr>
-    }
-    <tr id="@grid.NewRowId()">
-        <td>@grid.TextBox(row => row.Name, new { @class = "form-control" })</td>
-        <td>@grid.TextBox(row => row.Description, new { @class = "form-control" })</td>
-        <td>@grid.TextBox(row => row.UnitCost, new { @class = "form-control" })</td>
-        <td>@grid.TextBox(row => row.SalePrice, new { @class = "form-control" })</td>
-        <td>@grid.Controls()</td>
-    </tr>
-</table>
-@grid.HandlerForms("SaveItem", "DeleteItem")
-
-
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/gh/adamosoftware/GridEditor.RazorPages@1.0.3/js/GridEditor.min.js"></script>
-}
