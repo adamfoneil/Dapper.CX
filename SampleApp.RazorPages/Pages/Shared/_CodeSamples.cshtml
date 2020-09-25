@@ -1,0 +1,7 @@
+﻿@model SampleApp.RazorPages.Interfaces.ICodeSample
+
+@foreach (var sample in Model.Samples)
+{    
+    <h3>@sample.Title</h3>
+<pre><code class="code-sample language-csharp" data-url="@sample.Url"></code></pre>
+}

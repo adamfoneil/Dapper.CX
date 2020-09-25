@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SampleApp.Models;
+using SampleApp.RazorPages.Interfaces;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SampleApp.RazorPages.Pages
 {
     [Authorize]
-    public class ItemsModel : BasePageModel
+    public class ItemsModel : BasePageModel, ICodeSample
     {
         public ItemsModel(DapperCX<int, UserProfile> data) : base(data)
         {
@@ -21,6 +23,15 @@ namespace SampleApp.RazorPages.Pages
         public SelectList ItemSelect { get; set; }
 
         public Item Item { get; set; }
+
+        public IEnumerable<CodeSample> Samples => new CodeSample[]
+        {
+            new CodeSample()
+            {
+                Title = "Code Behind",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Pages/Items.cshtml.cs"
+            }
+        };
 
         public async Task OnGetAsync()
         {

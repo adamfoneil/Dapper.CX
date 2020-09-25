@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp.Models", "SampleA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp.Services", "SampleApp.Services\SampleApp.Services.csproj", "{F39D57F3-C8D4-4CB9-8109-BC3243CE8118}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.CrudService", "Tests.CrudService\Tests.CrudService.csproj", "{A2772B52-1364-41E0-A4CC-2287268C08BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.CrudService", "Tests.CrudService\Tests.CrudService.csproj", "{A2772B52-1364-41E0-A4CC-2287268C08BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
