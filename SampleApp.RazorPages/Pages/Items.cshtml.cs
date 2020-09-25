@@ -24,6 +24,22 @@ namespace SampleApp.RazorPages.Pages
 
         public Item Item { get; set; }
 
+        public async Task OnGetAsync()
+        {
+            Item = await Data.GetAsync<Item>(Id);
+
+            ItemSelect = await Data.QuerySelectListAsync(new Queries.SelectLists.ItemSelect()
+            {
+                WorkspaceId = Data.User.WorkspaceId ?? 0
+            }, Id);
+        }
+
+        public async Task<RedirectResult> OnPostSaveItemAsync(Item item) => 
+            await Data.SaveAndRedirectAsync(item, (model, exc) => (model.Id != 0) ? Redirect($"/Items/{model.Id}") : Redirect("/Items"), 
+                beforeSave: (model) => model.WorkspaceId = Data.User.WorkspaceId ?? 0,
+                onSuccess: (id) => SaveSuccessMessage($"Item {id} updated successfully."), 
+                onException: (model, exc) => SaveErrorMessage(exc));
+
         public IEnumerable<CodeSample> Samples => new CodeSample[]
         {
             new CodeSample()
@@ -48,21 +64,5 @@ namespace SampleApp.RazorPages.Pages
                 Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.Models/Item.cs"
             }
         };
-
-        public async Task OnGetAsync()
-        {
-            Item = await Data.GetAsync<Item>(Id);
-
-            ItemSelect = await Data.QuerySelectListAsync(new Queries.SelectLists.ItemSelect()
-            {
-                WorkspaceId = Data.User.WorkspaceId ?? 0
-            }, Id);
-        }
-
-        public async Task<RedirectResult> OnPostSaveItemAsync(Item item) => 
-            await Data.SaveAndRedirectAsync(item, (model, exc) => (model.Id != 0) ? Redirect($"/Items/{model.Id}") : Redirect("/Items"), 
-                beforeSave: (model) => model.WorkspaceId = Data.User.WorkspaceId ?? 0,
-                onSuccess: (id) => SaveSuccessMessage($"Item {id} updated successfully."), 
-                onException: (model, exc) => SaveErrorMessage(exc));
     }
 }
