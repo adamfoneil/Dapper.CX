@@ -4,7 +4,7 @@
 <h2>Startup</h2>
 
 <p>I have a decent <a href="https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection">wiki topic</a> on how to setup Dapper.CX at startup,
-    that I don't simply want to repeat here.</p>
+    but there's.</p>
 
 <p>Use this page as a walkthrough of the sample app's examples.</p>
 
@@ -17,4 +17,13 @@
     user profile class of your chosing <code>TUser</code>. When you add Dapper.CX to your services container, part of what you must specify is a class
     that converts Claims into your <code>TUser</code> class and back. To do that, you create a class that inherits from <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.SqlServer.AspNetCore/Services/DbUserClaimsConverter.cs">DbUserClaimsConverter&lt;TUser&gt;</a>.</p>
     <p>The Sample App here uses the example below:</p>
+</div>
+
+<div id="claims-factory">
+    <p>Once you have a Claims Converter class, as described above, you need to enable the login process to make use of it. In other words,
+    when users log in, you want the claims your application relies on to be generated for each user. To do this, you create a class that inherits from
+    <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.SqlServer.AspNetCore/Services/DbUserClaimsFactory.cs">DbUserClaimsFactory&lt;TUser&gt;</a>.
+    This is, in turn, based on a built-in .NET Core class <code>UserClaimsPrincipalFactory&lt;IdentityUser&gt;</code>.</p>
+    <p>Fortunately, this is pretty simple because there's nothing you have to implement specifically. You just have to pass the <code>ClaimsConverter</code>
+    you already created in the <code>ClaimsFactory</code> constructor.</p>
 </div>

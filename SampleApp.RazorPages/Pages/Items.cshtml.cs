@@ -57,7 +57,8 @@ namespace SampleApp.RazorPages.Pages
             {
                 Title = "JavaScript",
                 Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/wwwroot/js/Items.js",
-                Language = "js"
+                Language = "js",
+                ImportElementId = "goto-item"
             },
             new CodeSample()
             {

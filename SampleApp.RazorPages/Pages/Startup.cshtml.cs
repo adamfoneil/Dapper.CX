@@ -26,7 +26,8 @@ namespace SampleApp.RazorPages.Pages
             new CodeSample()
             {
                 Title = "Claims Factory",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Services/UserProfileClaimsFactory.cs"
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Services/UserProfileClaimsFactory.cs",
+                ImportElementId = "claims-factory"
             },
             new CodeSample()
             {

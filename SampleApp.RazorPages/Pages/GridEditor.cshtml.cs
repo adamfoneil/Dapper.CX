@@ -46,12 +46,12 @@ namespace SampleApp.RazorPages.Pages
             new CodeSample()
             {
                 Title = "Code Behind",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Pages/ItemGrid.cshtml.cs"
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Pages/GridEditor.cshtml.cs"
             },
             new CodeSample()
             {
                 Title = "Razor",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Pages/ItemGrid.cshtml",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Pages/GridEditor.cshtml",
                 Language = "html"
             }
         };
