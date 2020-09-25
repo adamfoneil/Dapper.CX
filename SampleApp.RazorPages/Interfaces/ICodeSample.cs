@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace SampleApp.RazorPages.Interfaces
 {
@@ -16,5 +17,7 @@ namespace SampleApp.RazorPages.Interfaces
         public string Url { get; set; }
         public string Comments { get; set; }
         public string Language { get; set; } = "csharp";
+
+        public string GetFilename() => Path.GetFileName(Url);
     }
 }

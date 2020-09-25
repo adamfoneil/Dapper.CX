@@ -7,9 +7,9 @@
     index++;
     <div class="card">
         <div class="card-header">
-            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#code-sample-@index">@sample.Title</button>            
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#code-sample-@index">@sample.Title - @sample.GetFilename()</button>
         </div>
-        <div class="card-body collapse" id="code-sample-@index">
+        <div class="card-body collapse" id="code-sample-@index" data-parent="#accordion">
             <pre><code class="code-sample @sample.Language" data-url="@sample.Url"></code></pre>
         </div>
     </div>        

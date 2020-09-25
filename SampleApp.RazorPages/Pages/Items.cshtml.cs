@@ -33,16 +33,20 @@ namespace SampleApp.RazorPages.Pages
             },
             new CodeSample()
             {
-                Title = "Razor Markup",
+                Title = "Razor",
                 Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Pages/Items.cshtml"
             },
             new CodeSample()
             {
-                Title = "Item.js",
+                Title = "JavaScript",
                 Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/wwwroot/js/Items.js",
                 Language = "js"
+            },
+            new CodeSample()
+            {
+                Title = "Model Class",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.Models/Item.cs"
             }
-
         };
 
         public async Task OnGetAsync()
