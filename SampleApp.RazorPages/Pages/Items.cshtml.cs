@@ -30,7 +30,19 @@ namespace SampleApp.RazorPages.Pages
             {
                 Title = "Code Behind",
                 Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Pages/Items.cshtml.cs"
+            },
+            new CodeSample()
+            {
+                Title = "Razor Markup",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Pages/Items.cshtml"
+            },
+            new CodeSample()
+            {
+                Title = "Item.js",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/wwwroot/js/Items.js",
+                Language = "js"
             }
+
         };
 
         public async Task OnGetAsync()

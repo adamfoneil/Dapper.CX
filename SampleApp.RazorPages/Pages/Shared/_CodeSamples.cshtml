@@ -1,7 +1,17 @@
 ﻿@model SampleApp.RazorPages.Interfaces.ICodeSample
 
+@{ int index = 0; }
+<div id="accordion" class="accordion">
 @foreach (var sample in Model.Samples)
-{    
-    <h3>@sample.Title</h3>
-    <pre><code class="code-sample csharp" data-url="@sample.Url"></code></pre>
+{
+    index++;
+    <div class="card">
+        <div class="card-header">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#code-sample-@index">@sample.Title</button>            
+        </div>
+        <div class="card-body collapse" id="code-sample-@index">
+            <pre><code class="code-sample @sample.Language" data-url="@sample.Url"></code></pre>
+        </div>
+    </div>        
 }
+</div>
