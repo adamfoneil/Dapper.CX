@@ -50,7 +50,8 @@ namespace SampleApp.RazorPages.Pages
             new CodeSample()
             {
                 Title = "Razor",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Pages/Items.cshtml"
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Pages/Items.cshtml",
+                Language = "html"
             },
             new CodeSample()
             {
@@ -62,6 +63,11 @@ namespace SampleApp.RazorPages.Pages
             {
                 Title = "Model Class",
                 Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.Models/Item.cs"
+            },
+            new CodeSample()
+            {
+                Title = "Select List Query",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Queries/SelectLists/ItemSelect.cs"
             }
         };
     }

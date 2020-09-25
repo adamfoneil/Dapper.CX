@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace SampleApp.RazorPages.Pages
 {
-    public class ItemGridModel : BasePageModel, ICodeSample
+    public class GridEditorModel : BasePageModel, ICodeSample
     {
-        public ItemGridModel(DapperCX<int, UserProfile> data) : base(data)
+        public GridEditorModel(DapperCX<int, UserProfile> data) : base(data)
         {
         }
 
@@ -32,13 +32,13 @@ namespace SampleApp.RazorPages.Pages
         public async Task<RedirectResult> OnPostSaveItemAsync(Item item)
         {
             await Data.TrySaveAsync(item, onException: SaveErrorMessage);
-            return Redirect("/");
+            return Redirect("/ItemGrid");
         }
 
         public async Task<RedirectResult> OnPostDeleteItemAsync(int id)
         {
             await Data.TryDeleteAsync<Item>(id, onException: SaveErrorMessage);
-            return Redirect("/");
+            return Redirect("/ItemGrid");
         }
 
         public IEnumerable<CodeSample> Samples => new CodeSample[]
@@ -46,7 +46,13 @@ namespace SampleApp.RazorPages.Pages
             new CodeSample()
             {
                 Title = "Code Behind",
-                Url = ""
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Pages/ItemGrid.cshtml.cs"
+            },
+            new CodeSample()
+            {
+                Title = "Razor",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Pages/ItemGrid.cshtml",
+                Language = "html"
             }
         };
     }

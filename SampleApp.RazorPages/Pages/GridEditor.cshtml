@@ -1,10 +1,18 @@
 ﻿@page
-@model SampleApp.RazorPages.Pages.ItemGridModel
+@model SampleApp.RazorPages.Pages.GridEditorModel
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 
 @{ 
     var grid = new GridEditor<Item>(this, Xsrf, (item) => item.Id, defaults: new { WorkspaceId = Model.Data?.User?.WorkspaceId ?? 0 }); 
 }
+
+<h3>Grid Editor</h3>
+<p>Though not part of Dapper.CX itself, and a rather old-school implementation that betrays my dislike for JavaScript, 
+    I wanted to show an approach to an inline table editor that uses Dapper.CX on the backend.
+    This uses my <a href="https://github.com/adamfoneil/GridEditor.RazorPages">GridEditor.RazorPages</a> project, which is entirely agnostic
+    about how the backend is implemented.</p>
+
+<p>Despite its limitations from a UX perspective, it's very easy to implement.</p>
 
 <partial name="~/Pages/Shared/_SaveResult.cshtml"/>
 
