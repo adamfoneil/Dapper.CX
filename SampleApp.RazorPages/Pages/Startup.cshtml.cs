@@ -1,16 +1,37 @@
-using System;
+using Dapper.CX.SqlServer.Services;
+using SampleApp.Models;
+using SampleApp.RazorPages.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace SampleApp.RazorPages.Pages
 {
-    public class StartupModel : PageModel
+    public class StartupModel : BasePageModel, ICodeSample
     {
+        public StartupModel(DapperCX<int, UserProfile> data) : base(data)
+        {
+        }     
+
         public void OnGet()
         {
         }
+
+        public IEnumerable<CodeSample> Samples => new CodeSample[]
+        {
+            new CodeSample()
+            {
+                Title = "Claims Converter",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Services/UserProfileClaimsConverter.cs"
+            },
+            new CodeSample()
+            {
+                Title = "Claims Factory",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Services/UserProfileClaimsFactory.cs"
+            },
+            new CodeSample()
+            {
+                Title = "Startup",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Startup.cs"
+            }
+        };
     }
 }
