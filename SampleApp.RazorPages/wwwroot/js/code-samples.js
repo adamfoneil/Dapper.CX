@@ -1,8 +1,10 @@
 ﻿$(document).ready(function () {
-    $(".code-sample").each(async function (index) {
-        var url = $(this).data("url");
+    let blocks = document.querySelectorAll(".code-sample");
+    blocks.forEach(async function (ele) {
+        var url = $(ele).data("url");
         const response = await fetch(url);
-        const content = await response.text();        
-        $(this).text(content);                
+        const content = await response.text();
+        ele.innerText = content;
+        hljs.highlightBlock(ele);
     });    
 });
