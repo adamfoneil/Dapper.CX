@@ -49,7 +49,8 @@ public async Task<IActionResult> OnPostDeleteAsync(int id)
 ```
 
 ## Customizing behaviors with interfaces
-There's a lot of functionality you can opt into by implementing interfaces on your model classes from the [AO.Models](https://github.com/adamfoneil/Models) project. Available interfaces are [here](https://github.com/adamfoneil/Models/tree/master/Models/Interfaces)
+There's a lot of functionality you can opt into by implementing interfaces on your model classes from the [AO.Models](https://github.com/adamfoneil/Models) project. Available interfaces are [here](https://github.com/adamfoneil/Models/tree/master/Models/Interfaces).
+
 ## And one other thing...
 In addition to the more common strong-typed CRUD operations, Dapper.CX also offers a [SqlCmdDictionary](https://github.com/adamosoftware/Dapper.CX/wiki/Using-SqlCmdDictionary) feature that gives you a clean way to build INSERT and UPDATE statements dynamically.
 
