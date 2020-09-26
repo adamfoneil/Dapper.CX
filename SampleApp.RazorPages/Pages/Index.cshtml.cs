@@ -3,9 +3,7 @@ using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SampleApp.Models;
-using SampleApp.RazorPages.Queries;
 using SampleApp.RazorPages.Queries.SelectLists;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SampleApp.RazorPages.Pages

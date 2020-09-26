@@ -4,14 +4,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SampleApp.Models;
-using SampleApp.RazorPages.Interfaces;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SampleApp.RazorPages.Pages
 {
     [Authorize]
-    public class ItemsModel : BasePageModel, ICodeSample
+    public partial class ItemsModel : BasePageModel
     {
         public ItemsModel(DapperCX<int, UserProfile> data) : base(data)
         {
@@ -39,37 +37,5 @@ namespace SampleApp.RazorPages.Pages
                 beforeSave: (model) => model.WorkspaceId = Data.User.WorkspaceId ?? 0,
                 onSuccess: (id) => SaveSuccessMessage($"Item {id} updated successfully."), 
                 onException: (model, exc) => SaveErrorMessage(exc));
-
-        public IEnumerable<CodeSample> Samples => new CodeSample[]
-        {
-            new CodeSample()
-            {
-                Title = "Code Behind",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Pages/Items.cshtml.cs"
-            },
-            new CodeSample()
-            {
-                Title = "Razor",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Pages/Items.cshtml",
-                Language = "html"
-            },
-            new CodeSample()
-            {
-                Title = "JavaScript",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/wwwroot/js/Items.js",
-                Language = "js",
-                ImportElementId = "goto-item"
-            },
-            new CodeSample()
-            {
-                Title = "Model Class",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.Models/Item.cs"
-            },
-            new CodeSample()
-            {
-                Title = "Select List Query",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Queries/SelectLists/ItemSelect.cs"
-            }
-        };
     }
 }
