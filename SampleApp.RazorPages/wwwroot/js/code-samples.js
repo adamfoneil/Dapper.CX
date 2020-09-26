@@ -1,8 +1,15 @@
 ﻿$(document).ready(function () {
     let blocks = document.querySelectorAll(".code-sample");
     blocks.forEach(async function (ele) {
-        let url = $(ele).data("url");
-        const response = await fetch(url);
+
+        let jsonEncoded = $(ele).data("source-request");
+        let request = decodeJson(jsonEncoded);        
+       
+        const response = await fetch("/GitHub/Source", {
+            method: "post",
+            body: JSON.stringify(request)
+        });
+
         const content = await response.text();
         ele.innerText = content;
         hljs.highlightBlock(ele);
@@ -11,8 +18,7 @@
         if (importElement != "") {
             let importContent = document.getElementById(importElement);
             let target = document.getElementById(importElement + "-target");
-            target.appendChild(importContent);
-            document.removeChild(importContent);
+            target.appendChild(importContent);            
         }
     });  
 
@@ -20,4 +26,25 @@
     blocks.forEach(function (ele) {
         hljs.highlightBlock(ele);
     });
+
+    $(".tooltip").tooltip({
+        items: "span.tooltip",
+        content: function () {
+            let contentId = $(this).data("tooltip");
+            let node = document.getElementById(contentId).cloneNode(true);
+            node.style.display = "block";
+            return node;
+        }
+    });
 });
+
+function decodeJson(input) {
+    let json = replaceAll(input, "&quot;", "\"");
+    json = replaceAll(json, "&amp;", "&");
+    return JSON.parse(json);
+}
+
+function replaceAll(input, lookFor, replaceWith) {
+    let tokens = input.split(lookFor);
+    return tokens.join(replaceWith);
+}

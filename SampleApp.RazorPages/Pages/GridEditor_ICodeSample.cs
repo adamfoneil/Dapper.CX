@@ -10,13 +10,22 @@ namespace SampleApp.RazorPages.Pages
             new CodeSample()
             {
                 Title = "Code Behind",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Pages/GridEditor.cshtml.cs"
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Pages/GridEditor.cshtml.cs",
+                Links = new CodeSample.Link[]
+                {
+                    new CodeSample.Link(LinkType.Tooltip, "OnPostSaveItemAsync", "SaveItem"),
+                    new CodeSample.Link(LinkType.Tooltip, "OnPostDeleteItemAsync", "DeleteItem")
+                }
             },
             new CodeSample()
             {
                 Title = "Razor",
                 Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Pages/GridEditor.cshtml",
-                Language = "html"
+                Language = "html",
+                Links = new CodeSample.Link[]
+                {
+                    new CodeSample.Link(LinkType.Tooltip, "grid.HandlerForms", "HandlerForms")
+                }
             }
         };
     }

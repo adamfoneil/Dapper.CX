@@ -39,7 +39,7 @@ namespace SampleApp.RazorPages
                 () => new UserProfileClaimsConverter(connectionString));           
 
             services.AddRazorPages();
-
+            services.AddControllersWithViews();
             services.AddChangeTracking(connectionString, new DataModel());
         }
         
@@ -67,6 +67,7 @@ namespace SampleApp.RazorPages
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
