@@ -48,7 +48,7 @@ namespace SampleApp.RazorPages.Interfaces
 
         /// <summary>
         /// element Id on the razor page that will be imported in the accordion card body, used
-        /// for adding explanator content for a code sample
+        /// for adding explanatory content for a code sample
         /// </summary>
         public string ImportElementId { get; set; }
 
