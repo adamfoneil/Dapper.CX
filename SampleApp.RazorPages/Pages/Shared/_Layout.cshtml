@@ -30,7 +30,9 @@
     </header>
     <div class="container">
         <div class="row">
-            <div class="col-lg-3">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="col-lg-3">
                 <ul>
                     <li>Why Dapper.CX?</li>
                     <li><a href="/Startup">Startup</a></li>                    
@@ -60,6 +62,11 @@
                     }
                 </main>
             </div>
+            }
+            else
+            {
+                @RenderBody()
+            }
         </div>
     </div>
 

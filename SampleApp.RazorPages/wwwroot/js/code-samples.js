@@ -8,11 +8,16 @@
         hljs.highlightBlock(ele);
 
         let importElement = $(ele).data("import-element");
-        if (importElement != null) {
+        if (importElement != "") {
             let importContent = document.getElementById(importElement);
             let target = document.getElementById(importElement + "-target");
             target.appendChild(importContent);
             document.removeChild(importContent);
         }
-    });    
+    });  
+
+    blocks = document.querySelectorAll(".code-block");
+    blocks.forEach(function (ele) {
+        hljs.highlightBlock(ele);
+    });
 });

@@ -3,8 +3,29 @@
 
 <h2>Startup</h2>
 
-<p>I have a decent <a href="https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection">wiki topic</a> on how to setup Dapper.CX at startup,
-    but there's.</p>
+<p>I have a <a href="https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection">wiki topic</a> on how to setup Dapper.CX at startup,
+    but I'll use this page to explain it as well.</p>
+
+<p>Here's what to do in your <code>Startup.ConfigureServices</code> method to use Dapper.CX as an injected service.</p>
+
+<ul>
+    <li>Add a model class to your project that implements <a href="https://github.com/adamfoneil/Models/blob/master/Models/Interfaces/IUserBase.cs">IUserBase</a>. Example: <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.Models/UserProfile.cs">UserProfile</a>.
+    This will map to your <code>dbo.AspNetUsers</code> table.</li>
+    <li>Install NuGet package <a href="https://www.nuget.org/packages/Dapper.CX.SqlServer.AspNetCore/">Dapper.CX.SqlServer.AspNetCore</a> in your application project. Do not install in your business or model layer projects.</li>
+    <li>Add a service to your project that derives from abstract class <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.SqlServer.AspNetCore/Services/DbUserClaimsConverter.cs">DbUserClaimsConverter&lt;TUser&gt;</a>. This used to convert your user profile model class to a set of claims that map onto it. Example: <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.RazorPages/Services/UserProfileClaimsConverter.cs">UserProfileClaimsConverter</a>.</li>
+    <li>
+        <p>Add a custom claims factory to the line that adds Identity to your application. This is what enables your application's login process
+        to make your user metadata available to your application.</p>
+<pre><code class="code-block csharp">services
+    .AddDefaultIdentity&lt;IdentityUser&gt;(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores&lt;ApplicationDbContext&gt;()
+    <span class="highlight">.AddClaimsPrincipalFactory&lt;UserProfileClaimsFactory&gt;();</span>
+</code></pre>
+    </li>
+    <li>
+        <p>Call the <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.SqlServer.AspNetCore/CrudServiceExtensions.cs#L20">AddDapperCX</a> extension method.</p>
+    </li>
+</ul>
 
 <p>Use this page as a walkthrough of the sample app's examples.</p>
 
