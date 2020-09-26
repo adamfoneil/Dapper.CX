@@ -26,6 +26,12 @@ namespace SampleApp.RazorPages.Pages
                 {
                     new CodeSample.Link(LinkType.Tooltip, "grid.HandlerForms", "HandlerForms")
                 }
+            },
+            new CodeSample()
+            {
+                Title = "AllItems Query",
+                ImportElementId = "AllItemsQuery",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Queries/AllItems.cs"
             }
         };
     }

@@ -13,6 +13,15 @@
         const content = await response.text();
         ele.innerHTML = content;        
         hljs.highlightBlock(ele);
+        $(ele).tooltip({
+            items: "span.sample-tooltip",
+            content: function () {
+                let contentId = $(this).data("tooltip");
+                let node = document.getElementById(contentId).cloneNode(true);
+                node.style.display = "block";
+                return node;
+            }
+        });
 
         let importElement = $(ele).data("import-element");
         if (importElement != "") {
@@ -27,16 +36,8 @@
         hljs.highlightBlock(ele);
     });
 
-    // not firing because content with tooltips is loaded after doc is ready
-    $(".sample-tooltip").tooltip({
-        items: "span",
-        content: function () {
-            let contentId = $(this).data("tooltip");
-            let node = document.getElementById(contentId).cloneNode(true);
-            node.style.display = "block";
-            return node;
-        }
-    });
+    
+    
 });
 
 function decodeJson(input) {
