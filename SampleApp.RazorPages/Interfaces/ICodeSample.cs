@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace SampleApp.RazorPages.Interfaces
 {
@@ -20,5 +22,16 @@ namespace SampleApp.RazorPages.Interfaces
         public string ImportElementId { get; set; }
 
         public string GetFilename() => Path.GetFileName(Url);
+
+        // converts a "raw" GitHub URL to the regular URL
+        public string GetFullUrl()
+        {
+            const int repoNameFolder = 3;
+            var rawUri = new Uri(Url);
+            var folders = rawUri.LocalPath.Split('/').ToList();
+            folders.Insert(repoNameFolder, "blob");
+            string newPath = string.Join("/", folders);
+            return rawUri.AbsoluteUri.Replace(rawUri.Authority, "github.com").Replace(rawUri.LocalPath, newPath);
+        }
     }
 }
