@@ -1,0 +1,91 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/github.min.css"/>       
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/> 
+        <style>
+            .sample-tooltip {
+                background-color:gold
+            }
+
+            .local-link {
+                background-color: lightgreen;
+            }
+
+            .hidden {
+                display:none
+            }
+        </style>
+    </head>
+    <body>
+        <div id="sample" class="hidden">
+            <p>This is my highlight comment. Along with something else.</p>
+            <p>And another paragraph is here.</p>
+        </div>
+        <pre><code class="csharp" id="codeBlock">
+using Dapper.CX.SqlServer.AspNetCore.Extensions;
+using Dapper.CX.SqlServer.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SampleApp.Models;
+using SampleApp.RazorPages.Queries;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace SampleApp.RazorPages.Pages
+{
+    [Authorize]
+    public partial class GridEditorModel : BasePageModel
+    {
+        public GridEditorModel(DapperCX&lt;int, UserProfile&gt; data) : base(data)
+        {
+        }
+
+        public IEnumerable&lt;Item&gt; AllItems { get; set; }        
+
+        public async Task OnGetAsync()
+        {
+            if (Data.HasUser)
+            {
+                AllItems = await Data.QueryAsync(new AllItems() 
+                { 
+                    WorkspaceId = Data.User.WorkspaceId ?? 0, 
+                    IsActive = true 
+                });
+            }
+        }
+
+        public async Task&lt;RedirectResult&gt; <span class="sample-tooltip" data-tooltip="sample">OnPostSaveItemAsync</span>(Item item)
+        {
+            await Data.TrySaveAsync(item, onException: SaveErrorMessage);
+            return Redirect("/ItemGrid");
+        }
+
+        public async Task&lt;RedirectResult&gt; OnPostDeleteItemAsync(int id)
+        {
+            await Data.TryDeleteAsync&lt;Item&gt;(id, onException: SaveErrorMessage);
+            return Redirect("/ItemGrid");
+        }
+    }
+}
+        </code></pre>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/highlight.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/languages/csharp.min.js"></script>    
+        <script>            
+            hljs.highlightBlock(document.getElementById("codeBlock"));           
+
+            $(function () {                
+                $(".sample-tooltip").tooltip({
+                    items: "span.sample-tooltip",
+                    content: function() {
+                        let contentId = $(this).data("tooltip");
+                        let node = document.getElementById(contentId).cloneNode(true);
+                        node.style.display = "block";
+                        return node;
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

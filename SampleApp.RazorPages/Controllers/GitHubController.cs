@@ -29,7 +29,7 @@ namespace SampleApp.RazorPages.Controllers
                 {
                     foreach (var link in request.Links)
                     {
-                        content = content.Replace(link.Text, $"<span id=\"{link.Target}\" class=\"{link.CssClass}\">{link.Text}</span>");
+                        content = content.Replace(link.Text, $"<span data-tooltip=\"{link.Target}\" class=\"{link.CssClass}\">{link.Text}</span>");
                     }
                 }
 

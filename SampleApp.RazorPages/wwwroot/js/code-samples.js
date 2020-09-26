@@ -11,7 +11,7 @@
         });
 
         const content = await response.text();
-        ele.innerText = content;
+        ele.innerHTML = content;        
         hljs.highlightBlock(ele);
 
         let importElement = $(ele).data("import-element");
@@ -27,8 +27,9 @@
         hljs.highlightBlock(ele);
     });
 
-    $(".tooltip").tooltip({
-        items: "span.tooltip",
+    // not firing because content with tooltips is loaded after doc is ready
+    $(".sample-tooltip").tooltip({
+        items: "span",
         content: function () {
             let contentId = $(this).data("tooltip");
             let node = document.getElementById(contentId).cloneNode(true);

@@ -96,7 +96,7 @@ namespace SampleApp.RazorPages.Interfaces
             public string CssClass 
             {  
                 get =>
-                    (Type == LinkType.Tooltip) ? "tooltip" :
+                    (Type == LinkType.Tooltip) ? "sample-tooltip" :
                     (Type == LinkType.CodeSample) ? "code-sample" :
                     throw new Exception($"Unknown link type {Type}");
             }
