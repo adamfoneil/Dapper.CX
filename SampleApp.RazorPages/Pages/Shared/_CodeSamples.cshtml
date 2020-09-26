@@ -1,5 +1,8 @@
 ﻿@model SampleApp.RazorPages.Interfaces.ICodeSample
 
+<hr/>
+<h3 class="text-muted">Code Components</h3>
+
 @{ int index = 0; }
 <div id="accordion" class="accordion">
 @foreach (var sample in Model.Samples)
@@ -15,7 +18,7 @@
                 <div id="@sample.ImportElementId-target"></div>
             }            
             <pre><code class="code-sample @sample.Language" data-source-request="@sample.SourceRequestJson" data-import-element="@sample.ImportElementId"></code></pre>
-            <p>View online: <a href="@sample.GetFullUrl()" class="btn btn-sm btn-outline-info">@sample.GetFilename()</a></p>
+            <p>View on GitHub: <a href="@sample.GetFullUrl()" class="btn btn-sm btn-outline-info">@sample.GetFilename()</a></p>
         </div>
     </div>        
 }
