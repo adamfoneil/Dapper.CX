@@ -15,7 +15,7 @@ When using the injected service, you'd write CRUD code that looks like this. Thi
 ```csharp
 public Employee ViewRecord { get; set; }
 
-public async Task<IActionResult> OnGetAsync(int id)
+public async Task OnGetAsync(int id)
 {
     ViewRecord = await Data.GetAsync<Employee>(id);
 }
@@ -38,7 +38,7 @@ When using the extension methods, it's almost the same thing, but you must open 
 ```csharp
 public Employee ViewRecord { get; set; }
 
-public async Task<IActionResult> OnGetAsync(int id)
+public async Task OnGetAsync(int id)
 {
     using (var cn = GetConnection())
     {
