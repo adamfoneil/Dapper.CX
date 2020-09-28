@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 namespace SampleApp.RazorPages.Pages
 {
     [Authorize]
-    public class MultiTenancyModel : BasePageModel
+    public partial class MultiTenancyModel : BasePageModel
     {
         public MultiTenancyModel(DapperCX<int, UserProfile> data) : base(data)
         {
         }
 
         public SelectList WorkspaceSelect { get; set; }
-        public Workspace Workspace { get; set; }
+        public Workspace Workspace { get; set; }        
 
         public async Task OnGetAsync()
         {

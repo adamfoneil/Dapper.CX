@@ -3,6 +3,36 @@
 @{
 }
 
+<h3>Multi-tenancy</h3>
+
+<p>In a multi-tenant app, users and their data are partitioned so that they can see and work with their own data only. A critical concern
+    is ensuring that users can't access data belonging to another tenant partition.</p>
+
+<p>In CRUD operations, Dapper.CX makes this easy to enforce using a couple interfaces <code>ITenantUser&lt;T&gt;</code>
+    used on your user profile class and <code>ITenantIsolated&lt;T&gt;</code> used on model classes.</p>
+
+<hr/>
+
+<div id="ITenantUser">
+    <p>Implement this on your user profile class. This is how you indicate what property of your user profile class returns the tenant Id value.
+    The <code>T</code> generic argument indicates the type of the tenant property.</p>
+</div>
+
+<div id="TenantIdTooltip" class="hidden">
+    This is how you indicate what property of your user profile model defines what tenant they belong to. Usually, it would just
+    wrap an existing property you have. In this example, I use use the existing <code>WorkspaceId</code> property, coalescing to <code>0</code>
+    in case it's not set.
+</div>
+
+<div id="TenantIdInterface" class="hidden">
+    Add this interface to your user profile class.
+</div>
+
+<div id="GetTenantIdTooltip" class="hidden">
+    This is how you indicate what tenant a row belongs to. It's an <code>async</code> method in case you need to get the value using a query join.
+    In this example, it's simply an existing property of the model.
+</div>
+
 @if (Model.Data.HasUser)
 {
     if (!Model.Data.User.IsWorkspaceEnabled)
