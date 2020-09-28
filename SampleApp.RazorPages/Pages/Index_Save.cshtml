@@ -1,0 +1,9 @@
+﻿<p>Here's a typical use of <code>SaveAsync</code></p>
+
+<pre><code class="csharp">
+public async Task&lt;RedirectResult&gt; OnPostAsync(Item item)
+{
+    await Data.SaveAsync(Item);
+    return Redirect("/Items");
+}
+</code></pre>

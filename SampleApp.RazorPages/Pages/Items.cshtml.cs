@@ -33,7 +33,8 @@ namespace SampleApp.RazorPages.Pages
         }
 
         public async Task<RedirectResult> OnPostSaveItemAsync(Item item) => 
-            await Data.SaveAndRedirectAsync(item, (model, exc) => (model.Id != 0) ? Redirect($"/Items/{model.Id}") : Redirect("/Items"), 
+            await Data.SaveAndRedirectAsync(item, 
+                (model, exc) => (model.Id != 0) ? Redirect($"/Items/{model.Id}") : Redirect("/Items"), 
                 beforeSave: (model) => model.WorkspaceId = Data.User.WorkspaceId ?? 0,
                 onSuccess: (id) => SaveSuccessMessage($"Item {id} updated successfully."), 
                 onException: (model, exc) => SaveErrorMessage(exc));

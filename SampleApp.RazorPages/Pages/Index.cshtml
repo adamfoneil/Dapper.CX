@@ -9,34 +9,125 @@
 <partial name="~/Pages/Shared/_SaveResult.cshtml"/>
 
 <div class="text-center">
-    @if (Model.Data.HasUser)
+    <h1>Dapper.CX Sample App</h1>
+
+    <p>Dapper.CX is a CRUD library for SQL Server. You can use its <code>IDbConnection</code> <a href="https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-Extension-Methods">extension methods</a> or
+    as an injected service. This Razor Pages app demonstrates how to use the injected service along with a suite of
+    typical features that Dapper.CX makes easy to implement.</p>
+
+    <div class="row my-3">
+        <div class="col-sm-4">
+            <div class="card p-3 d-flex flex-row justify-content-center align-items-center h-100">
+                <a href="https://github.com/adamfoneil/Dapper.CX">
+                    <i class="fab fa-github fa-2x"></i>
+                    GitHub
+                </a>                
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card p-3">
+                Extension method package:
+                <a href="https://www.nuget.org/packages/Dapper.CX.SqlServer/">
+                    <img src="https://img.shields.io/nuget/v/Dapper.CX.SqlServer?label=SqlServer"/>
+                </a>                
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card p-3">
+                ASP.NET Core package
+                <a href="https://www.nuget.org/packages/Dapper.CX.SqlServer.AspNetCore/">
+                    <img src="https://img.shields.io/nuget/v/Dapper.CX.SqlServer.AspNetCore?label=AspNetCore"/>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <p>The reason for all this is that I don't really like Entity Framework. I feel that EF is not simple or productive enough.
+    In my opinion, it doesn't have a &quot;pit of success&quot;. Dapper.CX values code brevity, convention over configuration,
+    and elegant opt-in extendibility where you need it.</p>
+
+    <p>This sample app demonstrates both working features along with the code components that make it work, so you can see the result and what
+    makes it work side by side.</p>
+    
+    <h3>Startup</h3>
+    <p>Dapper.CX offers strong-typed user profile integration. I have a complete <a href="https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection">wiki topic</a> on this, but in a nutshell,
+    this is what it looks like to add the Dapper.CX service.</p>
+    </div>
+
+    <pre><code class="csharp">
+    services
+        .AddDefaultIdentity&lt;IdentityUser&gt;(options =&gt; options.SignIn.RequireConfirmedAccount = true)
+        .AddEntityFrameworkStores&lt;ApplicationDbContext&gt;()
+        .AddClaimsPrincipalFactory&lt;UserProfileClaimsFactory&gt;();
+
+    services.AddDapperCX(
+        connectionString, 
+        (id) => Convert.ToInt32(id), 
+        () => new UserProfileClaimsConverter(connectionString));
+    </code></pre>
+
+    <div class="text-center">
+        <h3>Dependency Injection</h3>
+        <p>Your page and component constructors will look something like this. This snippet assumes a <code>TIdentity</code> of <code>int</code> and 
+        a <code>TUser</code> class of <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.Models/UserProfile.cs">UserProfile</a>.
+        I recommend using a base class that your pages inherit from with this constructor along with read-only <code>Data</code> property like this
+        that provides the root of all your data access in an application.</p>
+    </div>
+    
+    <pre><code class="csharp">
+    public class BasePageModel : PageModel
     {
-        if (!Model.Data.User.IsWorkspaceEnabled)
+        public BasePageModel(DapperCX&lt;int, UserProfile&gt; data)
         {
-            <p>user is disabled in the workspace</p>
-            return;
+            Data = data;
         }
 
-        <p>user = @(Model.Data.User.DisplayName ?? Model.Data.User.Name), local time @(Model.Data.User.LocalTime), workspaceId = @(Model.Data.User.WorkspaceId ?? 0)</p>
-
-        @if (Model.Data.User.HasRole("Admin"))
-        {
-            <p>I'm an admin!</p>
-        }
-
-        <form asp-page-handler="SetWorkspace" method="post">
-            <select name="workspaceId" onchange="this.form.submit()" asp-items="@Model.WorkspaceSelect" class="form-control">
-                <option value="">(none)</option>
-            </select>
-        </form>
-
-        <form asp-page-handler="SaveWorkspace" method="post" class="form-inline mt-4 mb-4">
-            @Html.Hidden("Id", Model.Workspace?.Id ?? 0)
-                            
-            <label class="mr-2">Workspace Name:</label>
-            @Html.TextBox("Name", Model.Workspace?.Name, new { @class = "form-control mr-2", required = "required" })
-                
-            <button class="btn btn-outline-dark">Save</button>            
-        </form>
+        public DapperCX&lt;int, UserProfile&gt; Data { get; }
     }
-</div>
+    </code></pre>    
+
+    <div class="text-center">
+        <h3>Typical CRUD Operations</h3>
+        <p>Most often you'll be <i>getting</i>, <i>saving</i>, and <i>deleting</i> your <a href="https://github.com/adamfoneil/Dapper.CX/tree/master/SampleApp.Models">model class</a> entities. Please
+        see my <a href="https://github.com/adamfoneil/Dapper.CX/wiki/Model-Class-Best-Practices-and-Suggestions">wiki topic</a> on model class guidance.</p>
+    </div>
+
+    <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="pills-getasync-tab" data-toggle="pill" href="#pills-getasync" role="tab" aria-controls="pills-getasync" aria-selected="true">GetAsync</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="pills-saveasync-tab" data-toggle="pill" href="#pills-saveasync" role="tab" aria-controls="pills-saveasync" aria-selected="false">SaveAsync</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="pills-deleteasync-tab" data-toggle="pill" href="#pills-deleteasync" role="tab" aria-controls="pills-deleteasync" aria-selected="false">DeleteAsync</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="pills-more-tab" data-toggle="pill" href="#pills-more" role="tab" aria-controls="pills-more" aria-selected="false">More</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-getasync" role="tabpanel" aria-labelledby="pills-getasync-tab">
+            <partial name="Index_Get.cshtml"/>
+        </div>
+        <div class="tab-pane fade" id="pills-saveasync" role="tabpanel" aria-labelledby="pills-saveasync-tab">
+            <partial name="Index_Save.cshtml"/>
+        </div>
+        <div class="tab-pane fade" id="pills-deleteasync" role="tabpanel" aria-labelledby="pills-deleteasync-tab">
+            <p>delete</p>
+        </div>
+        <div class="tab-pane fade" id="pills-more" role="tabpanel" aria-labelledby="pills-more-tab">
+            <p>more content</p>
+        </div>
+    </div>
+    
+@section Scripts {
+    <script>
+        $(function () {
+            let blocks = document.querySelectorAll(".csharp");
+            blocks.forEach(function (ele) {
+                hljs.highlightBlock(ele);
+            });
+        });
+    </script>
+}

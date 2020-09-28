@@ -1,0 +1,35 @@
+﻿@page
+@model SampleApp.RazorPages.Pages.MultiTenancyModel
+@{
+}
+
+@if (Model.Data.HasUser)
+{
+    if (!Model.Data.User.IsWorkspaceEnabled)
+    {
+        <p>user is disabled in the workspace</p>
+        return;
+    }
+
+    <p>user = @(Model.Data.User.DisplayName ?? Model.Data.User.Name), local time @(Model.Data.User.LocalTime), workspaceId = @(Model.Data.User.WorkspaceId ?? 0)</p>
+
+    @if (Model.Data.User.HasRole("Admin"))
+    {
+        <p>I'm an admin!</p>
+    }
+
+    <form asp-page-handler="SetWorkspace" method="post">
+        <select name="workspaceId" onchange="this.form.submit()" asp-items="@Model.WorkspaceSelect" class="form-control">
+            <option value="">(none)</option>
+        </select>
+    </form>
+
+    <form asp-page-handler="SaveWorkspace" method="post" class="form-inline mt-4 mb-4">
+        @Html.Hidden("Id", Model.Workspace?.Id ?? 0)
+                            
+        <label class="mr-2">Workspace Name:</label>
+        @Html.TextBox("Name", Model.Workspace?.Name, new { @class = "form-control mr-2", required = "required" })
+                
+        <button class="btn btn-outline-dark">Save</button>            
+    </form>
+}
