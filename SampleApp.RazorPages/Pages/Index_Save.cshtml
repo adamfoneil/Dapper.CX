@@ -15,10 +15,14 @@
     messages as well as handle the redirect.</p>
 
 <pre><code class="csharp">
-    public async Task<RedirectResult> OnPostSaveItemAsync(Item item) => 
+    public async Task&lt;RedirectResult&gt; OnPostSaveItemAsync(Item item) => 
         await Data.SaveAndRedirectAsync(item, 
+            // where do we redirect after success or fail? If save successful, model.Id != 0
             (model, exc) => (model.Id != 0) ? Redirect($"/Items/{model.Id}") : Redirect("/Items"), 
+            // in a multi-tenant environment, we need to make sure the tenant Id (workspaceId in this case) is set
             beforeSave: (model) => model.WorkspaceId = Data.User.WorkspaceId ?? 0,
-            onSuccess: (id) => SaveSuccessMessage($"Item {id} updated successfully."), 
+            // capture success message in TempData
+            onSuccess: (model) => SaveSuccessMessage($"Item {model.Name} updated successfully."), 
+            // capture error message in TempData
             onException: (model, exc) => SaveErrorMessage(exc));
 </code></pre>
