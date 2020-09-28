@@ -1,15 +1,25 @@
 ﻿<p>Here's what a typical use of <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudService.cs#L49">GetAsync</a> would look like in a Razor page. This snippet uses the <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.Models/Item.cs">Item</a> model class.</p>
 
 <pre><code class="csharp">
-// identity property passed through route or query string
-[BindProperty(SupportsGet = true)]
-public int Id { get; set; }
+    // identity property passed through route or query string
+    [BindProperty(SupportsGet = true)]
+    public int Id { get; set; }
 
-// your model class type to interact with
-public Item Item { get; set; }
+    // your model class type to interact with
+    public Item Item { get; set; }
 
-public async Task OnGetAsync()
-{
-    Item = await Data.GetAsync<Item>(Id);
-}
+    public async Task OnGetAsync()
+    {
+        Item = await Data.GetAsync<Item>(Id);
+    }
+</code></pre>
+
+<p>Here's what it might look like in an MVC app:</p>
+
+<pre><code class="csharp">
+    public async Task&lt;IActionResult&gt; Edit(int id)
+    {
+        var item = await Data.GetAsync&lt;Item&gt;(id);
+        return View(item);
+    }
 </code></pre>
