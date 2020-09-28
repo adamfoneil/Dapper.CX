@@ -1,7 +1,9 @@
-﻿<p>Here's a typical use of <code>SaveAsync</code></p>
+﻿<p>Here's a typical use of <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudService.cs#L117">SaveAsync</a>
+    that you might see in an MVC app.</p>
 
 <pre><code class="csharp">
-public async Task&lt;RedirectResult&gt; OnPostAsync(Item item)
+[HttpPost]
+public async Task&lt;RedirectResult&gt; OnSubmitAsync(Item item)
 {
     await Data.SaveAsync(Item);
     return Redirect("/Items");

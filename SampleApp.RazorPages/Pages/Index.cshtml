@@ -17,11 +17,11 @@
 
     <div class="row my-3">
         <div class="col-sm-4">
-            <div class="card p-3 d-flex flex-row justify-content-center align-items-center h-100">
-                <a href="https://github.com/adamfoneil/Dapper.CX">
-                    <i class="fab fa-github fa-2x"></i>
-                    GitHub
-                </a>                
+            <div class="card p-3">
+                ASP.NET Core package
+                <a href="https://www.nuget.org/packages/Dapper.CX.SqlServer.AspNetCore/">
+                    <img src="https://img.shields.io/nuget/v/Dapper.CX.SqlServer.AspNetCore?label=AspNetCore"/>
+                </a>
             </div>
         </div>
         <div class="col-sm-4">
@@ -33,11 +33,11 @@
             </div>
         </div>
         <div class="col-sm-4">
-            <div class="card p-3">
-                ASP.NET Core package
-                <a href="https://www.nuget.org/packages/Dapper.CX.SqlServer.AspNetCore/">
-                    <img src="https://img.shields.io/nuget/v/Dapper.CX.SqlServer.AspNetCore?label=AspNetCore"/>
-                </a>
+            <div class="card p-3 d-flex flex-row justify-content-center align-items-center h-100">
+                <a href="https://github.com/adamfoneil/Dapper.CX">
+                    <i class="fab fa-github fa-2x"></i>
+                    GitHub
+                </a>                
             </div>
         </div>
     </div>
@@ -50,27 +50,35 @@
     makes it work side by side.</p>
     
     <h3>Startup</h3>
-    <p>Dapper.CX offers strong-typed user profile integration. I have a complete <a href="https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection">wiki topic</a> on this, but in a nutshell,
-    this is what it looks like to add the Dapper.CX service.</p>
+    <p>The Dapper.CX <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.SqlServer/Services/DapperCX.cs">service</a> has 
+    two generic arguments <code>TIdentity</code> and <code>TUser</code>. <code>TIdentity</code> indicates the type of your model class <code>Id</code> properties.
+    <code>TUser</code> indicates the type of your user profile model class. This snippet assumes a <code>TIdentity</code> of <code>int</code> and 
+    a <code>TUser</code> class of <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.Models/UserProfile.cs">UserProfile</a>.
+    I have a complete <a href="https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection">wiki topic</a> on how to 
+    configure Dapper.CX at startup. But in a nutshell, this is what it looks like to add the Dapper.CX service.</p>
     </div>
 
     <pre><code class="csharp">
+    // we need to customize the login process slightly
     services
         .AddDefaultIdentity&lt;IdentityUser&gt;(options =&gt; options.SignIn.RequireConfirmedAccount = true)
         .AddEntityFrameworkStores&lt;ApplicationDbContext&gt;()
+        // enable the login process to create your user profile properties as claims
         .AddClaimsPrincipalFactory&lt;UserProfileClaimsFactory&gt;();
 
+    // now add the core service to the dependency container
     services.AddDapperCX(
-        connectionString, 
+        connectionString,
+        // delegate that converts SQL SCOPE_IDENTITY() to TIdentity
         (id) => Convert.ToInt32(id), 
-        () => new UserProfileClaimsConverter(connectionString));
+        // how we convert user profile properties into claims
+        () => new UserProfileClaimsConverter(connectionString)); 
     </code></pre>
 
     <div class="text-center">
         <h3>Dependency Injection</h3>
-        <p>Your page and component constructors will look something like this. This snippet assumes a <code>TIdentity</code> of <code>int</code> and 
-        a <code>TUser</code> class of <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.Models/UserProfile.cs">UserProfile</a>.
-        I recommend using a base class that your pages inherit from with this constructor along with read-only <code>Data</code> property like this
+        <p>Your page and component constructors will look something like this. 
+        I recommend using a base class that your pages and components inherit from with this constructor along with a public read-only <code>Data</code> property like this
         that provides the root of all your data access in an application.</p>
     </div>
     
@@ -89,7 +97,8 @@
     <div class="text-center">
         <h3>Typical CRUD Operations</h3>
         <p>Most often you'll be <i>getting</i>, <i>saving</i>, and <i>deleting</i> your <a href="https://github.com/adamfoneil/Dapper.CX/tree/master/SampleApp.Models">model class</a> entities. Please
-        see my <a href="https://github.com/adamfoneil/Dapper.CX/wiki/Model-Class-Best-Practices-and-Suggestions">wiki topic</a> on model class guidance.</p>
+        see my <a href="https://github.com/adamfoneil/Dapper.CX/wiki/Model-Class-Best-Practices-and-Suggestions">wiki topic</a> on model class guidance.
+        Here's a complete <a href="https://github.com/adamfoneil/Dapper.CX/wiki/SqlCrudService-reference">method reference</a>.</p>
     </div>
 
     <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab" role="tablist">
