@@ -9,13 +9,15 @@ using System.Threading.Tasks;
 
 namespace SampleApp.Models
 {
-    public partial class UserProfile : IValidate
+    public partial class UserProfile : IValidate, ITenantUser<int>
     {
         [NotMapped]
         public string WorkspaceName { get; set; }
 
         [NotMapped]
         public bool IsWorkspaceEnabled { get; set; }
+
+        public int TenantId => WorkspaceId ?? 0;
 
         public ValidateResult Validate()
         {
