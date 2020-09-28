@@ -1,11 +1,24 @@
 ﻿<p>Here's a typical use of <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudService.cs#L117">SaveAsync</a>
-    that you might see in an MVC app.</p>
+    that you might see in an MVC app. The <code>SaveAsync</code> method performs an <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L88-L99">insert or update</a> automatically.</p>
 
 <pre><code class="csharp">
-[HttpPost]
-public async Task&lt;RedirectResult&gt; OnSubmitAsync(Item item)
-{
-    await Data.SaveAsync(Item);
-    return Redirect("/Items");
-}
+    [HttpPost]
+    public async Task&lt;RedirectResult&gt; OnSubmitAsync(Item item)
+    {
+        await Data.SaveAsync(Item);
+        return Redirect("/Items");
+    }
+</code></pre>
+
+<p>You can also use the <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.SqlServer.AspNetCore/Extensions/DapperCXExtensions.cs#L15">SaveAndRedirect</a> extension method 
+    to add exception handling and redirect delegates. This snippet comes from <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.RazorPages/Pages/Items.cshtml.cs#L35-L39">here</a>, and demonstrates how to capture success and error
+    messages as well as handle the redirect.</p>
+
+<pre><code class="csharp">
+    public async Task<RedirectResult> OnPostSaveItemAsync(Item item) => 
+        await Data.SaveAndRedirectAsync(item, 
+            (model, exc) => (model.Id != 0) ? Redirect($"/Items/{model.Id}") : Redirect("/Items"), 
+            beforeSave: (model) => model.WorkspaceId = Data.User.WorkspaceId ?? 0,
+            onSuccess: (id) => SaveSuccessMessage($"Item {id} updated successfully."), 
+            onException: (model, exc) => SaveErrorMessage(exc));
 </code></pre>

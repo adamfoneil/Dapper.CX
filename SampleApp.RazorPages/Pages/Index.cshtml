@@ -57,7 +57,7 @@
     I have a complete <a href="https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection">wiki topic</a> on how to 
     configure Dapper.CX at startup. But in a nutshell, this is what it looks like to add the Dapper.CX service.</p>
     </div>
-
+    
     <pre><code class="csharp">
     // we need to customize the login process slightly
     services
@@ -78,8 +78,9 @@
     <div class="text-center">
         <h3>Dependency Injection</h3>
         <p>Your page and component constructors will look something like this. 
-        I recommend using a base class that your pages and components inherit from with this constructor along with a public read-only <code>Data</code> property like this
-        that provides the root of all your data access in an application.</p>
+        I recommend using a base class that your pages and components inherit from with this constructor. Add a public read-only <code>Data</code> property like this
+        that provides the root of all your data access in an application. The <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.RazorPages/BasePageModel.cs">BasePageModel</a> in the sample app also adds some helper methods
+        of use to the rest of the app.</p>
     </div>
     
     <pre><code class="csharp">
@@ -92,7 +93,7 @@
 
         public DapperCX&lt;int, UserProfile&gt; Data { get; }
     }
-    </code></pre>    
+    </code></pre>        
 
     <div class="text-center">
         <h3>Typical CRUD Operations</h3>
@@ -101,6 +102,7 @@
         Here's a complete <a href="https://github.com/adamfoneil/Dapper.CX/wiki/SqlCrudService-reference">method reference</a>.</p>
     </div>
 
+    
     <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
             <a class="nav-link active" id="pills-getasync-tab" data-toggle="pill" href="#pills-getasync" role="tab" aria-controls="pills-getasync" aria-selected="true">GetAsync</a>
@@ -128,7 +130,7 @@
         <div class="tab-pane fade" id="pills-more" role="tabpanel" aria-labelledby="pills-more-tab">
             <p>more content</p>
         </div>
-    </div>
+    </div>    
     
 @section Scripts {
     <script>
