@@ -1,0 +1,20 @@
+﻿<p>Here's a typical use of <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudService.cs#L212">DeleteAsync</a>
+    that you might see in an MVC app.</p>
+
+<pre><code class="csharp">
+    [HttpPost]
+    public async Task&lt;RedirectResult&gt; OnDeleteAsync(int id)
+    {
+        await Data.DeleteAsync&lt;Item&gt;(id);
+        return Redirect("/Items");
+    }
+</code></pre>
+
+<p>You can also use the <a href="">DeleteAndRedirectAsync</a> extension method 
+    to add exception handling and redirect delegates. This snippet comes from <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.RazorPages/Pages/Items.cshtml.cs#L35-L39">here</a>, and demonstrates how to capture success and error
+    messages as well as handle the redirect.</p>
+
+<pre><code class="csharp">
+    public async Task&lt;RedirectResult&gt; OnPostDeleteAsync(int id) =>
+        await Data.DeleteAndRedirectAsync&lt;Item, int, UserProfile&gt;(id, "/Items");
+</code></pre>

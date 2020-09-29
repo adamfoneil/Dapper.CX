@@ -27,49 +27,51 @@
     is added using query string syntax, and it doesn't play as well with MVC routing.</p>    
 </div>
 
-@if (Model.Item == null)
-{
-    <p>Please select an item.</p>
-    return;
-}
-
 <hr/>
 
 <form method="post" class="mt-4" asp-page-handler="SaveItem">    
-    <input type="hidden" name="Id" value="@Model.Item.Id"/>
+    <input type="hidden" name="Id" value="@Model.Item?.Id" id="rowId"/>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Item Name:</label>
         <div class="col-sm-10">
-            @Html.TextBox("Name", Model.Item.Name, new { @class = "form-control", required = "required" })
+            @Html.TextBox("Name", Model.Item?.Name, new { @class = "form-control", required = "required" })
         </div>        
     </div>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Description:</label>
         <div class="col-sm-10">
-            @Html.TextArea("Description", Model.Item.Description, new { @class = "form-control" })
+            @Html.TextArea("Description", Model.Item?.Description, new { @class = "form-control" })
         </div>        
     </div>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Unit Cost:</label>
         <div class="col-sm-2">
-            @Html.TextBox("UnitCost", Model.Item.UnitCost, "{0:n2}", new { @class = "form-control" })
+            @Html.TextBox("UnitCost", Model.Item?.UnitCost, "{0:n2}", new { @class = "form-control" })
         </div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Unit Cost:</label>
         <div class="col-sm-2">
-            @Html.TextBox("SalePrice", Model.Item.SalePrice, "{0:n2}", new { @class = "form-control" })
+            @Html.TextBox("SalePrice", Model.Item?.SalePrice, "{0:n2}", new { @class = "form-control" })
         </div>
     </div>
 
     <div class="form-group row">
         <div class="col-sm-2"></div>
         <div class="col-sm-10">
-            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-primary" type="submit">Save</button>            
+            @if (Model.Item != null)
+            {
+                <button class="btn btn-outline-danger" type="button" id="btnDelete">Delete...</button>
+            }            
         </div>
     </div>
+</form>
+
+<form asp-page-handler="Delete" method="post" id="frmDelete">
+    <input type="hidden" name="Id" id="deleteId"/>
 </form>

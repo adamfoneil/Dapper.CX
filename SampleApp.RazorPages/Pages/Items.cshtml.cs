@@ -38,5 +38,8 @@ namespace SampleApp.RazorPages.Pages
                 beforeSave: (model) => model.WorkspaceId = Data.User.WorkspaceId ?? 0,
                 onSuccess: (model) => SaveSuccessMessage($"Item {model.Name} updated successfully."), 
                 onException: (model, exc) => SaveErrorMessage(exc));
+
+        public async Task<RedirectResult> OnPostDeleteAsync(int id) =>
+            await Data.DeleteAndRedirectAsync<Item, int, UserProfile>(id, "/Items");
     }
 }
