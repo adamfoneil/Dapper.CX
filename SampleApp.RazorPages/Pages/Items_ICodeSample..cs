@@ -9,14 +9,18 @@ namespace SampleApp.RazorPages.Pages
         {
             new CodeSample()
             {
-                Title = "Code Behind",
+                Title = "Controller",
                 Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Pages/Items.cshtml.cs"
             },
             new CodeSample()
             {
                 Title = "Razor",
                 Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Pages/Items.cshtml",
-                Language = "html"
+                Language = "html",
+                Links = new CodeSample.Link[]
+                {
+                    new CodeSample.Link(LinkType.Tooltip, "_SaveResult.cshtml", "SaveResult")
+                }                
             },
             new CodeSample()
             {
@@ -34,6 +38,11 @@ namespace SampleApp.RazorPages.Pages
             {
                 Title = "Select List Query",
                 Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.RazorPages/Queries/SelectLists/ItemSelect.cs"
+            },
+            new CodeSample()
+            {
+                Title = "Success/Fail Message Area",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.RazorPages/Pages/Shared/_SaveResult.cshtml"
             }
         };
     }

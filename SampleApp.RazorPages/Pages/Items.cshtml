@@ -13,10 +13,13 @@
 <form method="get">
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">View Item:</label>
-        <div class="col-sm-10">
+        <div class="col-sm-8">
             <select name="Id" id="gotoItem" asp-items="@Model.ItemSelect" class="form-control">
                 <option value="">(select)</option>
             </select>
+        </div>
+        <div class="col-sm-2">
+            <a href="/Items" class="btn btn-outline-info">Add New</a>
         </div>
     </div>        
 </form>
@@ -76,3 +79,7 @@
 <form asp-page-handler="Delete" method="post" id="frmDelete">
     <input type="hidden" name="Id" id="deleteId"/>
 </form>
+
+<div id="SaveResult" class="hidden">
+    <p>This shared partial view provides a place to show the success or fail message from a save or delete operation.</p>
+</div>
