@@ -33,17 +33,5 @@ namespace SampleApp.Models
             // now we can return the tenantId, which is the workspaceId
             return Item.WorkspaceId;
         }
-
-        public ValidateResult Validate()
-        {
-            if (Price < 0) return new ValidateResult("SalePrice may not be less than zero.");
-
-            return new ValidateResult();
-        }
-
-        public async Task<ValidateResult> ValidateAsync(IDbConnection connection, IDbTransaction txn = null)
-        {
-            return await Task.FromResult(new ValidateResult() { IsValid = true });
-        }
     }
 }

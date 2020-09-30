@@ -37,6 +37,10 @@
     In this example, it's simply an existing property of the model.
 </div>
 
+<div id="GetTenantIdQuery" class="hidden">
+    <p>We use this to get the <code>WorkspaceId</code> from the related <code>Item</code> model.</p>
+</div>
+
 @if (Model.Data.HasUser)
 {
     if (!Model.Data.User.IsWorkspaceEnabled)
@@ -73,8 +77,15 @@
     <p>In this application, <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.Models/Workspace.cs">Workspace</a> defines all the tenants.</p>
 </div>
 
-<div id="ITenantIsolateImpl">
+<div id="ITenantIsolatedImpl">
     <p>Here's an example of implementing <code>ITenantIsolated&lt;T&gt;</code> on a model class. This is a simple case because this model already has a <code>WorkspaceId</code>
     property, which defines the tenant a row belongs to. All we need to do is return the <code>WorkspaceId</code>. The method <code>GetTenantIdAsync</code>
-    is async in case you need to query it, as in the next example.</p>
+    is async in case you need to query it, as in the following example.</p>
+</div>
+
+<div id="ITenantIsolatedItemPrice">
+    <p>One thing that helps us implement <code>ITenantIsolated&lt;T&gt;</code> is <code>IGetRelated</code>. This interface lets us implement
+    what are effectively <i>navigation properties</i> much like Entity Framework has. In this example, it's helpful because we need to return
+    the <code>WorkspaceId</code> of a model that doesn't have that property directly. We'll access the <code>WorkspaceId</code> through a related
+    model's property. We'll use the <code>IGetRelated</code> implementation as part of the <code>ITenantIsolated&lt;T&gt;</code> implementation.</p>
 </div>

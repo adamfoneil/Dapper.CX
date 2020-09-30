@@ -10,10 +10,8 @@ using System.Threading.Tasks;
 namespace SampleApp.Models
 {
     [TrackChanges]
-    public partial class Item : IValidate, ITenantIsolated<int>
-    {
-        public async Task<int> GetTenantIdAsync(IDbConnection connection, IDbTransaction txn = null) => await Task.FromResult(WorkspaceId);
-
+    public partial class Item : IValidate
+    {        
         public ValidateResult Validate()
         {
             var rules = new Dictionary<Func<Item, bool>, string>()
