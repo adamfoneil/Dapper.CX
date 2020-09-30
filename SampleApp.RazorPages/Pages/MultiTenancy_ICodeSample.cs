@@ -9,8 +9,9 @@ namespace SampleApp.RazorPages.Pages
         {
             new CodeSample()
             {
-                Title = "UserProfile",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.Services/Models/UserProfile_ext.cs",
+                Title = "1. Implement ITenantUser<T>",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.Services/Models/UserProfile_ext.cs",
+                ImportElementId = "ITenantUserImpl",
                 Links = new CodeSample.Link[]
                 {
                     new CodeSample.Link(LinkType.Tooltip, "TenantId", "TenantIdTooltip"),
@@ -19,23 +20,13 @@ namespace SampleApp.RazorPages.Pages
             },
             new CodeSample()
             {
-                Title = "Item.cs",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/code-samples/SampleApp.Services/Models/Item_ext.cs",
+                Title = "2. Implement ITenantIsolated<T>",
+                Url = "https://raw.githubusercontent.com/adamfoneil/Dapper.CX/master/SampleApp.Services/Models/Item_ext.cs",
+                ImportElementId = "ITenantIsolatedImpl",
                 Links = new CodeSample.Link[]
                 {
                     new CodeSample.Link(LinkType.Tooltip, "GetTenantIdAsync", "GetTenantIdTooltip")
                 }
-            },
-            new CodeSample()
-            {
-                Title = "ITenantUser<T>",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Models/master/Models/Interfaces/ITenantUser.cs",
-                ImportElementId = "ITenantUser"
-            },
-            new CodeSample()
-            {
-                Title = "ITenantIsolated<T>",
-                Url = "https://raw.githubusercontent.com/adamfoneil/Models/master/Models/Interfaces/ITenantIsolated.cs"
             }
         };
     }

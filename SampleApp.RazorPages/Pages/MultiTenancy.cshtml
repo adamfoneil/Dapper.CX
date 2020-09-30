@@ -3,13 +3,17 @@
 @{
 }
 
-<h3>Multi-tenancy</h3>
+<h3>Multi-Tenancy</h3>
 
-<p>In a multi-tenant app, users and their data are partitioned so that they can see and work with their own data only. A critical concern
+<p>In a multi-tenant app, users are grouped by company or organization (generically referred to as a <i>tenant</i>), 
+    and the tenant's data are partitioned so that users in a tenant can access only their tenant's data. A critical concern
     is ensuring that users can't access data belonging to another tenant partition.</p>
 
-<p>In CRUD operations, Dapper.CX makes this easy to enforce using a couple interfaces <code>ITenantUser&lt;T&gt;</code>
-    used on your user profile class and <code>ITenantIsolated&lt;T&gt;</code> used on model classes.</p>
+<p>In CRUD operations, Dapper.CX makes this easy to enforce using a couple interfaces <a href="https://github.com/adamfoneil/Models/blob/master/Models/Interfaces/ITenantUser.cs">ITenantUser&lt;T&gt;</a>
+    used on your user profile class and <a href="https://github.com/adamfoneil/Models/blob/master/Models/Interfaces/ITenantIsolated.cs">ITenantIsolated&lt;T&gt;</a> used on model classes. When you implement
+    these interfaces, Dapper.CX <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L476">throws an exception</a> if a user tries to access or update a row belonging to another tenant.</p>
+
+<p>Here are my suggestions on how to implement multi-tenancy in a .NET Core app using <code>ITenantUser&lt;T&gt;</code> and <code>ITenantIsolated&lt;T&gt;</code>.</p>
 
 <hr/>
 
@@ -63,3 +67,14 @@
         <button class="btn btn-outline-dark">Save</button>            
     </form>
 }
+
+<div id="ITenantUserImpl">
+    <p>In this example, I implement <code>ITenantUser&lt;T&gt;</code> on my user profile model, and it simply wraps an existing property <code>UserProfile.WorkspaceId</code>.</p>    
+    <p>In this application, <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.Models/Workspace.cs">Workspace</a> defines all the tenants.</p>
+</div>
+
+<div id="ITenantIsolateImpl">
+    <p>Here's an example of implementing <code>ITenantIsolated&lt;T&gt;</code> on a model class. This is a simple case because this model already has a <code>WorkspaceId</code>
+    property, which defines the tenant a row belongs to. All we need to do is return the <code>WorkspaceId</code>. The method <code>GetTenantIdAsync</code>
+    is async in case you need to query it, as in the next example.</p>
+</div>

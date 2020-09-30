@@ -8,6 +8,8 @@
     <Compile Include="..\SampleApp.Models\Conventions\BaseTable.cs" Link="Models\Conventions\BaseTable.cs" />
     <Compile Include="..\SampleApp.Models\Extensions\Timestamp.cs" Link="Extensions\Timestamp.cs" />
     <Compile Include="..\SampleApp.Models\Item.cs" Link="Models\Item.cs" />
+    <Compile Include="..\SampleApp.Models\ItemPrice.cs" Link="Models\ItemPrice.cs" />
+    <Compile Include="..\SampleApp.Models\PriceLevel.cs" Link="Models\PriceLevel.cs" />
     <Compile Include="..\SampleApp.Models\UserProfile.cs" Link="Models\UserProfile.cs" />
     <Compile Include="..\SampleApp.Models\Workspace.cs" Link="Models\Workspace.cs" />
     <Compile Include="..\SampleApp.Models\WorkspaceUser.cs" Link="Models\WorkspaceUser.cs" />
