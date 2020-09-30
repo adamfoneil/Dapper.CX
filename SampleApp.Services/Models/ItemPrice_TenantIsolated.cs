@@ -1,12 +1,11 @@
-﻿using AO.Models;
-using AO.Models.Interfaces;
+﻿using AO.Models.Interfaces;
 using Dapper.CX.SqlServer.Extensions.Int;
 using System.Data;
 using System.Threading.Tasks;
 
 namespace SampleApp.Models
 {
-    public partial class ItemPrice : IValidate, ITenantIsolated<int>, IGetRelated
+    public partial class ItemPrice : ITenantIsolated<int>, IGetRelated
     {
         /// <summary>
         /// a "navigation property" to a related row
