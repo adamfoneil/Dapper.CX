@@ -11,10 +11,15 @@
     <Compile Include="..\SampleApp.Models\Conventions\BaseTable.cs" Link="Linked\Conventions\BaseTable.cs" />
     <Compile Include="..\SampleApp.Models\Extensions\Timestamp.cs" Link="Linked\Extensions\Timestamp.cs" />
     <Compile Include="..\SampleApp.Models\Item.cs" Link="Linked\Item.cs" />
+    <Compile Include="..\SampleApp.Models\ItemPrice.cs" Link="Linked\ItemPrice.cs" />
+    <Compile Include="..\SampleApp.Models\PriceLevel.cs" Link="Linked\PriceLevel.cs" />
     <Compile Include="..\SampleApp.Models\UserProfile.cs" Link="Linked\UserProfile.cs" />
     <Compile Include="..\SampleApp.Models\Workspace.cs" Link="Linked\Workspace.cs" />
     <Compile Include="..\SampleApp.Models\WorkspaceUser.cs" Link="Linked\WorkspaceUser.cs" />
-    <Compile Include="..\SampleApp.Services\Models\Item_ext.cs" Link="Linked\Item_ext.cs" />
+    <Compile Include="..\SampleApp.Services\Models\ItemPrice_TenantIsolated.cs" Link="Linked\ItemPrice_TenantIsolated.cs" />
+    <Compile Include="..\SampleApp.Services\Models\ItemPrice_Validate.cs" Link="Linked\ItemPrice_Validate.cs" />
+    <Compile Include="..\SampleApp.Services\Models\Item_TenantIsolated.cs" Link="Linked\Item_TenantIsolated.cs" />
+    <Compile Include="..\SampleApp.Services\Models\Item_Validate.cs" Link="Linked\Item_Validate.cs" />
     <Compile Include="..\SampleApp.Services\Models\UserProfile_ext.cs" Link="Linked\UserProfile_ext.cs" />
     <Compile Include="..\SampleApp.Services\Models\Workspace_Validation.cs" Link="Linked\Workspace_Validation.cs" />
     <Compile Include="..\SampleApp.Services\Queries\WorkspaceUsers.cs" Link="Linked\Queries\WorkspaceUsers.cs" />

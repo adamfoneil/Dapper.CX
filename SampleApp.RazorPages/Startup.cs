@@ -2,6 +2,7 @@ using Dapper.CX.SqlServer.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,14 +22,14 @@ namespace SampleApp.RazorPages
         }
 
         public IConfiguration Configuration { get; }
-        
+
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration.GetConnectionString("Default");           
+            var connectionString = Configuration.GetConnectionString("Default");
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
-            services
+            services                
                 .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddClaimsPrincipalFactory<UserProfileClaimsFactory>();
@@ -36,7 +37,9 @@ namespace SampleApp.RazorPages
             services.AddDapperCX(
                 connectionString, 
                 (id) => Convert.ToInt32(id), 
-                () => new UserProfileClaimsConverter(connectionString));           
+                () => new UserProfileClaimsConverter(connectionString));
+
+            services.AddCustomUserStore(connectionString);
 
             services.AddRazorPages();
             services.AddControllersWithViews();

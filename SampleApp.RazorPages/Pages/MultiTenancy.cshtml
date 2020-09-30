@@ -13,33 +13,11 @@
     used on your user profile class and <a href="https://github.com/adamfoneil/Models/blob/master/Models/Interfaces/ITenantIsolated.cs">ITenantIsolated&lt;T&gt;</a> used on model classes. When you implement
     these interfaces, Dapper.CX <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/SqlCrudProvider.cs#L476">throws an exception</a> if a user tries to access or update a row belonging to another tenant.</p>
 
-<p>Here are my suggestions on how to implement multi-tenancy in a .NET Core app using <code>ITenantUser&lt;T&gt;</code> and <code>ITenantIsolated&lt;T&gt;</code>.</p>
+<p>In addition to using these interfaces to enforce tenant isolation at the data level, you also typically need some features in your .NET Core app
+    to route users when they don't have a tenant Id set, for example. You also need to validate tenant changes, if you allow users to change
+    tenants.</p>
 
 <hr/>
-
-<div id="ITenantUser">
-    <p>Implement this on your user profile class. This is how you indicate what property of your user profile class returns the tenant Id value.
-    The <code>T</code> generic argument indicates the type of the tenant property.</p>
-</div>
-
-<div id="TenantIdTooltip" class="hidden">
-    This is how you indicate what property of your user profile model defines what tenant they belong to. Usually, it would just
-    wrap an existing property you have. In this example, I use use the existing <code>WorkspaceId</code> property, coalescing to <code>0</code>
-    in case it's not set.
-</div>
-
-<div id="TenantIdInterface" class="hidden">
-    Add this interface to your user profile class.
-</div>
-
-<div id="GetTenantIdTooltip" class="hidden">
-    This is how you indicate what tenant a row belongs to. It's an <code>async</code> method in case you need to get the value using a query join.
-    In this example, it's simply an existing property of the model.
-</div>
-
-<div id="GetTenantIdQuery" class="hidden">
-    <p>We use this to get the <code>WorkspaceId</code> from the related <code>Item</code> model.</p>
-</div>
 
 @if (Model.Data.HasUser)
 {
@@ -73,14 +51,15 @@
 }
 
 <div id="ITenantUserImpl">
-    <p>In this example, I implement <code>ITenantUser&lt;T&gt;</code> on my user profile model, and it simply wraps an existing property <code>UserProfile.WorkspaceId</code>.</p>    
+    <p>In this example, I implement <code>ITenantUser&lt;T&gt;</code> on my user profile model, and it simply wraps an existing property <code>UserProfile.WorkspaceId</code>.
+    The <code>T</code> generic argument indicates the type of the tenant property, and in this application, that is <code>int</code>.</p>    
     <p>In this application, <a href="https://github.com/adamfoneil/Dapper.CX/blob/master/SampleApp.Models/Workspace.cs">Workspace</a> defines all the tenants.</p>
 </div>
 
 <div id="ITenantIsolatedImpl">
     <p>Here's an example of implementing <code>ITenantIsolated&lt;T&gt;</code> on a model class. This is a simple case because this model already has a <code>WorkspaceId</code>
     property, which defines the tenant a row belongs to. All we need to do is return the <code>WorkspaceId</code>. The method <code>GetTenantIdAsync</code>
-    is async in case you need to query it, as in the following example.</p>
+    is async in case you need to query it, which we'll do in the next example.</p>
 </div>
 
 <div id="ITenantIsolatedItemPrice">
@@ -88,4 +67,23 @@
     what are effectively <i>navigation properties</i> much like Entity Framework has. In this example, it's helpful because we need to return
     the <code>WorkspaceId</code> of a model that doesn't have that property directly. We'll access the <code>WorkspaceId</code> through a related
     model's property. We'll use the <code>IGetRelated</code> implementation as part of the <code>ITenantIsolated&lt;T&gt;</code> implementation.</p>
+</div>
+
+<div id="TenantIdTooltip" class="hidden">
+    This is how you indicate what property of your user profile model defines what tenant they belong to. Usually, it would just
+    wrap an existing property you have. In this example, I use use the existing <code>WorkspaceId</code> property, coalescing to <code>0</code>
+    in case it's not set.
+</div>
+
+<div id="TenantIdInterface" class="hidden">
+    Add this interface to your user profile class.
+</div>
+
+<div id="GetTenantIdTooltip" class="hidden">
+    This is how you indicate what tenant a row belongs to. It's an <code>async</code> method in case you need to get the value using a query join.
+    In this example, it's simply an existing property of the model.
+</div>
+
+<div id="GetTenantIdQuery" class="hidden">
+    <p>We use this to get the <code>WorkspaceId</code> from the related <code>Item</code> model.</p>
 </div>
