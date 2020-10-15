@@ -33,8 +33,6 @@
     <Compile Include="..\Dapper.CX.Base\Exceptions\TriggerException.cs" Link="Base\Exceptions\TriggerException.cs" />
     <Compile Include="..\Dapper.CX.Base\Exceptions\ValidationException.cs" Link="Base\Exceptions\ValidationException.cs" />
     <Compile Include="..\Dapper.CX.Base\Extensions\ConnectionExtensions.cs" Link="Base\Extensions\ConnectionExtensions.cs" />
-    <Compile Include="..\Dapper.CX.Base\Extensions\ModelClassHelper.cs" Link="Base\Extensions\ModelClassHelper.cs" />
-    <Compile Include="..\Dapper.CX.Base\Extensions\ReflectionHelper.cs" Link="Base\Extensions\ReflectionHelper.cs" />
     <Compile Include="..\Dapper.CX.Base\Interfaces\ISqlCrudProvider.cs" Link="Base\Interfaces\ISqlCrudProvider.cs" />
     <Compile Include="..\Dapper.CX.Base\Interfaces\ISqlCrudService.cs" Link="Base\Interfaces\ISqlCrudService.cs" />
     <Compile Include="..\Dapper.CX.Base\Models\ColumnHistory.cs" Link="Base\Models\ColumnHistory.cs" />
@@ -42,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AO.Models" Version="1.1.13" />
+    <PackageReference Include="AO.Models" Version="1.1.18" />
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
   </ItemGroup>

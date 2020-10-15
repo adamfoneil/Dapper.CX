@@ -1,4 +1,5 @@
 ﻿using AO.Models.Interfaces;
+using AO.Models.Static;
 using Dapper.CX.Extensions;
 using Dapper.CX.Interfaces;
 using Dapper.CX.Models;

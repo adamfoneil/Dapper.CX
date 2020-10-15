@@ -1,6 +1,7 @@
 ﻿using AO.Models.Attributes;
 using AO.Models.Enums;
 using AO.Models.Interfaces;
+using AO.Models.Static;
 using Dapper.CX.Classes;
 using Dapper.CX.Exceptions;
 using Dapper.CX.Extensions;
@@ -386,7 +387,7 @@ namespace Dapper.CX.Abstract
 
         public string GetInsertStatement(Type modelType, IEnumerable<string> columnNames = null, bool getIdentity = true)
         {
-            var columns = columnNames ?? GetMappedProperties(modelType, SaveAction.Insert).Select(pi => pi.GetColumnName());
+            var columns = columnNames ?? GetMappedProperties(modelType, SaveAction.Insert).Select(pi => pi.GetColumnName());          
 
             return
                 $@"INSERT INTO {ApplyDelimiter(modelType.GetTableName())} (
