@@ -54,10 +54,10 @@ namespace Dapper.CX.Abstract
                 string propName = PropertyNameFromLambda(e);
                 PropertyInfo pi = type.GetProperty(propName);
                 dp.Add(propName, e.Compile().Invoke(@object));
-                return $"{ApplyDelimiter(pi.GetColumnName())}=@{propName}";
+                return $"{SqlBuilder.ApplyDelimiter(pi.GetColumnName(), StartDelimiter, EndDelimiter)}=@{propName}";
             }));
 
-            string cmdText = $"UPDATE {ApplyDelimiter(type.GetTableName())} SET {setColumnExpr} WHERE {ApplyDelimiter(type.GetIdentityName())}=@id";
+            string cmdText = $"UPDATE {SqlBuilder.ApplyDelimiter(type.GetTableName(), StartDelimiter, EndDelimiter)} SET {setColumnExpr} WHERE {SqlBuilder.ApplyDelimiter(type.GetIdentityName(), StartDelimiter, EndDelimiter)}=@id";
             dp.Add("id", GetIdentity(@object));
 
             Debug.Print(cmdText);

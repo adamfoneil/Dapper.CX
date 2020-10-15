@@ -16,12 +16,12 @@ namespace Tests.Base
         {
             var provider = GetProvider();
             string result = provider.GetInsertStatement(typeof(Employee), new string[] { "FirstName", "LastName" });
-            Assert.IsTrue(result.Equals(
+            Assert.IsTrue(result.ReplaceWhitespace().Equals(
                 @"INSERT INTO [Employee] (
                     [FirstName], [LastName]
                 ) VALUES (
                     @FirstName, @LastName
-                ); SELECT SCOPE_IDENTITY();"));
+                ); SELECT SCOPE_IDENTITY();".ReplaceWhitespace()));
         }
 
         [TestMethod]
@@ -29,11 +29,11 @@ namespace Tests.Base
         {
             var provider = GetProvider();
             string result = provider.GetUpdateStatement<Employee>(columnNames: new string[] { "FirstName", "LastName" });
-            Assert.IsTrue(result.Equals(
+            Assert.IsTrue(result.ReplaceWhitespace().Equals(
                 @"UPDATE [Employee] SET 
                     [FirstName]=@FirstName, [LastName]=@LastName 
                 WHERE 
-                    [Id]=@Id"));
+                    [Id]=@Id".ReplaceWhitespace()));
         }
 
         [TestMethod]

@@ -342,11 +342,11 @@ namespace Dapper.CX.Abstract
 
             string query = (isCustom) ?
                 GetCustomSelectFrom(modelType) :
-                $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())}";
+                $"SELECT * FROM {SqlBuilder.ApplyDelimiter(modelType.GetTableName(), StartDelimiter, EndDelimiter)}";
 
             string whereId = (isCustom) ?
                 GetCustomWhereId(modelType) :
-                $"{ApplyDelimiter(modelType.GetIdentityName())}=@id";
+                $"{SqlBuilder.ApplyDelimiter(modelType.GetIdentityName(), StartDelimiter, EndDelimiter)}=@id";
 
             return $"{query} WHERE {whereId}";
         }
@@ -359,11 +359,11 @@ namespace Dapper.CX.Abstract
 
         public string GetQuerySingleWhereStatement(Type modelType, IEnumerable<string> propertyNames)
         {
-            string whereClause = $"WHERE {string.Join(" AND ", propertyNames.Select(name => ApplyDelimiter(name) + "=@" + name))}";
+            string whereClause = $"WHERE {string.Join(" AND ", propertyNames.Select(name => SqlBuilder.ApplyDelimiter(name, StartDelimiter, EndDelimiter) + "=@" + name))}";
 
             string query = (modelType.Implements(typeof(ICustomGet))) ?
                 GetCustomSelectFrom(modelType) :
-                $"SELECT * FROM {ApplyDelimiter(modelType.GetTableName())}";
+                $"SELECT * FROM {SqlBuilder.ApplyDelimiter(modelType.GetTableName(), StartDelimiter, EndDelimiter)}";
 
             return $"{query} {whereClause}";
         }
@@ -385,72 +385,19 @@ namespace Dapper.CX.Abstract
             return GetQuerySingleWhereStatement(modelType, properties.Select(pi => pi.GetColumnName()));
         }
 
-        public string GetInsertStatement(Type modelType, IEnumerable<string> columnNames = null, bool getIdentity = true)
-        {
-            var columns = columnNames ?? GetMappedProperties(modelType, SaveAction.Insert).Select(pi => pi.GetColumnName());          
-
-            return
-                $@"INSERT INTO {ApplyDelimiter(modelType.GetTableName())} (
-                    {string.Join(", ", columns.Select(col => ApplyDelimiter(col)))}
-                ) VALUES (
-                    {string.Join(", ", columns.Select(col => "@" + col))}
-                ); " + ((getIdentity) ? SelectIdentityCommand : string.Empty);
-        }
+        public string GetInsertStatement(Type modelType, IEnumerable<string> columnNames = null, bool getIdentity = true) => 
+            SqlBuilder.Insert(modelType, columnNames, StartDelimiter, EndDelimiter) + ((getIdentity) ? " " + SelectIdentityCommand : string.Empty);
 
         public string GetUpdateStatement<TModel>(ChangeTracker<TModel> changeTracker = null, IEnumerable<string> columnNames = null)
         {
             var columns =
                 columnNames ??
-                changeTracker?.GetModifiedColumns(SaveAction.Update) ??
-                GetMappedProperties(typeof(TModel), SaveAction.Update).Select(pi => pi.GetColumnName());
+                changeTracker?.GetModifiedColumns(SaveAction.Update);
 
-            var type = typeof(TModel);
-            string identityCol = type.GetIdentityName();
-
-            return
-                $@"UPDATE {ApplyDelimiter(type.GetTableName())} SET 
-                    {string.Join(", ", columns.Select(col => $"{ApplyDelimiter(col)}=@{col}"))} 
-                WHERE 
-                    {ApplyDelimiter(identityCol)}=@{identityCol}";
+            return SqlBuilder.Update(typeof(TModel), columns, StartDelimiter, EndDelimiter);
         }
 
-        private PropertyInfo[] GetMappedProperties(Type modelType, SaveAction saveAction)
-        {
-            bool isNullableEnum(Type type)
-            {
-                return
-                    type.IsGenericType &&
-                    type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)) &&
-                    type.GetGenericArguments()[0].IsEnum;
-            }
-
-            bool isMapped(PropertyInfo pi)
-            {
-                if (!pi.CanWrite) return false;
-                if (pi.IsIdentity()) return false;
-                if (!SupportedTypes.Contains(pi.PropertyType) && !pi.PropertyType.IsEnum && !isNullableEnum(pi.PropertyType)) return false;
-                if (!pi.AllowSaveAction(saveAction)) return false;
-
-                var attr = pi.GetCustomAttribute<NotMappedAttribute>();
-                if (attr != null) return false;
-
-                return true;
-            };
-
-            return modelType.GetProperties().Where(pi => isMapped(pi)).ToArray();
-        }
-
-        public string GetDeleteStatement(Type modelType)
-        {
-            return $@"DELETE {ApplyDelimiter(modelType.GetTableName())} WHERE {ApplyDelimiter(modelType.GetIdentityName())}=@id";
-        }
-
-        protected string ApplyDelimiter(string name)
-        {
-            return string.Join(".", name
-                .Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(namePart => $"{StartDelimiter}{namePart}{EndDelimiter}"));
-        }
+        public string GetDeleteStatement(Type modelType) => SqlBuilder.Delete(modelType, StartDelimiter, EndDelimiter);                
         #endregion
 
         private static async Task VerifyGetPermission<TModel>(IDbConnection connection, TIdentity identity, IDbTransaction txn, IUserBase user, TModel result)
