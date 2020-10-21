@@ -92,6 +92,14 @@ namespace Dapper.CX.Abstract
             }
         }
 
+        public async Task<bool> KeyExistsAsync(TKey key)
+        {
+            using (var cn = _getConnection.Invoke())
+            {
+                return await cn.RowExistsAsync($"[{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key });
+            }
+        }
+
         public async Task DeleteAsync(TKey key)
         {
             using (var cn = _getConnection.Invoke())

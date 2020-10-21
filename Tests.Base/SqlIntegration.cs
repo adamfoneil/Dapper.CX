@@ -135,6 +135,8 @@ namespace Tests.Base
             entry = sampleDictionary.GetAsync<Employee>("hello").Result;
             Assert.IsTrue(entry.FirstName.Equals("Django"));
 
+            Assert.IsTrue(sampleDictionary.KeyExistsAsync("hello").Result);
+
             sampleDictionary.DeleteAsync("hello").Wait();
 
             using (var cn = GetConnection())
