@@ -1,10 +1,8 @@
-﻿using AO.Models.Interfaces;
-using Dapper;
+﻿using Dapper;
 using Dapper.CX.Abstract;
 using Dapper.CX.Classes;
 using Dapper.CX.Extensions;
 using Dapper.CX.SqlServer;
-using Dapper.CX.SqlServer.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlServer.LocalDb;
 using System;

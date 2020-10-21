@@ -1,4 +1,5 @@
-﻿using Dapper.CX.SqlServer;
+﻿using Dapper;
+using Dapper.CX.SqlServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SqlServer.LocalDb;
 using System;
@@ -109,6 +110,33 @@ namespace Tests.Base
                 Assert.IsNull(emp);
             }
 
+        }
+
+        [TestMethod]
+        public void DbDictionaryCoreOperations()
+        {
+            var sampleDictionary = new SessionDbDictionary(GetConnection);
+            var input = new Employee()
+            {
+                FirstName = "whoever",
+                LastName = "nobody",
+                Status = Status.Active
+            };
+
+            sampleDictionary.SetAsync("hello", input).Wait();
+
+            var entry = sampleDictionary.GetAsync<Employee>("hello").Result;
+            Assert.IsTrue(input.FirstName.Equals("whoever"));
+            Assert.IsTrue(input.LastName.Equals("nobody"));
+            Assert.IsTrue(input.Status == Status.Active);
+
+            sampleDictionary.DeleteAsync("hello").Wait();
+
+            using (var cn = GetConnection())
+            {
+                cn.Execute("DROP TABLE [session].[User]");
+                cn.Execute("DROP SCHEMA [session]");
+            }
         }
     }
 }
