@@ -130,6 +130,11 @@ namespace Tests.Base
             Assert.IsTrue(input.LastName.Equals("nobody"));
             Assert.IsTrue(input.Status == Status.Active);
 
+            entry.FirstName = "Django";
+            sampleDictionary.SetAsync("hello", entry).Wait();
+            entry = sampleDictionary.GetAsync<Employee>("hello").Result;
+            Assert.IsTrue(entry.FirstName.Equals("Django"));
+
             sampleDictionary.DeleteAsync("hello").Wait();
 
             using (var cn = GetConnection())
