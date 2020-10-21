@@ -71,5 +71,8 @@ There's a lot of functionality you can opt into by implementing interfaces on yo
 ## And one other thing...
 In addition to the more common strong-typed CRUD operations, Dapper.CX also offers a [SqlCmdDictionary](https://github.com/adamosoftware/Dapper.CX/wiki/Using-SqlCmdDictionary) feature that gives you a clean way to build INSERT and UPDATE statements dynamically.
 
+## One other thing...
+If you need a `Dictionary`-like object to persist in a database, you can implement the abstract class [DbDictionary](https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/DbDictionary.cs). Use this to store any object with a key. The abstract methods [Serialize](https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/DbDictionary.cs#L65) and [Deserialize](https://github.com/adamfoneil/Dapper.CX/blob/master/Dapper.CX.Base/Abstract/DbDictionary.cs#L63) let you provide your Json serialization. See the [integration test](https://github.com/adamfoneil/Dapper.CX/blob/master/Tests.Base/SqlIntegration.cs#L116) to see in action, along with the [sample implementation](https://github.com/adamfoneil/Dapper.CX/blob/master/Tests.Base/SampleDbDictionary.cs).
+
 ---
 Please see also [Dapper.QX](https://github.com/adamosoftware/Dapper.QX), Dapper.CX's companion library.
