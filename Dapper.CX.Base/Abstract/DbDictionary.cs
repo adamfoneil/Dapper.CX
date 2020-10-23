@@ -70,7 +70,7 @@ namespace Dapper.CX.Abstract
 
             using (var cn = _getConnection.Invoke())
             {
-                var row = await cn.QuerySingleAsync<DictionaryRow>($"SELECT * FROM [{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key });
+                var row = await cn.QuerySingleOrDefaultAsync<DictionaryRow>($"SELECT * FROM [{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key });
                 return (row != null) ? Deserialize<TValue>(row.Value) : defaultValue;
             }
         }
