@@ -44,11 +44,11 @@ namespace Dapper.CX.SqlServer.AspNetCore
         /// </summary>
         public static void AddDapperCX<TIdentity>(
             this IServiceCollection services, 
-            string connectionString, Func<object, TIdentity> convertIdentity, string systemUserName = "system")
+            string connectionString, Func<object, TIdentity> convertIdentity)
         {
             services.AddScoped((sp) =>
             {
-                return new DapperCX<TIdentity, SystemUser>(connectionString, new SystemUser(systemUserName), convertIdentity);
+                return new DapperCX<TIdentity>(connectionString, convertIdentity);
             });
         }        
 
