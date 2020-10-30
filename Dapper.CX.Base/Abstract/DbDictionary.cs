@@ -3,7 +3,6 @@ using Dapper.CX.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
@@ -68,10 +67,15 @@ namespace Dapper.CX.Abstract
         {
             if (!_initialized) await InitializeAsync();
 
+            var row = await GetRowAsync(key);
+            return (row != null) ? Deserialize<TValue>(row.Value) : defaultValue;
+        }
+
+        protected async Task<DictionaryRow> GetRowAsync(TKey key)
+        {
             using (var cn = _getConnection.Invoke())
             {
-                var row = await cn.QuerySingleOrDefaultAsync<DictionaryRow>($"SELECT * FROM [{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key });
-                return (row != null) ? Deserialize<TValue>(row.Value) : defaultValue;
+                return await cn.QuerySingleOrDefaultAsync<DictionaryRow>($"SELECT * FROM [{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key });
             }
         }
 
@@ -83,11 +87,11 @@ namespace Dapper.CX.Abstract
             {
                 string json = Serialize(value);
 
-                int affected = await cn.ExecuteAsync($"UPDATE [{_tableName.Schema}].[{_tableName.Name}] SET [Value]=@json, [DateModified]=getdate() WHERE [Key]=@key", new { key, json });
+                int affected = await cn.ExecuteAsync($"UPDATE [{_tableName.Schema}].[{_tableName.Name}] SET [Value]=@json, [DateModified]=getutcdate() WHERE [Key]=@key", new { key, json });
 
                 if (affected == 0)
                 {
-                    await cn.ExecuteAsync($"INSERT INTO [{_tableName.Schema}].[{_tableName.Name}] ([Key], [Value], [DateCreated]) VALUES (@key, @json, getdate())", new { key, json });
+                    await cn.ExecuteAsync($"INSERT INTO [{_tableName.Schema}].[{_tableName.Name}] ([Key], [Value], [DateCreated]) VALUES (@key, @json, getutcdate())", new { key, json });
                 }
             }
         }
@@ -108,7 +112,7 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        private class DictionaryRow
+        protected class DictionaryRow
         {
             public TKey Key { get; set; }
             public string Value { get; set; }
