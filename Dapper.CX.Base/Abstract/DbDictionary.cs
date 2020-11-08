@@ -12,7 +12,7 @@ namespace Dapper.CX.Abstract
         private readonly Func<IDbConnection> _getConnection;
         private readonly ObjectName _tableName;
 
-        private static bool _initialized = false;
+        private bool _initialized = false;
 
         public DbDictionary(Func<IDbConnection> getConnection, string tableName)
         {
