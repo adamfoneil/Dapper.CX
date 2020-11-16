@@ -69,5 +69,7 @@ namespace Dapper.CX.Classes
                 (value == null && this[kp.Key] == null) ? false :
                 !value.Equals(this[kp.Key]);            
         }
+
+        public bool HasChanges(SaveAction? saveAction = null, bool loggableOnly = false) => GetModifiedProperties(saveAction, loggableOnly).Any();       
     }
 }

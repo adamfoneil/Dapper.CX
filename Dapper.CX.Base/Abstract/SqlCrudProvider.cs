@@ -208,6 +208,8 @@ namespace Dapper.CX.Abstract
         {
             changeTracker = await InitChangeTrackingAsync(connection, txn, model, user, changeTracker);
 
+            if (!changeTracker?.HasChanges(SaveAction.Update) ?? false) return;
+          
             await ValidateInternal(connection, model, txn);
 
             AuditRow(model, SaveAction.Update, user);
