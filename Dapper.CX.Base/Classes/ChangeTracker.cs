@@ -1,7 +1,6 @@
 ﻿using AO.Models.Attributes;
 using AO.Models.Enums;
 using AO.Models.Static;
-using Dapper.CX.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +19,7 @@ namespace Dapper.CX.Classes
         {
             Instance = @object;
 
-            string identityName = (typeof(TModel).TryGetIdentityName(out string name)) ? name : string.Empty;
-
-            var props = @object.GetType().GetProperties().Where(pi =>
-                pi.CanWrite &&
-                !pi.GetIndexParameters().Any() &&
-                !pi.Name.Equals(identityName)).ToArray();
+            var props = SqlBuilder.GetMappedProperties(@object.GetType(), SaveAction.Update);
 
             _ignoreProps = props.Where(pi => pi.HasAttribute<NoChangeTrackingAttribute>()).Select(pi => pi.Name);
             _properties = props.ToDictionary(pi => pi.Name);
