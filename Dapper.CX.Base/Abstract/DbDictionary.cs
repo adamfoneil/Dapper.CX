@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
 {
-    public abstract class DbDictionary<TKey>
+    public abstract class DbDictionary<TKey> : IDbDictionary<TKey>
     {
         private readonly Func<IDbConnection> _getConnection;
         private readonly ObjectName _tableName;
@@ -36,7 +36,7 @@ namespace Dapper.CX.Abstract
             if (!supportedKeyTypes.ContainsKey(typeof(TKey))) throw new Exception($"Unsupported key type {typeof(TKey).Name} used with DbDictionary");
 
             using (var cn = _getConnection.Invoke())
-            {             
+            {
                 if (!await cn.SchemaExistsAsync(_tableName.Schema))
                 {
                     await cn.ExecuteAsync($"CREATE SCHEMA [{_tableName.Schema}]");

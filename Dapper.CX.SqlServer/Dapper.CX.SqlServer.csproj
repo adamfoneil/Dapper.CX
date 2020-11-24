@@ -55,11 +55,9 @@
 
   <ItemGroup>
     <Folder Include="Abstract\" />
-    <Folder Include="Base\Abstract\" />
     <Folder Include="Base\Classes\" />
     <Folder Include="Base\Exceptions\" />
     <Folder Include="Base\Extensions\" />
-    <Folder Include="Base\Interfaces\" />
     <Folder Include="Base\Models\" />
   </ItemGroup>
 
