@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Dapper.CX.Abstract
+namespace Dapper.CX.Interfaces
 {
     public interface IDbDictionary<TKey>
     {

@@ -18,7 +18,7 @@ namespace Tests.ChangeTracking.Models
         public string Name { get; set; }
     }
 
-    public class Widget : ITextLookup
+    public class Widget : IDbTextLookup
     {
         public int Id { get; set; }
 

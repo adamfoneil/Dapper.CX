@@ -24,7 +24,7 @@ namespace Tests.Models
     }
 
     [Identity(nameof(Id))]
-    public class Employee : ITrigger
+    public class Employee : IDbTrigger
     {
         [Key]
         public string FirstName { get; set; }

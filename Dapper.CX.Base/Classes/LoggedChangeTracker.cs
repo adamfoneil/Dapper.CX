@@ -64,7 +64,7 @@ namespace Dapper.CX.Classes
             {
                 int version = await IncrementRowVersionAsync(connection, tableName, rowId, innerTxn);
 
-                var textLookup = Instance as ITextLookup;
+                var textLookup = Instance as IDbTextLookup;
 
                 foreach (var kp in GetModifiedProperties(loggableOnly: true))
                 {
@@ -125,7 +125,7 @@ namespace Dapper.CX.Classes
             return Convert.ToInt64(value);
         }
 
-        public static async Task InitializeAsync(IDbConnection connection, ISqlObjectCreator objectCreator)
+        public static async Task InitializeAsync(IDbConnection connection, IDbSqlObjectCreator objectCreator)
         {
             if (_initialized) return;
 

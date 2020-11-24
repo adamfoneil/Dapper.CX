@@ -52,7 +52,7 @@ namespace Dapper.CX.SqlServer.AspNetCore
             });
         }        
 
-        public static void AddChangeTracking(this IServiceCollection services, string connectionString, ISqlObjectCreator objectCreator)
+        public static void AddChangeTracking(this IServiceCollection services, string connectionString, IDbSqlObjectCreator objectCreator)
         {
             using (var cn = new SqlConnection(connectionString))
             {

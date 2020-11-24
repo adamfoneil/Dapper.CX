@@ -11,7 +11,7 @@ namespace Tests.Models
 {
     [Identity(nameof(Id))]
     [Table("Employee")]
-    public class EmployeeCustom : ICustomGet, IGetRelated
+    public class EmployeeCustom : ICustomGet, IDbGetRelated
     {
         [Key]
         public string FirstName { get; set; }

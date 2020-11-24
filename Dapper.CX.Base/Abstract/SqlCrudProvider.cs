@@ -82,7 +82,7 @@ namespace Dapper.CX.Abstract
         {
             if (result == null) return;
 
-            var getRelated = result as IGetRelated;
+            var getRelated = result as IDbGetRelated;
             if (getRelated != null) await getRelated.GetRelatedAsync(connection, txn);
         }
 
@@ -192,7 +192,7 @@ namespace Dapper.CX.Abstract
         {
             try
             {
-                var trigger = model as ITrigger;
+                var trigger = model as IDbTrigger;
                 if (trigger != null)
                 {
                     await trigger.RowSavedAsync(connection, saveAction, txn, user);
@@ -284,7 +284,7 @@ namespace Dapper.CX.Abstract
 
         private async Task<TModel> AllowDeleteAsync<TModel>(IDbConnection connection, TIdentity id, IDbTransaction txn, IUserBase user, TModel model = default)
         {
-            if (user != null && typeof(TModel).ImplementsAny(typeof(ITenantIsolated<TIdentity>), typeof(ITrigger)))
+            if (user != null && typeof(TModel).ImplementsAny(typeof(IDbTenantIsolated<TIdentity>), typeof(IDbTrigger)))
             {
                 if (model == null)
                 {
@@ -301,7 +301,7 @@ namespace Dapper.CX.Abstract
         {
             try
             {
-                var trigger = model as ITrigger;
+                var trigger = model as IDbTrigger;
                 if (trigger != null)
                 {
                     await trigger.RowDeletedAsync(connection, txn, user);
@@ -331,8 +331,11 @@ namespace Dapper.CX.Abstract
             {
                 var result = ((IValidate)model).Validate();
                 if (!result.IsValid) throw new Exceptions.ValidationException(result.Message);
+            }
 
-                result = await ((IValidate)model).ValidateAsync(connection, txn);
+            if (typeof(TModel).Implements(typeof(IDbValidate)))
+            {
+                var result = await ((IDbValidate)model).ValidateAsync(connection, txn);
                 if (!result.IsValid) throw new Exceptions.ValidationException(result.Message);
             }
         }
@@ -404,7 +407,7 @@ namespace Dapper.CX.Abstract
 
         private static async Task VerifyGetPermission<TModel>(IDbConnection connection, TIdentity identity, IDbTransaction txn, IUserBase user, TModel result)
         {
-            var permission = result as IPermission;
+            var permission = result as IDbPermission;
             if (permission != null)
             {
                 if (!await permission.AllowGetAsync(connection, user, txn))
@@ -418,7 +421,7 @@ namespace Dapper.CX.Abstract
         {
             if (user == null) return;
 
-            var isolated = result as ITenantIsolated<TIdentity>;
+            var isolated = result as IDbTenantIsolated<TIdentity>;
             var tenantUser = user as ITenantUser<TIdentity>;
             if (isolated != null && tenantUser != null)
             {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SampleApp.Models
 {
-    public partial class ItemPrice : ITenantIsolated<int>, IGetRelated
+    public partial class ItemPrice : IDbTenantIsolated<int>, IDbGetRelated
     {
         /// <summary>
         /// a "navigation property" to a related row
