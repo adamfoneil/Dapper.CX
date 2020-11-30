@@ -184,6 +184,29 @@ namespace Tests.SqlServer
         }
 
         [TestMethod]
+        public void GetEmployeeWhereLambda()
+        {
+            using (var cn = LocalDb.GetConnection("DapperCX"))
+            {
+                var emp = new EmployeeCustom()
+                {
+                    FirstName = "Yarga",
+                    LastName = "Jingajinga",
+                    IsExempt = true,
+                    HireDate = DateTime.Today,
+                    Value = OtherEnum.Other
+                };
+
+                var provider = GetProvider();
+                int id = provider.SaveAsync(cn, emp).Result;
+
+                emp = provider.GetWhereAsync<EmployeeCustom>(cn, 
+                    e => e.FirstName == "Yarga", 
+                    e => e.LastName == "Jingajinga").Result;
+            }
+        }
+
+        [TestMethod]
         public void TransactionRollback()
         {
             var provider = GetProvider();

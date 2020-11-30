@@ -144,6 +144,6 @@ namespace Tests.Base
                 cn.Execute("DROP TABLE [session].[User]");
                 cn.Execute("DROP SCHEMA [session]");
             }
-        }
+        }        
     }
 }

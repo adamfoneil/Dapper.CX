@@ -20,6 +20,7 @@
     <Compile Include="..\Dapper.CX.Base\Abstract\SqlCmdDictionary.cs" Link="Base\Abstract\SqlCmdDictionary.cs" />
     <Compile Include="..\Dapper.CX.Base\Abstract\SqlCrudProvider.cs" Link="Base\Abstract\SqlCrudProvider.cs" />
     <Compile Include="..\Dapper.CX.Base\Abstract\SqlCrudProvider_Compatibility.cs" Link="Base\Abstract\SqlCrudProvider_Compatibility.cs" />
+    <Compile Include="..\Dapper.CX.Base\Abstract\SqlCrudProvider_GetWhereLambda.cs" Link="Base\Abstract\SqlCrudProvider_GetWhereLambda.cs" />
     <Compile Include="..\Dapper.CX.Base\Abstract\SqlCrudProvider_Sync.cs" Link="Base\Abstract\SqlCrudProvider_Sync.cs" />
     <Compile Include="..\Dapper.CX.Base\Abstract\SqlCrudService.cs" Link="Base\Abstract\SqlCrudService.cs" />
     <Compile Include="..\Dapper.CX.Base\Classes\ChangeTracker.cs" Link="Base\Classes\ChangeTracker.cs" />
@@ -34,6 +35,7 @@
     <Compile Include="..\Dapper.CX.Base\Exceptions\TriggerException.cs" Link="Base\Exceptions\TriggerException.cs" />
     <Compile Include="..\Dapper.CX.Base\Exceptions\ValidationException.cs" Link="Base\Exceptions\ValidationException.cs" />
     <Compile Include="..\Dapper.CX.Base\Extensions\ConnectionExtensions.cs" Link="Base\Extensions\ConnectionExtensions.cs" />
+    <Compile Include="..\Dapper.CX.Base\Interfaces\IDbDictionary.cs" Link="Base\Interfaces\IDbDictionary.cs" />
     <Compile Include="..\Dapper.CX.Base\Interfaces\ISqlCrudProvider.cs" Link="Base\Interfaces\ISqlCrudProvider.cs" />
     <Compile Include="..\Dapper.CX.Base\Interfaces\ISqlCrudService.cs" Link="Base\Interfaces\ISqlCrudService.cs" />
     <Compile Include="..\Dapper.CX.Base\Models\ColumnHistory.cs" Link="Base\Models\ColumnHistory.cs" />

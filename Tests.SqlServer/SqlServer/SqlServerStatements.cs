@@ -55,7 +55,7 @@ namespace Tests.SqlServer
 
             emp.FirstName = "argo";
 
-            string sql = GetProvider().GetUpdateStatement<Employee>(ct);
+            string sql = GetProvider().GetUpdateStatement(ct);
             const string result =
                 @"UPDATE [Employee] SET 
                     [FirstName]=@FirstName 
