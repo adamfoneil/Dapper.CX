@@ -12,7 +12,7 @@
     <PackageProjectUrl>https://github.com/adamfoneil/Dapper.CX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamfoneil/Dapper.CX</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageReleaseNotes>https://github.com/adamfoneil/Dapper.CX/issues/29</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/adamfoneil/Dapper.CX/issues/31</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
