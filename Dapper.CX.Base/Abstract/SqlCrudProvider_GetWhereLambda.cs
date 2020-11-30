@@ -12,29 +12,29 @@ namespace Dapper.CX.Abstract
 {
     public abstract partial class SqlCrudProvider<TIdentity> : ISqlCrudProvider<TIdentity>
     {
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IUserBase user, params Expression<Func<TModel, bool>>[] whereExpressions)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IUserBase user, params Expression<Func<TModel, bool>>[] criteria)
         {
-            return await GetWhereAsync(connection, whereExpressions, user: user);
+            return await GetWhereAsync(connection, criteria, user: user);
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IDbTransaction txn, params Expression<Func<TModel, bool>>[] whereExpressions)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IDbTransaction txn, params Expression<Func<TModel, bool>>[] criteria)
         {
-            return await GetWhereAsync(connection, whereExpressions, txn: txn);
+            return await GetWhereAsync(connection, criteria, txn: txn);
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IUserBase user, IDbTransaction txn, params Expression<Func<TModel, bool>>[] whereExpressions)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IUserBase user, IDbTransaction txn, params Expression<Func<TModel, bool>>[] criteria)
         {
-            return await GetWhereAsync(connection, whereExpressions, user, txn);
+            return await GetWhereAsync(connection, criteria, user, txn);
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, params Expression<Func<TModel, bool>>[] whereExpressions)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, params Expression<Func<TModel, bool>>[] criteria)
         {
-            return await GetWhereAsync(connection, whereExpressions, null, null);
+            return await GetWhereAsync(connection, criteria, null, null);
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, Expression<Func<TModel, bool>>[] whereExpressions, IUserBase user = null, IDbTransaction txn = null)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, Expression<Func<TModel, bool>>[] criteria, IUserBase user = null, IDbTransaction txn = null)
         {
-            var cmd = GetWhereClauseCommand(whereExpressions, txn);
+            var cmd = GetWhereClauseCommand(criteria, txn);
             var result = await connection.QuerySingleOrDefaultAsync<TModel>(cmd);
 
             if (result != null && user != null)
@@ -48,18 +48,18 @@ namespace Dapper.CX.Abstract
             return result;
         }
 
-        public TModel GetWhere<TModel>(IDbConnection connection, Expression<Func<TModel, bool>>[] whereExpressions, IDbTransaction txn = null)
+        public TModel GetWhere<TModel>(IDbConnection connection, Expression<Func<TModel, bool>>[] criteria, IDbTransaction txn = null)
         {
-            var cmd = GetWhereClauseCommand(whereExpressions, txn);
+            var cmd = GetWhereClauseCommand(criteria, txn);
             return connection.QuerySingleOrDefault<TModel>(cmd);            
         }
 
-        private CommandDefinition GetWhereClauseCommand<TModel>(Expression<Func<TModel, bool>>[] whereExpressions, IDbTransaction txn = null)
+        private CommandDefinition GetWhereClauseCommand<TModel>(Expression<Func<TModel, bool>>[] criteria, IDbTransaction txn = null)
         {
             var type = typeof(TModel);
             DynamicParameters dp = new DynamicParameters();
 
-            string whereClause = string.Join(" AND ", whereExpressions.Select(e =>
+            string whereClause = string.Join(" AND ", criteria.Select(e =>
             {
                 var result = WhereClauseExpression(e);
                 dp.Add(result.columnName, result.paramValue);

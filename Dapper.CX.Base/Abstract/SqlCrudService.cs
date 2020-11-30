@@ -3,6 +3,7 @@ using Dapper.CX.Classes;
 using Dapper.CX.Interfaces;
 using System;
 using System.Data;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
@@ -54,16 +55,29 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, object criteria)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, object criteria, IDbTransaction txn = null)
         {
-            return await CrudProvider.GetWhereAsync<TModel>(connection, criteria, user: User);
+            return await CrudProvider.GetWhereAsync<TModel>(connection, criteria, txn: txn, user: User);
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(object criteria)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, params Expression<Func<TModel, bool>>[] criteria)
+        {
+            return await CrudProvider.GetWhereAsync(connection, User, null, criteria);
+        }
+
+        public async Task<TModel> GetWhereAsync<TModel>(params Expression<Func<TModel, bool>>[] criteria)
         {
             using (var cn = GetConnection())
             {
-                return await GetWhereAsync<TModel>(cn, criteria);
+                return await GetWhereAsync(cn, criteria);
+            }
+        }
+
+        public async Task<TModel> GetWhereAsync<TModel>(object criteria, IDbTransaction txn = null)
+        {
+            using (var cn = GetConnection())
+            {
+                return await GetWhereAsync<TModel>(cn, criteria, txn: txn);
             }
         }
 

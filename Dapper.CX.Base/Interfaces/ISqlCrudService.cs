@@ -2,6 +2,7 @@
 using Dapper.CX.Classes;
 using System;
 using System.Data;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Interfaces
@@ -23,8 +24,10 @@ namespace Dapper.CX.Interfaces
         Task<TModel> GetAsync<TModel>(IDbConnection connection, TIdentity id);
         Task<TModel> GetAsync<TModel>(TIdentity id);
         IDbConnection GetConnection();
-        Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, object criteria);
-        Task<TModel> GetWhereAsync<TModel>(object criteria);
+        Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, object criteria, IDbTransaction txn = null);
+        Task<TModel> GetWhereAsync<TModel>(object criteria, IDbTransaction txn = null);
+        Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, Expression<Func<TModel, bool>>[] criteria);
+        Task<TModel> GetWhereAsync<TModel>(Expression<Func<TModel, bool>>[] criteria);
         Task<TIdentity> InsertAsync<TModel>(IDbConnection connection, TModel model, Func<IDbConnection, IDbTransaction, Task> txnAction = null);
         Task<TIdentity> InsertAsync<TModel>(TModel model, Func<IDbConnection, IDbTransaction, Task> txnAction = null);
         Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Func<IDbConnection, IDbTransaction, Task> txnAction = null);
