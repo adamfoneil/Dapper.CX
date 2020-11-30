@@ -48,6 +48,12 @@ namespace Dapper.CX.Abstract
             return result;
         }
 
+        public TModel GetWhere<TModel>(IDbConnection connection, Expression<Func<TModel, bool>>[] whereExpressions, IDbTransaction txn = null)
+        {
+            var cmd = GetWhereClauseCommand(whereExpressions, txn);
+            return connection.QuerySingleOrDefault<TModel>(cmd);            
+        }
+
         private CommandDefinition GetWhereClauseCommand<TModel>(Expression<Func<TModel, bool>>[] whereExpressions, IDbTransaction txn = null)
         {
             var type = typeof(TModel);
@@ -88,6 +94,7 @@ namespace Dapper.CX.Abstract
                 var rightMethod = binaryExp.Right as MethodCallExpression;
                 if (rightMethod != null)
                 {
+                    // thanks to https://stackoverflow.com/a/776477/2023653
                     var value = Expression.Lambda(rightMethod).Compile().DynamicInvoke();
                     return (left.Member.Name, value);
                 }
