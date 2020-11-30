@@ -69,16 +69,35 @@ namespace Dapper.CX.Abstract
 
         private (string columnName, object paramValue) WhereClauseExpression(Expression expression)
         {
-            var lambdaExp = expression as LambdaExpression;
-            if (lambdaExp == null) throw new ArgumentException(nameof(expression));
+            try
+            {
+                var lambdaExp = expression as LambdaExpression;
+                if (lambdaExp == null) throw new ArgumentException(nameof(expression));
 
-            var binaryExp = lambdaExp.Body as BinaryExpression;
-            if (binaryExp == null) throw new ArgumentException(nameof(binaryExp));
+                var binaryExp = lambdaExp.Body as BinaryExpression;
+                if (binaryExp == null) throw new ArgumentException(nameof(binaryExp));
 
-            var left = binaryExp.Left as MemberExpression;
-            var right = binaryExp.Right as ConstantExpression;
-            
-            return (left.Member.Name, right.Value);
+                var left = binaryExp.Left as MemberExpression;
+                var right = binaryExp.Right as ConstantExpression;
+
+                if (right != null)
+                {
+                    return (left.Member.Name, right.Value);
+                }
+
+                var rightMethod = binaryExp.Right as MethodCallExpression;
+                if (rightMethod != null)
+                {
+                    var value = Expression.Lambda(rightMethod).Compile().DynamicInvoke();
+                    return (left.Member.Name, value);
+                }
+
+                throw new Exception("Unsupported WHERE clause lambda.");
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Error in WHERE clause lambda: {exc.Message}");
+            }
         }
     }
 }

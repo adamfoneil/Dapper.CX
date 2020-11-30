@@ -191,7 +191,7 @@ namespace Tests.SqlServer
                 var emp = new EmployeeCustom()
                 {
                     FirstName = "Yarga",
-                    LastName = "Jingajinga",
+                    LastName = GetLastName(),
                     IsExempt = true,
                     HireDate = DateTime.Today,
                     Value = OtherEnum.Other
@@ -202,11 +202,13 @@ namespace Tests.SqlServer
 
                 emp = provider.GetWhereAsync<EmployeeCustom>(cn, 
                     e => e.FirstName == "Yarga", 
-                    e => e.LastName == "Jingajinga").Result;
+                    e => e.LastName == GetLastName()).Result;
 
-                Assert.IsTrue(emp != null);
+                Assert.IsTrue(emp.Id == id);
             }
         }
+
+        private string GetLastName() => "Jingajinga";
 
         [TestMethod]
         public void TransactionRollback()
