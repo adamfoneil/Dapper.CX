@@ -203,6 +203,8 @@ namespace Tests.SqlServer
                 emp = provider.GetWhereAsync<EmployeeCustom>(cn, 
                     e => e.FirstName == "Yarga", 
                     e => e.LastName == "Jingajinga").Result;
+
+                Assert.IsTrue(emp != null);
             }
         }
 

@@ -6,57 +6,79 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.Abstract
 {
     public abstract partial class SqlCrudProvider<TIdentity> : ISqlCrudProvider<TIdentity>
     {
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IUserBase user, params Expression<Func<TModel, object>>[] whereExpressions)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IUserBase user, params Expression<Func<TModel, bool>>[] whereExpressions)
         {
-            throw new NotImplementedException();
+            return await GetWhereAsync(connection, whereExpressions, user: user);
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IDbTransaction txn, params Expression<Func<TModel, object>>[] whereExpressions)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IDbTransaction txn, params Expression<Func<TModel, bool>>[] whereExpressions)
         {
-            throw new NotImplementedException();
+            return await GetWhereAsync(connection, whereExpressions, txn: txn);
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IUserBase user, IDbTransaction txn, params Expression<Func<TModel, object>>[] whereExpressions)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, IUserBase user, IDbTransaction txn, params Expression<Func<TModel, bool>>[] whereExpressions)
         {
-            throw new NotImplementedException();
+            return await GetWhereAsync(connection, whereExpressions, user, txn);
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, params Expression<Func<TModel, object>>[] whereExpressions)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, params Expression<Func<TModel, bool>>[] whereExpressions)
         {
-            throw new NotImplementedException();
+            return await GetWhereAsync(connection, whereExpressions, null, null);
         }
 
-        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, Expression<Func<TModel, object>>[] whereExpressions, IUserBase user = null, IDbTransaction txn = null)
+        public async Task<TModel> GetWhereAsync<TModel>(IDbConnection connection, Expression<Func<TModel, bool>>[] whereExpressions, IUserBase user = null, IDbTransaction txn = null)
         {
-            throw new NotImplementedException();
+            var cmd = GetWhereClauseCommand(whereExpressions, txn);
+            var result = await connection.QuerySingleOrDefaultAsync<TModel>(cmd);
+
+            if (result != null && user != null)
+            {
+                await VerifyGetPermission(connection, GetIdentity(result), txn, user, result);
+                await VerifyTenantIsolation(connection, user, result, txn);                
+            }
+
+            await OnGetRelatedAsync(connection, result, txn);
+
+            return result;
         }
 
-        private CommandDefinition GetWhereClauseCommand<TModel>(Expression<Func<TModel, object>>[] whereExpressions, IDbTransaction txn = null)
+        private CommandDefinition GetWhereClauseCommand<TModel>(Expression<Func<TModel, bool>>[] whereExpressions, IDbTransaction txn = null)
         {
             var type = typeof(TModel);
             DynamicParameters dp = new DynamicParameters();
 
-            string whereClause = string.Join(", ", whereExpressions.Select(e =>
+            string whereClause = string.Join(" AND ", whereExpressions.Select(e =>
             {
-                string propName = PropertyNameFromLambda(e);
-                PropertyInfo pi = type.GetProperty(propName);
-                dp.Add(propName, e.Compile().Invoke(@object));
-                return $"{SqlBuilder.ApplyDelimiter(pi.GetColumnName(), StartDelimiter, EndDelimiter)}=@{propName}";
+                var result = WhereClauseExpression(e);
+                dp.Add(result.columnName, result.paramValue);
+                return $"{SqlBuilder.ApplyDelimiter(result.columnName, StartDelimiter, EndDelimiter)}=@{result.columnName}";
             }));
 
-            string cmdText = $"UPDATE {SqlBuilder.ApplyDelimiter(type.GetTableName(), StartDelimiter, EndDelimiter)} SET {whereClause} WHERE {SqlBuilder.ApplyDelimiter(type.GetIdentityName(), StartDelimiter, EndDelimiter)}=@id";
-            dp.Add("id", GetIdentity(@object));
+            string cmdText = $"SELECT * FROM {SqlBuilder.ApplyDelimiter(type.GetTableName(), StartDelimiter, EndDelimiter)} WHERE {whereClause}";            
 
             Debug.Print(cmdText);
 
             return new CommandDefinition(cmdText, dp, transaction: txn);
+        }
+
+        private (string columnName, object paramValue) WhereClauseExpression(Expression expression)
+        {
+            var lambdaExp = expression as LambdaExpression;
+            if (lambdaExp == null) throw new ArgumentException(nameof(expression));
+
+            var binaryExp = lambdaExp.Body as BinaryExpression;
+            if (binaryExp == null) throw new ArgumentException(nameof(binaryExp));
+
+            var left = binaryExp.Left as MemberExpression;
+            var right = binaryExp.Right as ConstantExpression;
+            
+            return (left.Member.Name, right.Value);
         }
     }
 }
