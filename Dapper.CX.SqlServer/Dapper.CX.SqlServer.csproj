@@ -16,6 +16,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Abstract\**" />
+    <EmbeddedResource Remove="Abstract\**" />
+    <None Remove="Abstract\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\Dapper.CX.Base\Abstract\DbDictionary.cs" Link="Base\Abstract\DbDictionary.cs" />
     <Compile Include="..\Dapper.CX.Base\Abstract\SqlCmdDictionary.cs" Link="Base\Abstract\SqlCmdDictionary.cs" />
     <Compile Include="..\Dapper.CX.Base\Abstract\SqlCrudProvider.cs" Link="Base\Abstract\SqlCrudProvider.cs" />
@@ -56,7 +62,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Abstract\" />
     <Folder Include="Base\Classes\" />
     <Folder Include="Base\Exceptions\" />
     <Folder Include="Base\Extensions\" />
