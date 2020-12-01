@@ -102,6 +102,7 @@ namespace Dapper.CX.Abstract
                 var rightMember = binaryExp.Right as MemberExpression;
                 if (rightMember != null)
                 {
+                    // thanks to https://stackoverflow.com/a/4404113/2023653
                     var value = Expression.Lambda(rightMember).Compile().DynamicInvoke();
                     return (left.Member.Name, value);
                 }
