@@ -99,6 +99,13 @@ namespace Dapper.CX.Abstract
                     return (left.Member.Name, value);
                 }
 
+                var rightMember = binaryExp.Right as MemberExpression;
+                if (rightMember != null)
+                {
+                    var value = Expression.Lambda(rightMember).Compile().DynamicInvoke();
+                    return (left.Member.Name, value);
+                }
+
                 throw new Exception("Unsupported WHERE clause lambda.");
             }
             catch (Exception exc)

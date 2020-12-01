@@ -188,9 +188,11 @@ namespace Tests.SqlServer
         {
             using (var cn = LocalDb.GetConnection("DapperCX"))
             {
+                string lastName = "Yarga";
+
                 var emp = new EmployeeCustom()
                 {
-                    FirstName = "Yarga",
+                    FirstName = lastName,
                     LastName = GetLastName(),
                     IsExempt = true,
                     HireDate = DateTime.Today,
@@ -198,10 +200,10 @@ namespace Tests.SqlServer
                 };
 
                 var provider = GetProvider();
-                int id = provider.SaveAsync(cn, emp).Result;
+                int id = provider.SaveAsync(cn, emp).Result;                
 
                 emp = provider.GetWhereAsync<EmployeeCustom>(cn, 
-                    e => e.FirstName == "Yarga", 
+                    e => e.FirstName == lastName, 
                     e => e.LastName == GetLastName()).Result;
 
                 Assert.IsTrue(emp.Id == id);

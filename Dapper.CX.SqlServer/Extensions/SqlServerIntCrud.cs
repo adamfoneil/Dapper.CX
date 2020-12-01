@@ -3,6 +3,7 @@ using Dapper.CX.Abstract;
 using Dapper.CX.Classes;
 using System;
 using System.Data;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Dapper.CX.SqlServer.Extensions.Int
@@ -19,6 +20,31 @@ namespace Dapper.CX.SqlServer.Extensions.Int
         public static async Task<TModel> GetWhereAsync<TModel>(this IDbConnection connection, object criteria, IDbTransaction txn = null, IUserBase user = null)
         {
             return await GetProvider().GetWhereAsync<TModel>(connection, criteria, txn, user);
+        }
+
+        public static async Task<TModel> GetWhereAsync<TModel>(this IDbConnection connection, IUserBase user, params Expression<Func<TModel, bool>>[] criteria)
+        {
+            return await GetProvider().GetWhereAsync(connection, user, criteria);
+        }
+
+        public static async Task<TModel> GetWhereAsync<TModel>(this IDbConnection connection, IDbTransaction txn, params Expression<Func<TModel, bool>>[] criteria)
+        {
+            return await GetProvider().GetWhereAsync(connection, txn, criteria);
+        }
+
+        public static async Task<TModel> GetWhereAsync<TModel>(this IDbConnection connection, IUserBase user, IDbTransaction txn, params Expression<Func<TModel, bool>>[] criteria)
+        {
+            return await GetProvider().GetWhereAsync(connection, user, txn, criteria);
+        }
+
+        public static async Task<TModel> GetWhereAsync<TModel>(this IDbConnection connection, params Expression<Func<TModel, bool>>[] criteria)
+        {
+            return await GetProvider().GetWhereAsync(connection, criteria);
+        }
+
+        public static async Task<TModel> GetWhereAsync<TModel>(this IDbConnection connection, Expression<Func<TModel, bool>>[] criteria, IUserBase user = null, IDbTransaction txn = null)
+        {
+            return await GetProvider().GetWhereAsync(connection, criteria, user, txn);
         }
 
         public static async Task<int> InsertAsync<TModel>(this IDbConnection connection, TModel model, bool getIdentity = true, IDbTransaction txn = null, IUserBase user = null)
