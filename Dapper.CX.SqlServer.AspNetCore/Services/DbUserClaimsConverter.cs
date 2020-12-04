@@ -31,7 +31,7 @@ namespace Dapper.CX.SqlServer.Services
             };
 
             var result = new TUser();
-            var props = typeof(TUser).GetProperties().Where(pi => supportedTypes.ContainsKey(pi.PropertyType));
+            var props = typeof(TUser).GetProperties().Where(pi => supportedTypes.ContainsKey(pi.PropertyType) && pi.CanWrite);
             HashSet<string> propertyNames = props.Select(pi => pi.Name).ToHashSet();
 
             // for duplicate claim types, assume the last one. If this is bad behavior in your app, 
