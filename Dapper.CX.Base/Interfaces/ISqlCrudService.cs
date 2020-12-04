@@ -51,6 +51,6 @@ namespace Dapper.CX.Interfaces
         Task<bool> TryUpdateUserAsync(Func<Task> onSuccess = null, Func<Exception, Task> onException = null);
         Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Func<IDbConnection, IDbTransaction, Task> txnAction = null);
         Task UpdateAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Func<IDbConnection, IDbTransaction, Task> txnAction = null);
-        Task UpdateUserAsync();
+        Task UpdateUserAsync(params Expression<Func<TUser, object>>[] setColumns);
     }
 }

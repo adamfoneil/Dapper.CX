@@ -26,13 +26,13 @@ namespace Dapper.CX.Abstract
 
         public bool HasUser => !string.IsNullOrEmpty(User?.Name);
 
-        public async Task UpdateUserAsync()
+        public async Task UpdateUserAsync(params Expression<Func<TUser, object>>[] setColumns)
         {
             if (User is SystemUser) throw new Exception("Can't update a SystemUser account.");
 
             using (var cn = GetConnection())
             {
-                await CrudProvider.UpdateAsync(cn, User);
+                await CrudProvider.UpdateAsync(cn, User, setColumns);
                 if (OnUserUpdatedAsync != null)
                 {
                     await OnUserUpdatedAsync.Invoke(User);
