@@ -1,4 +1,5 @@
-﻿using AO.Models.Interfaces;
+﻿using AO.Models.Enums;
+using AO.Models.Interfaces;
 using Dapper.CX.Classes;
 using System;
 using System.Data;
@@ -61,14 +62,14 @@ namespace Dapper.CX.SqlServer.Extensions.Long
             await GetProvider().DeleteAsync<TModel>(connection, id, txn, user);
         }
 
-        public static async Task<long> SaveAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
+        public static async Task<long> SaveAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null, Action<SaveAction> onSave = null)
         {
-            return await GetProvider().SaveAsync(connection, model, changeTracker, txn, user);
+            return await GetProvider().SaveAsync(connection, model, changeTracker, txn, user, onSave);
         }
 
-        public static async Task<long> MergeAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
+        public static async Task<long> MergeAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null, Action<SaveAction> onSave = null)
         {
-            return await GetProvider().MergeAsync(connection, model, changeTracker, txn, user);
+            return await GetProvider().MergeAsync(connection, model, changeTracker, txn, user, onSave);
         }
 
         public static async Task<bool> ExistsAsync<TModel>(this IDbConnection connection, long id)
