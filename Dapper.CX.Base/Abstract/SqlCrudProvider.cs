@@ -87,14 +87,16 @@ namespace Dapper.CX.Abstract
             if (getRelated != null) await getRelated.GetRelatedAsync(connection, txn);
         }
 
-        public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
+        public async Task<TIdentity> SaveAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null, Action<SaveAction> onSave = null)
         {
             if (IsNew(model))
             {
+                onSave?.Invoke(SaveAction.Insert);
                 return await InsertAsync(connection, model, getIdentity: true, txn, user);
             }
             else
             {
+                onSave?.Invoke(SaveAction.Update);
                 await UpdateAsync(connection, model, changeTracker, txn, user);
                 return GetIdentity(model);
             }
@@ -124,7 +126,7 @@ namespace Dapper.CX.Abstract
             return null;
         }
 
-        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> keyProperties, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
+        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, IEnumerable<string> keyProperties, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null, Action<SaveAction> onSave = null)
         {
             if (IsNew(model))
             {
@@ -132,15 +134,15 @@ namespace Dapper.CX.Abstract
                 if (existing != null) SetIdentity(model, GetIdentity(existing));
             }
 
-            return await SaveAsync(connection, model, changeTracker, txn, user);
+            return await SaveAsync(connection, model, changeTracker, txn, user, onSave);
         }
 
-        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null)
+        public async Task<TIdentity> MergeAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null, Action<SaveAction> onSave = null)
         {
             var props = typeof(TModel).GetProperties().Where(pi => pi.HasAttribute<KeyAttribute>()).Select(pi => pi.GetColumnName());
             if (!props.Any()) throw new Exception($"No primary key properties found on {typeof(TModel).Name}");
 
-            return await MergeAsync(connection, model, props, changeTracker, txn, user);
+            return await MergeAsync(connection, model, props, changeTracker, txn, user, onSave);
         }
 
         private void SetIdentity<TModel>(TModel model, TIdentity identity)

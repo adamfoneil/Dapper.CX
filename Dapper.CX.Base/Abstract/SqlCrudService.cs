@@ -134,9 +134,8 @@ namespace Dapper.CX.Abstract
         {
             using (var connection = GetConnection())
             {
-                return await ExecuteInnerAsync<TModel>(connection, (cn, txn) => CrudProvider.SaveAsync(cn, model, changeTracker, txn, User), txnAction);
+                return await SaveAsync(connection, model, changeTracker, txnAction);                
             }
-
         }
 
         public async Task<TIdentity> MergeAsync<TModel>(
