@@ -19,6 +19,7 @@ namespace Tests.Models
                     [Timestamp] datetime NULL,
                     [Status] int NOT NULL,
                     [Value] int NULL,
+                    [Comments] nvarchar(max) NULL,
                     [Id] int identity(1, 1) PRIMARY KEY
                 )");
 

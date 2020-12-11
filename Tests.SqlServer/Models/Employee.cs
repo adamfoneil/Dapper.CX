@@ -37,6 +37,7 @@ namespace Tests.Models
         public Status Status { get; set; } = Status.Active;
         [Column(Order = 10)]
         public OtherEnum? Value { get; set; }
+        public string Comments { get; set; }
         public int Id { get; set; }
 
         public IEnumerable<string> Something { get; set; }

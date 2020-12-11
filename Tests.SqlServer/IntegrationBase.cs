@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using AO.Models.Enums;
+using Dapper;
 using Dapper.CX.Abstract;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -109,10 +110,24 @@ namespace Tests
                 var mergeEmp = GetTestEmployee();
                 mergeEmp.IsExempt = false;
 
-                provider.MergeAsync(cn, mergeEmp, new string[] { nameof(Employee.FirstName), nameof(Employee.LastName) }).Wait();
+                provider.MergeAsync(cn, mergeEmp, new string[] { nameof(Employee.FirstName), nameof(Employee.LastName) }, 
+                    onSave: (action) =>
+                    {
+                        switch (action)
+                        {
+                            case SaveAction.Insert:
+                                mergeEmp.Comments = "inserting";
+                                break;
+
+                            case SaveAction.Update:
+                                mergeEmp.Comments = "updating";
+                                break;
+                        }
+                    }).Wait();
 
                 var findEmp = provider.GetAsync<Employee>(cn, id).Result;
                 Assert.IsFalse(findEmp.IsExempt);
+                Assert.IsTrue(findEmp.Comments.Equals("updating"));
             }
         }
 
@@ -131,10 +146,25 @@ namespace Tests
                 var mergeEmp = GetTestEmployee();
                 mergeEmp.IsExempt = false;
 
-                provider.MergeAsync(cn, mergeEmp).Wait();
+                provider.MergeAsync(cn, mergeEmp, onSave: (action) => OnSave(action, mergeEmp)).Wait();
 
                 var findEmp = provider.GetAsync<Employee>(cn, id).Result;
                 Assert.IsFalse(findEmp.IsExempt);
+                Assert.IsTrue(findEmp.Comments.Equals("updating"));
+
+                void OnSave(SaveAction action, Employee model)
+                {
+                    switch (action)
+                    {
+                        case SaveAction.Insert:
+                            model.Comments = "inserting";
+                            break;
+
+                        case SaveAction.Update:
+                            model.Comments = "updating";
+                            break;
+                    }
+                }
             }
         }        
 

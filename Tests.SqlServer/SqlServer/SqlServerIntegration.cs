@@ -133,7 +133,7 @@ namespace Tests.SqlServer
                 int id = cn.Query<int>("SELECT [Id] FROM [dbo].[Employee]").First();
                 var cmd = SqlServerCmd.FromQueryAsync(cn, "SELECT * FROM [dbo].[Employee] WHERE [Id]=@id", new { id }, "Id").Result;
                 var columns = cmd.Select(kp => kp.Key).ToArray();
-                Assert.IsTrue(columns.SequenceEqual(new string[] { "FirstName", "LastName", "HireDate", "TermDate", "IsExempt", "Timestamp", "Status", "Value" }));
+                Assert.IsTrue(columns.SequenceEqual(new string[] { "FirstName", "LastName", "HireDate", "TermDate", "IsExempt", "Timestamp", "Status", "Value", "Comments" }));
             }
         }
 
@@ -147,7 +147,7 @@ namespace Tests.SqlServer
                 int id = cn.Query<int>("SELECT [Id] FROM [dbo].[Employee]").First();
                 var cmd = SqlServerCmd.FromQueryAsync(cn, "SELECT * FROM [dbo].[Employee] WHERE [Id]=@id", new { id }).Result;
                 var columns = cmd.Select(kp => kp.Key).ToArray();
-                Assert.IsTrue(columns.SequenceEqual(new string[] { "FirstName", "LastName", "HireDate", "TermDate", "IsExempt", "Timestamp", "Status", "Value", "Id" }));
+                Assert.IsTrue(columns.SequenceEqual(new string[] { "FirstName", "LastName", "HireDate", "TermDate", "IsExempt", "Timestamp", "Status", "Value", "Comments", "Id" }));
             }
         }
 
