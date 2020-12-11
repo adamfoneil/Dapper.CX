@@ -62,12 +62,12 @@ namespace Dapper.CX.SqlServer.Extensions.Long
             await GetProvider().DeleteAsync<TModel>(connection, id, txn, user);
         }
 
-        public static async Task<long> SaveAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null, Action<SaveAction> onSave = null)
+        public static async Task<long> SaveAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null, Action<SaveAction, TModel> onSave = null)
         {
             return await GetProvider().SaveAsync(connection, model, changeTracker, txn, user, onSave);
         }
 
-        public static async Task<long> MergeAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null, Action<SaveAction> onSave = null)
+        public static async Task<long> MergeAsync<TModel>(this IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, IDbTransaction txn = null, IUserBase user = null, Action<SaveAction, TModel> onSave = null)
         {
             return await GetProvider().MergeAsync(connection, model, changeTracker, txn, user, onSave);
         }

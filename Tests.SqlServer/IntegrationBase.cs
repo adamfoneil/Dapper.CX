@@ -111,16 +111,16 @@ namespace Tests
                 mergeEmp.IsExempt = false;
 
                 provider.MergeAsync(cn, mergeEmp, new string[] { nameof(Employee.FirstName), nameof(Employee.LastName) }, 
-                    onSave: (action) =>
+                    onSave: (action, model) =>
                     {
                         switch (action)
                         {
                             case SaveAction.Insert:
-                                mergeEmp.Comments = "inserting";
+                                model.Comments = "inserting";
                                 break;
 
                             case SaveAction.Update:
-                                mergeEmp.Comments = "updating";
+                                model.Comments = "updating";
                                 break;
                         }
                     }).Wait();
@@ -146,7 +146,7 @@ namespace Tests
                 var mergeEmp = GetTestEmployee();
                 mergeEmp.IsExempt = false;
 
-                provider.MergeAsync(cn, mergeEmp, onSave: (action) => OnSave(action, mergeEmp)).Wait();
+                provider.MergeAsync(cn, mergeEmp, onSave: (action, model) => OnSave(action, model)).Wait();
 
                 var findEmp = provider.GetAsync<Employee>(cn, id).Result;
                 Assert.IsFalse(findEmp.IsExempt);
