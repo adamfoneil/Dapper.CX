@@ -24,11 +24,10 @@ namespace SampleApp.RazorPages
             await Task.CompletedTask;
         }
 
-        protected async Task SaveErrorMessage(Exception exc)
+        protected void SaveErrorMessage(Exception exc)
         {
             TempData.Remove("error");
-            TempData.TryAdd("error", exc.Message);
-            await Task.CompletedTask;
+            TempData.TryAdd("error", exc.Message);            
         }
     }
 }

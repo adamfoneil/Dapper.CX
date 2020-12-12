@@ -17,7 +17,7 @@ namespace Dapper.CX.SqlServer.AspNetCore.Extensions
         public static async Task<RedirectResult> SaveAndRedirectAsync<TModel, TIdentity, TUser>(
             this DapperCX<TIdentity, TUser> crudService, TModel model, Func<TModel, Exception, RedirectResult> redirect,
             ChangeTracker<TModel> changeTracker = null, Action<TModel> beforeSave = null,
-            Func<TModel, Task> onSuccess = null, Func<TModel, Exception, Task> onException = null) where TUser : IUserBase
+            Func<TModel, Task> onSuccess = null, Action<TModel, Exception> onException = null) where TUser : IUserBase
         {
             beforeSave?.Invoke(model);
 
@@ -36,7 +36,7 @@ namespace Dapper.CX.SqlServer.AspNetCore.Extensions
 
         public static async Task<RedirectResult> DeleteAndRedirectAsync<TModel, TIdentity, TUser>(
             this DapperCX<TIdentity, TUser> crudService, TIdentity id, Func<TModel, Exception, RedirectResult> redirect,
-            Func<TModel, Task> onSuccess = null, Func<TModel, Exception, Task> onException = null) where TUser : IUserBase
+            Func<TModel, Task> onSuccess = null, Action<TModel, Exception> onException = null) where TUser : IUserBase
         {
             var model = await crudService.GetAsync<TModel>(id);
 
