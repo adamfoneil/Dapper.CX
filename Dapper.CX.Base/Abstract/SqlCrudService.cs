@@ -1,4 +1,5 @@
-﻿using AO.Models.Interfaces;
+﻿using AO.Models.Enums;
+using AO.Models.Interfaces;
 using Dapper.CX.Classes;
 using Dapper.CX.Interfaces;
 using System;
@@ -123,36 +124,36 @@ namespace Dapper.CX.Abstract
         public async Task<TIdentity> SaveAsync<TModel>(
             IDbConnection connection,
             TModel model, ChangeTracker<TModel> changeTracker = null,
-            Func<IDbConnection, IDbTransaction, Task> txnAction = null)
+            Func<IDbConnection, IDbTransaction, Task> txnAction = null, Action<SaveAction, TModel> onSave = null)
         {
-            return await ExecuteInnerAsync<TModel>(connection, (cn, txn) => CrudProvider.SaveAsync(cn, model, changeTracker, txn, User), txnAction);
+            return await ExecuteInnerAsync<TModel>(connection, (cn, txn) => CrudProvider.SaveAsync(cn, model, changeTracker, txn, User, onSave), txnAction);
         }
 
         public async Task<TIdentity> SaveAsync<TModel>(
             TModel model, ChangeTracker<TModel> changeTracker = null,
-            Func<IDbConnection, IDbTransaction, Task> txnAction = null)
+            Func<IDbConnection, IDbTransaction, Task> txnAction = null, Action<SaveAction, TModel> onSave = null)
         {
             using (var connection = GetConnection())
             {
-                return await SaveAsync(connection, model, changeTracker, txnAction);                
+                return await SaveAsync(connection, model, changeTracker, txnAction, onSave);                
             }
         }
 
         public async Task<TIdentity> MergeAsync<TModel>(
             IDbConnection connection,
             TModel model, ChangeTracker<TModel> changeTracker = null,
-            Func<IDbConnection, IDbTransaction, Task> txnAction = null)
+            Func<IDbConnection, IDbTransaction, Task> txnAction = null, Action<SaveAction, TModel> onSave = null)
         {
-            return await ExecuteInnerAsync<TModel>(connection, (cn, txn) => CrudProvider.MergeAsync(cn, model, changeTracker, txn, User), txnAction);
+            return await ExecuteInnerAsync<TModel>(connection, (cn, txn) => CrudProvider.MergeAsync(cn, model, changeTracker, txn, User, onSave), txnAction);
         }
 
         public async Task<TIdentity> MergeAsync<TModel>(
             TModel model, ChangeTracker<TModel> changeTracker = null,
-            Func<IDbConnection, IDbTransaction, Task> txnAction = null)
+            Func<IDbConnection, IDbTransaction, Task> txnAction = null, Action<SaveAction, TModel> onSave = null)
         {
             using (var connection = GetConnection())
             {
-                return await ExecuteInnerAsync<TModel>(connection, (cn, txn) => CrudProvider.MergeAsync(cn, model, changeTracker, txn, User), txnAction);
+                return await ExecuteInnerAsync<TModel>(connection, (cn, txn) => CrudProvider.MergeAsync(cn, model, changeTracker, txn, User, onSave), txnAction);
             }
         }
 
@@ -266,7 +267,7 @@ namespace Dapper.CX.Abstract
         }
 
         #region Try methods
-        public async Task<bool> TryUpdateUserAsync(Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
+        public async Task<bool> TryUpdateUserAsync(Func<Task> onSuccess = null, Action<Exception> onException = null)
         {
             try
             {
@@ -276,7 +277,7 @@ namespace Dapper.CX.Abstract
             }
             catch (Exception exc)
             {
-                if (onException != null) await onException.Invoke(exc);
+                if (onException != null) onException.Invoke(exc);
                 return false;
             }
         }
@@ -284,62 +285,62 @@ namespace Dapper.CX.Abstract
         public async Task<TIdentity> TrySaveAsync<TModel>(
             IDbConnection connection,
             TModel model, ChangeTracker<TModel> changeTracker = null,
-            Func<TIdentity, Task> onSuccess = null, Func<Exception, Task> onException = null)
+            Func<TIdentity, Task> onSuccess = null, Action<Exception> onException = null, Action<SaveAction, TModel> onSave = null)
         {
             try
             {
-                var result = await SaveAsync(connection, model, changeTracker);
+                var result = await SaveAsync(connection, model, changeTracker, onSave: onSave);
                 if (onSuccess != null) await onSuccess.Invoke(result);
                 return result;
             }
             catch (Exception exc)
             {
-                if (onException != null) await onException.Invoke(exc);
+                if (onException != null) onException.Invoke(exc);
                 return CrudProvider.GetIdentity(model);
             }
         }
 
         public async Task<TIdentity> TrySaveAsync<TModel>(
             TModel model, ChangeTracker<TModel> changeTracker = null,
-            Func<TIdentity, Task> onSuccess = null, Func<Exception, Task> onException = null)
+            Func<TIdentity, Task> onSuccess = null, Action<Exception> onException = null, Action<SaveAction, TModel> onSave = null)
         {
             using (var cn = GetConnection())
             {
-                return await TrySaveAsync(cn, model, changeTracker, onSuccess, onException);
+                return await TrySaveAsync(cn, model, changeTracker, onSuccess, onException, onSave);
             }
         }
 
         public async Task<bool> TryMergeAsync<TModel>(
             IDbConnection connection,
             TModel model, ChangeTracker<TModel> changeTracker = null,
-            Func<TIdentity, Task> onSuccess = null, Func<Exception, Task> onException = null)
+            Func<TIdentity, Task> onSuccess = null, Action<Exception> onException = null, Action<SaveAction, TModel> onSave = null)
         {
             try
             {
-                var result = await MergeAsync(connection, model, changeTracker);
+                var result = await MergeAsync(connection, model, changeTracker, onSave: onSave);
                 if (onSuccess != null) await onSuccess.Invoke(result);
                 return true;
             }
             catch (Exception exc)
             {
-                if (onException != null) await onException.Invoke(exc);
+                if (onException != null) onException.Invoke(exc);
                 return false;
             }
         }
 
         public async Task<bool> TryMergeAsync<TModel>(
             TModel model, ChangeTracker<TModel> changeTracker = null,
-            Func<TIdentity, Task> onSuccess = null, Func<Exception, Task> onException = null)
+            Func<TIdentity, Task> onSuccess = null, Action<Exception> onException = null, Action<SaveAction, TModel> onSave = null)
         {
             using (var cn = GetConnection())
             {
-                return await TryMergeAsync(cn, model, changeTracker, onSuccess, onException);
+                return await TryMergeAsync(cn, model, changeTracker, onSuccess, onException, onSave);
             }
         }
 
         public async Task<bool> TryInsertAsync<TModel>(
             IDbConnection connection,
-            TModel model, Func<TIdentity, Task> onSuccess = null, Func<Exception, Task> onException = null)
+            TModel model, Func<TIdentity, Task> onSuccess = null, Action<Exception> onException = null)
         {
             try
             {
@@ -349,12 +350,12 @@ namespace Dapper.CX.Abstract
             }
             catch (Exception exc)
             {
-                if (onException != null) await onException.Invoke(exc);
+                if (onException != null) onException.Invoke(exc);
                 return false;
             }
         }
 
-        public async Task<bool> TryInsertAsync<TModel>(TModel model, Func<TIdentity, Task> onSuccess = null, Func<Exception, Task> onException = null)
+        public async Task<bool> TryInsertAsync<TModel>(TModel model, Func<TIdentity, Task> onSuccess = null, Action<Exception> onException = null)
         {
             using (var cn = GetConnection())
             {
@@ -362,7 +363,7 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task<bool> TryDeleteAsync<TModel>(IDbConnection connection, TIdentity id, Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
+        public async Task<bool> TryDeleteAsync<TModel>(IDbConnection connection, TIdentity id, Func<Task> onSuccess = null, Action<Exception> onException = null)
         {
             try
             {
@@ -372,12 +373,12 @@ namespace Dapper.CX.Abstract
             }
             catch (Exception exc)
             {
-                if (onException != null) await onException.Invoke(exc);
+                if (onException != null) onException.Invoke(exc);
                 return false;
             }
         }
 
-        public async Task<bool> TryDeleteAsync<TModel>(TIdentity id, Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
+        public async Task<bool> TryDeleteAsync<TModel>(TIdentity id, Func<Task> onSuccess = null, Action<Exception> onException = null)
         {
             using (var cn = GetConnection())
             {
@@ -385,7 +386,7 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task<bool> TryDeleteAsync<TModel>(IDbConnection connection, TModel model, Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
+        public async Task<bool> TryDeleteAsync<TModel>(IDbConnection connection, TModel model, Func<Task> onSuccess = null, Action<Exception> onException = null)
         {
             try
             {
@@ -395,12 +396,12 @@ namespace Dapper.CX.Abstract
             }
             catch (Exception exc)
             {
-                if (onException != null) await onException.Invoke(exc);
+                if (onException != null) onException.Invoke(exc);
                 return false;
             }
         }
 
-        public async Task<bool> TryDeleteAsync<TModel>(TModel model, Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
+        public async Task<bool> TryDeleteAsync<TModel>(TModel model, Func<Task> onSuccess = null, Action<Exception> onException = null)
         {
             using (var cn = GetConnection())
             {
@@ -411,7 +412,7 @@ namespace Dapper.CX.Abstract
         public async Task<bool> TryUpdateAsync<TModel>(
             IDbConnection connection,
             TModel model, ChangeTracker<TModel> changeTracker = null,
-            Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
+            Func<Task> onSuccess = null, Action<Exception> onException = null)
         {
             try
             {
@@ -421,14 +422,14 @@ namespace Dapper.CX.Abstract
             }
             catch (Exception exc)
             {
-                if (onException != null) await onException.Invoke(exc);
+                if (onException != null) onException.Invoke(exc);
                 return false;
             }
         }
 
         public async Task<bool> TryUpdateAsync<TModel>(
             TModel model, ChangeTracker<TModel> changeTracker = null,
-            Func<Task> onSuccess = null, Func<Exception, Task> onException = null)
+            Func<Task> onSuccess = null, Action<Exception> onException = null)
         {
             using (var cn = GetConnection())
             {
