@@ -10,8 +10,8 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/adamfoneil/Dapper.CX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamfoneil/Dapper.CX</RepositoryUrl>
-    <Version>1.3.19</Version>
-    <PackageReleaseNotes>https://github.com/adamfoneil/Dapper.CX/issues/32</PackageReleaseNotes>
+    <Version>1.3.21</Version>
+    <PackageReleaseNotes>https://github.com/adamfoneil/Dapper.CX/issues/37</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
