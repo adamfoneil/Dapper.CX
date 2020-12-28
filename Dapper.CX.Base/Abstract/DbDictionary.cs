@@ -63,6 +63,8 @@ namespace Dapper.CX.Abstract
 
         protected abstract string Serialize<TValue>(TValue value);
 
+        protected virtual TKey FormatKey(TKey key) => key;
+
         public async Task<TValue> GetAsync<TValue>(TKey key, TValue defaultValue = default)
         {
             if (!_initialized) await InitializeAsync();
@@ -75,7 +77,7 @@ namespace Dapper.CX.Abstract
         {
             using (var cn = _getConnection.Invoke())
             {
-                return await cn.QuerySingleOrDefaultAsync<DictionaryRow>($"SELECT * FROM [{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key });
+                return await cn.QuerySingleOrDefaultAsync<DictionaryRow>($"SELECT * FROM [{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key = FormatKey(key) });
             }
         }
 
@@ -83,15 +85,17 @@ namespace Dapper.CX.Abstract
         {
             if (!_initialized) await InitializeAsync();
 
+            TKey formattedKey = FormatKey(key);
+
             using (var cn = _getConnection.Invoke())
             {
                 string json = Serialize(value);
 
-                int affected = await cn.ExecuteAsync($"UPDATE [{_tableName.Schema}].[{_tableName.Name}] SET [Value]=@json, [DateModified]=getutcdate() WHERE [Key]=@key", new { key, json });
+                int affected = await cn.ExecuteAsync($"UPDATE [{_tableName.Schema}].[{_tableName.Name}] SET [Value]=@json, [DateModified]=getutcdate() WHERE [Key]=@key", new { key = formattedKey, json });
 
                 if (affected == 0)
                 {
-                    await cn.ExecuteAsync($"INSERT INTO [{_tableName.Schema}].[{_tableName.Name}] ([Key], [Value], [DateCreated]) VALUES (@key, @json, getutcdate())", new { key, json });
+                    await cn.ExecuteAsync($"INSERT INTO [{_tableName.Schema}].[{_tableName.Name}] ([Key], [Value], [DateCreated]) VALUES (@key, @json, getutcdate())", new { key = formattedKey, json });
                 }
             }
         }
@@ -100,7 +104,7 @@ namespace Dapper.CX.Abstract
         {
             using (var cn = _getConnection.Invoke())
             {
-                return await cn.RowExistsAsync($"[{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key });
+                return await cn.RowExistsAsync($"[{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key = FormatKey(key) });
             }
         }
 
@@ -108,7 +112,7 @@ namespace Dapper.CX.Abstract
         {
             using (var cn = _getConnection.Invoke())
             {
-                await cn.ExecuteAsync($"DELETE [{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key });
+                await cn.ExecuteAsync($"DELETE [{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key = FormatKey(key) });
             }
         }
 
