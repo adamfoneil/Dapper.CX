@@ -15,7 +15,7 @@ namespace Dapper.CX.SqlServer.AspNetCore
     public static class CrudServiceExtensions
     {                
         /// <summary>
-        /// Dapper.CX config method that gives user profile integration
+        /// Dapper.CX config method that gives user profile integration with local accounts
         /// </summary>
         public static void AddDapperCX<TIdentity, TUser>(
             this IServiceCollection services,
@@ -48,6 +48,7 @@ namespace Dapper.CX.SqlServer.AspNetCore
         {
             services.AddScoped((sp) =>
             {
+                //var getUser = sp.GetService<IGetUser>();
                 return new DapperCX<TIdentity>(connectionString, convertIdentity);
             });
         }        
