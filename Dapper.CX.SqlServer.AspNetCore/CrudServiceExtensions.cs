@@ -1,5 +1,5 @@
 ﻿using AO.Models.Interfaces;
-using Dapper.CX.Classes;
+using Dapper.CX.Interfaces;
 using Dapper.CX.Models;
 using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Http;
@@ -39,6 +39,22 @@ namespace Dapper.CX.SqlServer.AspNetCore
             });
         }
 
+        public static void AddDapperCX<TIdentity, TUser>(
+            this IServiceCollection services,
+            string connectionString,
+            Func<object, TIdentity> convertIdentity) where TUser : IUserBase
+        {
+            services.AddHttpContextAccessor();
+            services.AddScoped((sp) =>
+            {
+                var http = sp.GetRequiredService<IHttpContextAccessor>();
+                var userName = http.HttpContext.User.Identity.Name;
+                var getUser = sp.GetRequiredService<IGetUser<TUser>>();
+                var user = getUser.Get(userName);
+                return new DapperCX<TIdentity, TUser>(connectionString, user, convertIdentity);
+            });
+        }
+
         /// <summary>
         /// simplest Dapper.CX use case, with no user profile integation
         /// </summary>
@@ -47,8 +63,7 @@ namespace Dapper.CX.SqlServer.AspNetCore
             string connectionString, Func<object, TIdentity> convertIdentity)
         {
             services.AddScoped((sp) =>
-            {
-                //var getUser = sp.GetService<IGetUser>();
+            {                
                 return new DapperCX<TIdentity>(connectionString, convertIdentity);
             });
         }        
