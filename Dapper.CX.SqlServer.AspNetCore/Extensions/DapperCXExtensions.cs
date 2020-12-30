@@ -70,6 +70,15 @@ namespace Dapper.CX.SqlServer.AspNetCore.Extensions
             }
         }
 
+        public static async Task<IEnumerable<TModel>> QueryAsync<TModel, TIdentity, TUser>(
+            this DapperCX<TIdentity, TUser> crudService, object criteria) where TUser : IUserBase
+        {
+            using (var cn = crudService.GetConnection())
+            {
+
+            }
+        }
+
         public static async Task<TResult> QuerySingleAsync<TResult, TIdentity, TUser>(
             this DapperCX<TIdentity, TUser> crudService,
             Query<TResult> query) where TUser : IUserBase
