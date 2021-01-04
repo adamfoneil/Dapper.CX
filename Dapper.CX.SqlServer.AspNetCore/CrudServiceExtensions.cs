@@ -68,6 +68,19 @@ namespace Dapper.CX.SqlServer.AspNetCore
             });
         }        
 
+        public static void AddSessionUser<TUser>(
+            this IServiceCollection services,
+            Func<ISession, IGetUser<TUser>> getUserFactory) where TUser : IUserBase
+        {
+            services.AddHttpContextAccessor();
+            services.AddSession();
+            services.AddScoped((sp) =>
+            {
+                var http = sp.GetRequiredService<IHttpContextAccessor>();
+                return getUserFactory.Invoke(http.HttpContext.Session);
+            });
+        }
+
         public static void AddChangeTracking(this IServiceCollection services, string connectionString, ISqlObjectCreator objectCreator)
         {
             using (var cn = new SqlConnection(connectionString))
