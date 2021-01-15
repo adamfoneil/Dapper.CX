@@ -49,8 +49,9 @@ namespace Dapper.CX.SqlServer.AspNetCore
             {
                 var http = sp.GetRequiredService<IHttpContextAccessor>();
                 var userName = http.HttpContext.User.Identity.Name;
-                var getUser = sp.GetRequiredService<IGetUser<TUser>>();
-                var user = getUser.Get(userName);
+                var getUser = sp.GetRequiredService<IOnboardUser<TUser>>();
+                var claims = http.HttpContext.User.Claims;
+                var user = getUser.Get(userName, claims);
                 return new DapperCX<TIdentity, TUser>(connectionString, user, convertIdentity);
             });
         }
@@ -70,14 +71,15 @@ namespace Dapper.CX.SqlServer.AspNetCore
 
         public static void AddSessionUser<TUser>(
             this IServiceCollection services,
-            Func<ISession, IGetUser<TUser>> getUserFactory) where TUser : IUserBase
+            Func<ISession, IEnumerable<Claim>, IOnboardUser<TUser>> onboardUserFactory) where TUser : IUserBase
         {
             services.AddHttpContextAccessor();
             services.AddSession();
             services.AddScoped((sp) =>
             {
                 var http = sp.GetRequiredService<IHttpContextAccessor>();
-                return getUserFactory.Invoke(http.HttpContext.Session);
+                var claims = http.HttpContext.User.Claims;
+                return onboardUserFactory.Invoke(http.HttpContext.Session, claims);
             });
         }
 
