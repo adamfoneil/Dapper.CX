@@ -71,15 +71,14 @@ namespace Dapper.CX.SqlServer.AspNetCore
 
         public static void AddSessionUser<TUser>(
             this IServiceCollection services,
-            Func<ISession, IEnumerable<Claim>, IOnboardUser<TUser>> onboardUserFactory) where TUser : IUserBase
+            Func<ISession, IOnboardUser<TUser>> onboardUserFactory) where TUser : IUserBase
         {
             services.AddHttpContextAccessor();
             services.AddSession();
             services.AddScoped((sp) =>
             {
-                var http = sp.GetRequiredService<IHttpContextAccessor>();
-                var claims = http.HttpContext.User.Claims;
-                return onboardUserFactory.Invoke(http.HttpContext.Session, claims);
+                var http = sp.GetRequiredService<IHttpContextAccessor>();                
+                return onboardUserFactory.Invoke(http.HttpContext.Session);
             });
         }
 
