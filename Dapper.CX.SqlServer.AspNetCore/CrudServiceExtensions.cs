@@ -48,17 +48,9 @@ namespace Dapper.CX.SqlServer.AspNetCore
             services.AddHttpContextAccessor();
             services.AddScoped((sp) =>
             {
-                var http = sp.GetRequiredService<IHttpContextAccessor>();
-                var userInfo = GetUserName(http);
-                
-                TUser user = new TUser();
-                if (userInfo.success)
-                {
-                    var getUser = sp.GetRequiredService<IOnboardUser<TUser>>();
-                    var claims = http.HttpContext.User.Claims;
-                    user = getUser.Get(userInfo.name, claims);
-                }
-                                               
+                var context = sp.GetRequiredService<IHttpContextAccessor>();
+                var getUser = sp.GetRequiredService<IUserAccessor<TUser>>();                    
+                var user = getUser.Get(context.HttpContext.User);                                               
                 return new DapperCX<TIdentity, TUser>(connectionString, user, convertIdentity);
             });
         }
@@ -76,16 +68,16 @@ namespace Dapper.CX.SqlServer.AspNetCore
             });
         }        
 
-        public static void AddSessionUser<TUser>(
+        public static void AddUserAccessor<TUser>(
             this IServiceCollection services,
-            Func<IServiceProvider, ISession, IOnboardUser<TUser>> onboardUserFactory) where TUser : IUserBase
+            Func<IServiceProvider, ClaimsPrincipal, IUserAccessor<TUser>> userAccessorFactory) where TUser : IUserBase
         {
             services.AddHttpContextAccessor();
             services.AddSession();
             services.AddScoped((sp) =>
             {
                 var http = sp.GetRequiredService<IHttpContextAccessor>();                
-                return onboardUserFactory.Invoke(sp, http.HttpContext.Session);
+                return userAccessorFactory.Invoke(sp, http.HttpContext.User);
             });
         }
 

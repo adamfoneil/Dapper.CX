@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="AO.Models" Version="1.1.25" />
-    <PackageReference Include="Dapper.CX.SqlServer" Version="1.3.26" />
+    <PackageReference Include="Dapper.CX.SqlServer" Version="1.3.27" />
     <PackageReference Include="Dapper.QX" Version="1.0.20" />
   </ItemGroup>
 
