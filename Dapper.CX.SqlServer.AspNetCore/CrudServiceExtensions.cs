@@ -141,7 +141,6 @@ namespace Dapper.CX.SqlServer.AspNetCore
                 const string nameClaim = "preferred_username";
                 try
                 {
-                    var claimTypes = string.Join(", ", context.User.Claims.GroupBy(c => c.Type));
                     var claimsLookup = context.User.Claims.ToLookup(c => c.Type);
                     return (true, claimsLookup[nameClaim].First().Value);
                 }
