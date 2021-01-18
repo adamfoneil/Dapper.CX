@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 
 namespace Dapper.CX.SqlServer.AspNetCore
@@ -48,7 +49,7 @@ namespace Dapper.CX.SqlServer.AspNetCore
             services.AddScoped((sp) =>
             {
                 var http = sp.GetRequiredService<IHttpContextAccessor>();
-                var userName = http.HttpContext.User.Identity.Name;
+                var userName = GetUserName(http);
                 var getUser = sp.GetRequiredService<IOnboardUser<TUser>>();
                 var claims = http.HttpContext.User.Claims;
                 var user = getUser.Get(userName, claims);
@@ -120,6 +121,28 @@ namespace Dapper.CX.SqlServer.AspNetCore
                 signinManager,
                 http.HttpContext.User.Claims
             );
+        }
+
+        private static string GetUserName(IHttpContextAccessor httpContextAccessor)
+        {
+            var user = httpContextAccessor.HttpContext.User;
+            try
+            {
+                return user.Identity.Name;
+            }
+            catch 
+            {
+                const string nameClaim = "preferred_username";
+                try
+                {
+                    var claimsLookup = user.Claims.ToLookup(c => c.Type);
+                    return claimsLookup[nameClaim].First().Value;
+                }
+                catch (Exception exc)
+                {
+                    throw new Exception($"Couldn't get the user name from claim type {nameClaim}: {exc.Message}");
+                }
+            }
         }
     }
 }
