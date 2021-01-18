@@ -42,15 +42,13 @@ namespace Dapper.CX.SqlServer.AspNetCore
 
         public static void AddDapperCX<TIdentity, TUser>(
             this IServiceCollection services,
-            string connectionString,
+            string connectionString,  
+            Func<IServiceProvider, TUser> getUser,
             Func<object, TIdentity> convertIdentity) where TUser : IUserBase, new()
-        {
-            services.AddHttpContextAccessor();
+        {            
             services.AddScoped((sp) =>
             {
-                var context = sp.GetRequiredService<IHttpContextAccessor>();
-                var getUser = sp.GetRequiredService<IUserAccessor<TUser>>();                    
-                var user = getUser.Get(context.HttpContext.User);                                               
+                var user = getUser.Invoke(sp);
                 return new DapperCX<TIdentity, TUser>(connectionString, user, convertIdentity);
             });
         }
@@ -65,19 +63,6 @@ namespace Dapper.CX.SqlServer.AspNetCore
             services.AddScoped((sp) =>
             {                
                 return new DapperCX<TIdentity>(connectionString, convertIdentity);
-            });
-        }        
-
-        public static void AddUserAccessor<TUser>(
-            this IServiceCollection services,
-            Func<IServiceProvider, ClaimsPrincipal, IUserAccessor<TUser>> userAccessorFactory) where TUser : IUserBase
-        {
-            services.AddHttpContextAccessor();
-            services.AddSession();
-            services.AddScoped((sp) =>
-            {
-                var http = sp.GetRequiredService<IHttpContextAccessor>();                
-                return userAccessorFactory.Invoke(sp, http.HttpContext.User);
             });
         }
 
