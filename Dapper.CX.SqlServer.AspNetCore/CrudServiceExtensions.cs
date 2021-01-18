@@ -43,16 +43,22 @@ namespace Dapper.CX.SqlServer.AspNetCore
         public static void AddDapperCX<TIdentity, TUser>(
             this IServiceCollection services,
             string connectionString,
-            Func<object, TIdentity> convertIdentity) where TUser : IUserBase
+            Func<object, TIdentity> convertIdentity) where TUser : IUserBase, new()
         {
             services.AddHttpContextAccessor();
             services.AddScoped((sp) =>
             {
                 var http = sp.GetRequiredService<IHttpContextAccessor>();
-                var userName = GetUserName(http);
-                var getUser = sp.GetRequiredService<IOnboardUser<TUser>>();
-                var claims = http.HttpContext.User.Claims;
-                var user = getUser.Get(userName, claims);
+                var userInfo = GetUserName(http);
+                
+                TUser user = new TUser();
+                if (userInfo.success)
+                {
+                    var getUser = sp.GetRequiredService<IOnboardUser<TUser>>();
+                    var claims = http.HttpContext.User.Claims;
+                    user = getUser.Get(userInfo.name, claims);
+                }
+                                               
                 return new DapperCX<TIdentity, TUser>(connectionString, user, convertIdentity);
             });
         }
@@ -123,24 +129,25 @@ namespace Dapper.CX.SqlServer.AspNetCore
             );
         }
 
-        private static string GetUserName(IHttpContextAccessor httpContextAccessor)
+        private static (bool success, string name) GetUserName(IHttpContextAccessor httpContextAccessor)
         {
-            var user = httpContextAccessor.HttpContext.User;
+            var context = httpContextAccessor.HttpContext;
             try
             {
-                return user.Identity.Name;
+                return (true, context.User.Identity.Name);
             }
-            catch 
+            catch
             {
                 const string nameClaim = "preferred_username";
                 try
                 {
-                    var claimsLookup = user.Claims.ToLookup(c => c.Type);
-                    return claimsLookup[nameClaim].First().Value;
+                    var claimTypes = string.Join(", ", context.User.Claims.GroupBy(c => c.Type));
+                    var claimsLookup = context.User.Claims.ToLookup(c => c.Type);
+                    return (true, claimsLookup[nameClaim].First().Value);
                 }
-                catch (Exception exc)
+                catch
                 {
-                    throw new Exception($"Couldn't get the user name from claim type {nameClaim}: {exc.Message}");
+                    return (false, string.Empty);                    
                 }
             }
         }
