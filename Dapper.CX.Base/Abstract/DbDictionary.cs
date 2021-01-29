@@ -67,7 +67,7 @@ namespace Dapper.CX.Abstract
 
         public async Task<TValue> GetAsync<TValue>(TKey key, TValue defaultValue = default)
         {
-            if (!_initialized) await InitializeAsync();
+            await InitializeAsync();
 
             var row = await GetRowAsync(key);
             return (row != null) ? Deserialize<TValue>(row.Value) : defaultValue;
@@ -83,7 +83,7 @@ namespace Dapper.CX.Abstract
 
         public async Task SetAsync<TValue>(TKey key, TValue value)
         {
-            if (!_initialized) await InitializeAsync();
+            await InitializeAsync();
 
             TKey formattedKey = FormatKey(key);
 
@@ -102,6 +102,8 @@ namespace Dapper.CX.Abstract
 
         public async Task<bool> KeyExistsAsync(TKey key)
         {
+            await InitializeAsync();
+
             using (var cn = _getConnection.Invoke())
             {
                 return await cn.RowExistsAsync($"[{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key = FormatKey(key) });
@@ -110,6 +112,8 @@ namespace Dapper.CX.Abstract
 
         public async Task DeleteAsync(TKey key)
         {
+            await InitializeAsync();
+
             using (var cn = _getConnection.Invoke())
             {
                 await cn.ExecuteAsync($"DELETE [{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key = FormatKey(key) });
