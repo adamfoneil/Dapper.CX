@@ -123,7 +123,7 @@ namespace Tests.Base
                 Status = Status.Active
             };
 
-            sampleDictionary.SetAsync("hello", input).Wait();
+            var id = sampleDictionary.SetAsync("hello", input).Result;
 
             var entry = sampleDictionary.GetAsync<Employee>("hello").Result;
             Assert.IsTrue(input.FirstName.Equals("whoever"));
@@ -136,6 +136,10 @@ namespace Tests.Base
             Assert.IsTrue(entry.FirstName.Equals("Django"));
 
             Assert.IsTrue(sampleDictionary.KeyExistsAsync("hello").Result);
+
+            var getById = sampleDictionary.GetByIdAsync<Employee>(id).Result;
+            Assert.IsTrue(getById.FirstName.Equals(entry.FirstName));
+            Assert.IsTrue(getById.LastName.Equals(entry.LastName));
 
             sampleDictionary.DeleteAsync("hello").Wait();
 

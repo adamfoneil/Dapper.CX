@@ -46,10 +46,12 @@ namespace Dapper.CX.Abstract
                 {
                     await cn.ExecuteAsync(
                         $@"CREATE TABLE [{_tableName.Schema}].[{_tableName.Name}] (
+                            [Id] int identity(1,1),
                             [Key] {supportedKeyTypes[typeof(TKey)]} NOT NULL PRIMARY KEY,                            
                             [Value] nvarchar(max) NOT NULL,
                             [DateCreated] datetime NOT NULL,
-                            [DateModified] datetime NULL
+                            [DateModified] datetime NULL,
+                            CONSTRAINT [U_{_tableName.Schema}_{_tableName.Name}_Id] UNIQUE ([Id])
                         )");
                 }
             }
@@ -73,6 +75,13 @@ namespace Dapper.CX.Abstract
             return (row != null) ? Deserialize<TValue>(row.Value) : defaultValue;
         }
 
+        public async Task<TValue> GetByIdAsync<TValue>(int id, TValue defaultValue = default)
+        {
+            await InitializeAsync();
+            var row = await GetRowByIdAsync(id);
+            return (row != null) ? Deserialize<TValue>(row.Value) : defaultValue;
+        }
+
         protected async Task<DictionaryRow> GetRowAsync(TKey key)
         {
             using (var cn = _getConnection.Invoke())
@@ -81,11 +90,20 @@ namespace Dapper.CX.Abstract
             }
         }
 
-        public async Task SetAsync<TValue>(TKey key, TValue value)
+        protected async Task<DictionaryRow> GetRowByIdAsync(int id)
+        {
+            using (var cn = _getConnection.Invoke())
+            {
+                return await cn.QuerySingleOrDefaultAsync<DictionaryRow>($"SELECT * FROM [{_tableName.Schema}].[{_tableName.Name}] WHERE [Id]=@id", new { id });
+            }
+        }
+
+        public async Task<int> SetAsync<TValue>(TKey key, TValue value)
         {
             await InitializeAsync();
 
             TKey formattedKey = FormatKey(key);
+            int result = 0;
 
             using (var cn = _getConnection.Invoke())
             {
@@ -97,7 +115,11 @@ namespace Dapper.CX.Abstract
                 {
                     await cn.ExecuteAsync($"INSERT INTO [{_tableName.Schema}].[{_tableName.Name}] ([Key], [Value], [DateCreated]) VALUES (@key, @json, getutcdate())", new { key = formattedKey, json });
                 }
+
+                result = await cn.QuerySingleAsync<int>($"SELECT [Id] FROM [{_tableName.Schema}].[{_tableName.Name}] WHERE [Key]=@key", new { key = formattedKey });
             }
+
+            return result;
         }
 
         public async Task<bool> KeyExistsAsync(TKey key)
@@ -122,6 +144,7 @@ namespace Dapper.CX.Abstract
 
         protected class DictionaryRow
         {
+            public int Id { get; set; }
             public TKey Key { get; set; }
             public string Value { get; set; }
             public DateTime DateCreated { get; set; }

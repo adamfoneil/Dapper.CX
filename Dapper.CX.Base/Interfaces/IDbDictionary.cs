@@ -10,6 +10,6 @@ namespace Dapper.CX.Abstract
         Task<TValue> GetAsync<TValue>(TKey key, TValue defaultValue = default);
         Task InitializeAsync();
         Task<bool> KeyExistsAsync(TKey key);
-        Task SetAsync<TValue>(TKey key, TValue value);
+        Task<int> SetAsync<TValue>(TKey key, TValue value);
     }
 }
