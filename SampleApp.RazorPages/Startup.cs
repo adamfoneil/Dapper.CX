@@ -1,6 +1,7 @@
 using Dapper.CX.SqlServer.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ModelSync.Models;
+using SampleApp.Models;
 using SampleApp.RazorPages.Data;
 using SampleApp.RazorPages.Services;
 using System;
@@ -29,15 +31,17 @@ namespace SampleApp.RazorPages
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
-            services                
+            services
                 .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddClaimsPrincipalFactory<UserProfileClaimsFactory>();
-            
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddScoped<ISession>((sp) => new UserAppData(sp));
+
             services.AddDapperCX(
                 connectionString, 
-                (id) => Convert.ToInt32(id), 
-                () => new UserProfileClaimsConverter(connectionString));
+                //sp => sp.GetAspNetUser<UserProfile>(connectionString), 
+                sp => sp.GetAspNetUserWithRoles<UserProfile>(connectionString, "profile"),
+                (id) => Convert.ToInt32(id));
 
             services.AddCustomUserStore(connectionString);
 

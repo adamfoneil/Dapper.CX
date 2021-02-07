@@ -11,7 +11,7 @@ namespace SampleApp.Models
 {
     [Table("AspNetUsers")]
     [Identity(nameof(UserId))]
-    public partial class UserProfile : IUserBase
+    public partial class UserProfile : IUserBaseWithRoles
     {
         public int UserId { get; set; }
 

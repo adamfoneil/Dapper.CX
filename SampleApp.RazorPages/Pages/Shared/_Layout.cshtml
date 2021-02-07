@@ -75,8 +75,19 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2020 - Adam O'Neil <a href="https://github.com/adamfoneil">GitHub</a>
+        <div class="container d-flex justify-content-between">
+            <div>
+                &copy; 2021 - Adam O'Neil <a href="https://github.com/adamfoneil">GitHub</a>
+            </div>
+            <div>                
+                @{ 
+                    var user = (Model as BasePageModel)?.Data.User;
+                }
+                @if (user != null)
+                {
+                    <span class="text-muted">@user.LocalTime</span>
+                }                
+            </div>
         </div>
     </footer>
 
