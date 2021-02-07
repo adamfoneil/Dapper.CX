@@ -3,7 +3,6 @@ using Dapper.CX.Classes;
 using Dapper.CX.SqlServer.AspNetCore.Classes;
 using Dapper.CX.SqlServer.Services;
 using Dapper.QX;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;

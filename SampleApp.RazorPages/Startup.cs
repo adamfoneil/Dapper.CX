@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,7 +37,7 @@ namespace SampleApp.RazorPages
             services.AddScoped<ISession>((sp) => new UserAppData(sp));
 
             services.AddDapperCX(
-                connectionString, 
+                connectionString,
                 //sp => sp.GetAspNetUser<UserProfile>(connectionString), 
                 sp => sp.GetAspNetUserWithRoles<UserProfile>(connectionString, "profile"),
                 (id) => Convert.ToInt32(id));
@@ -49,7 +48,7 @@ namespace SampleApp.RazorPages
             services.AddControllersWithViews();
             services.AddChangeTracking(connectionString, new DataModel());
         }
-        
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

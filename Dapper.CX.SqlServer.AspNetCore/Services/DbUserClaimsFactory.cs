@@ -21,9 +21,9 @@ namespace Dapper.CX.SqlServer.Services
         }
 
         public DbUserClaimsConverter<TUser> ClaimsConverter { get; }
-        
+
         protected async override Task<ClaimsIdentity> GenerateClaimsAsync(IdentityUser user)
-        {            
+        {
             var result = await base.GenerateClaimsAsync(user);
             var dbUser = await ClaimsConverter.QueryUserAsync(user.UserName);
             var claims = ClaimsConverter.GetClaimsFromUser(dbUser);

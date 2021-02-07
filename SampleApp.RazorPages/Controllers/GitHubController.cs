@@ -24,7 +24,7 @@ namespace SampleApp.RazorPages.Controllers
             {
                 var content = await response.Content.ReadAsStringAsync();
                 content = HttpUtility.HtmlEncode(content);
-                
+
                 if (request.Links != null)
                 {
                     foreach (var link in request.Links)

@@ -40,7 +40,7 @@ namespace Dapper.CX.SqlServer.Services
                 .Where(c => propertyNames.Contains(c.Type))
                 .ToLookup(c => c.Type)
                 .ToDictionary(c => c.Key, c => c.Last());
-                
+
             foreach (var pi in props.Where(pi => claimValues.ContainsKey(pi.Name)))
             {
                 pi.SetValue(result, supportedTypes[pi.PropertyType].Invoke(claimValues[pi.Name].Value));
@@ -50,9 +50,9 @@ namespace Dapper.CX.SqlServer.Services
         }
 
         public async Task UpdateClaimsAsync(
-            string userName, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signinManager, 
+            string userName, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signinManager,
             IEnumerable<Claim> oldClaims)
-        {            
+        {
             var identityUser = await userManager.FindByNameAsync(userName);
             await userManager.RemoveClaimsAsync(identityUser, oldClaims);
             await signinManager.RefreshSignInAsync(identityUser);

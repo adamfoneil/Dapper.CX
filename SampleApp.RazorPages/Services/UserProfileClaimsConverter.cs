@@ -45,7 +45,7 @@ namespace SampleApp.RazorPages.Services
 
             result.WorkspaceIds = claims.Where(c => c.Type.Equals(wsIdClaim)).Select(c => int.Parse(c.Value)).ToArray();
 
-            return result;            
+            return result;
         }
 
         public override async Task<UserProfile> QueryUserAsync(string userName)

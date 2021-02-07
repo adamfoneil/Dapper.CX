@@ -20,7 +20,7 @@ namespace SampleApp.RazorPages.Pages
                 Links = new CodeSample.Link[]
                 {
                     new CodeSample.Link(LinkType.Tooltip, "_SaveResult.cshtml", "SaveResult")
-                }                
+                }
             },
             new CodeSample()
             {

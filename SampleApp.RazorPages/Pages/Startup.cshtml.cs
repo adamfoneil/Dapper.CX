@@ -9,7 +9,7 @@ namespace SampleApp.RazorPages.Pages
     {
         public StartupModel(DapperCX<int, UserProfile> data) : base(data)
         {
-        }     
+        }
 
         public void OnGet()
         {

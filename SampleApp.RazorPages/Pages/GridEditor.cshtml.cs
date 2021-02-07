@@ -16,16 +16,16 @@ namespace SampleApp.RazorPages.Pages
         {
         }
 
-        public IEnumerable<Item> AllItems { get; set; }        
+        public IEnumerable<Item> AllItems { get; set; }
 
         public async Task OnGetAsync()
         {
             if (Data.HasUser)
             {
-                AllItems = await Data.QueryAsync(new AllItems() 
-                { 
-                    WorkspaceId = Data.User.WorkspaceId ?? 0, 
-                    IsActive = true 
+                AllItems = await Data.QueryAsync(new AllItems()
+                {
+                    WorkspaceId = Data.User.WorkspaceId ?? 0,
+                    IsActive = true
                 });
             }
         }

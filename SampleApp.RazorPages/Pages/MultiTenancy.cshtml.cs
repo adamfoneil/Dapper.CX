@@ -17,7 +17,7 @@ namespace SampleApp.RazorPages.Pages
         }
 
         public SelectList WorkspaceSelect { get; set; }
-        public Workspace Workspace { get; set; }        
+        public Workspace Workspace { get; set; }
 
         public async Task OnGetAsync()
         {

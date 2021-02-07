@@ -17,19 +17,19 @@ using System.Text.Json;
 namespace Dapper.CX.SqlServer.AspNetCore
 {
     public static class CrudServiceExtensions
-    {                
+    {
         /// <summary>
         /// Dapper.CX config method that gives user profile integration with local accounts
         /// </summary>
         public static void AddDapperCX<TIdentity, TUser>(
             this IServiceCollection services,
             string connectionString,
-            Func<object, TIdentity> convertIdentity, 
+            Func<object, TIdentity> convertIdentity,
             Func<DbUserClaimsConverter<TUser>> claimsConverterFactory)
-            where TUser : IUserBase, new()            
+            where TUser : IUserBase, new()
         {
             services.AddHttpContextAccessor();
-            services.AddSingleton(claimsConverterFactory.Invoke());            
+            services.AddSingleton(claimsConverterFactory.Invoke());
             services.AddScoped((sp) =>
             {
                 var context = sp.GetDapperCXContext<TUser>();
@@ -39,16 +39,16 @@ namespace Dapper.CX.SqlServer.AspNetCore
                     {
                         await context.claimsConverter.UpdateClaimsAsync(user.Name, context.userManager, context.signinManager, context.claims);
                     }
-                };                
+                };
             });
         }
 
         public static void AddDapperCX<TIdentity, TUser>(
             this IServiceCollection services,
-            string connectionString,  
+            string connectionString,
             Func<IServiceProvider, TUser> getUser,
             Func<object, TIdentity> convertIdentity) where TUser : IUserBase, new()
-        {            
+        {
             services.AddScoped((sp) =>
             {
                 var user = getUser.Invoke(sp);
@@ -60,11 +60,11 @@ namespace Dapper.CX.SqlServer.AspNetCore
         /// simplest Dapper.CX use case, with no user profile integation
         /// </summary>
         public static void AddDapperCX<TIdentity>(
-            this IServiceCollection services, 
+            this IServiceCollection services,
             string connectionString, Func<object, TIdentity> convertIdentity)
         {
             services.AddScoped((sp) =>
-            {                
+            {
                 return new DapperCX<TIdentity>(connectionString, convertIdentity);
             });
         }
@@ -191,7 +191,7 @@ namespace Dapper.CX.SqlServer.AspNetCore
                     session = serviceProvider.GetRequiredService<ISession>();
                     return true;
                 }
-                catch 
+                catch
                 {
                     session = default;
                     return false;
@@ -201,13 +201,13 @@ namespace Dapper.CX.SqlServer.AspNetCore
             TUser GetSessionUser(ISession session)
             {
                 try
-                {                    
+                {
                     byte[] data = null;
                     string json;
                     if (session.TryGetValue(sessionKey, out data))
                     {
                         json = Encoding.UTF8.GetString(data);
-                        return JsonSerializer.Deserialize<TUser>(json);                        
+                        return JsonSerializer.Deserialize<TUser>(json);
                     }
 
                     return default;
@@ -236,7 +236,7 @@ namespace Dapper.CX.SqlServer.AspNetCore
                 }
                 catch
                 {
-                    return (false, string.Empty);                    
+                    return (false, string.Empty);
                 }
             }
         }

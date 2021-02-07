@@ -43,7 +43,7 @@ namespace SampleApp.RazorPages.Interfaces
         /// <summary>
         /// this should always be a "raw" URL to a source file on GitHub, e.g. "https://raw.githubusercontent.com...
         /// </summary>
-        public string Url { get; set; }        
+        public string Url { get; set; }
         public string Language { get; set; } = "csharp";
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace SampleApp.RazorPages.Interfaces
         /// </summary>
         public string ImportElementId { get; set; }
 
-        public IEnumerable<Link> Links { get; set; }        
+        public IEnumerable<Link> Links { get; set; }
 
         public string GetFilename() => Path.GetFileName(Url);
 
@@ -62,7 +62,7 @@ namespace SampleApp.RazorPages.Interfaces
             {
                 Url = Url,
                 Links = Links
-            }));                
+            }));
         }
 
         // converts a "raw" GitHub URL to the regular URL
@@ -93,8 +93,8 @@ namespace SampleApp.RazorPages.Interfaces
             public string Text { get; set; }
             public string Target { get; set; }
 
-            public string CssClass 
-            {  
+            public string CssClass
+            {
                 get =>
                     (Type == LinkType.Tooltip) ? "sample-tooltip" :
                     (Type == LinkType.CodeSample) ? "code-sample" :

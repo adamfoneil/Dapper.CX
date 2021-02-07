@@ -15,7 +15,7 @@ namespace SampleApp.RazorPages.Extensions
                 using (var reader = new StreamReader(request.Body))
                 {
                     string requestBody = await reader.ReadToEndAsync();
-                    T item = JsonSerializer.Deserialize<T>(requestBody);                    
+                    T item = JsonSerializer.Deserialize<T>(requestBody);
                     return (requestBody, item);
                 }
             }

@@ -1,5 +1,4 @@
 ﻿using Dapper.CX.SqlServer.AspNetCore;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +17,7 @@ namespace SampleApp.RazorPages.Services
     /// serve as a user session data repository, to avoid unnecessary database traffic    
     /// </summary>
     public class UserAppData : ISession
-    {        
+    {
         private readonly string _rootPath;
         private readonly string _storagePath;
         private readonly string _userName;
@@ -34,8 +33,8 @@ namespace SampleApp.RazorPages.Services
             _enabled = !string.IsNullOrEmpty(_userName);
         }
 
-        private string GetPath() => (IsAvailable) ? 
-            Path.Combine(_rootPath, "App_Data", _storagePath, _userName) : 
+        private string GetPath() => (IsAvailable) ?
+            Path.Combine(_rootPath, "App_Data", _storagePath, _userName) :
             throw new Exception("No logged in user.");
 
         private string GetFilename(string key) => Path.Combine(GetPath(), $"{key}.json");
@@ -56,7 +55,7 @@ namespace SampleApp.RazorPages.Services
 
         public async Task CommitAsync(CancellationToken cancellationToken = default) => await Task.CompletedTask;
 
-        public async Task LoadAsync(CancellationToken cancellationToken = default) => await Task.CompletedTask;        
+        public async Task LoadAsync(CancellationToken cancellationToken = default) => await Task.CompletedTask;
 
         public void Remove(string key)
         {
@@ -64,10 +63,10 @@ namespace SampleApp.RazorPages.Services
             {
                 File.Delete(GetFilename(key));
             }
-            catch 
+            catch
             {
                 // do nothing
-            }            
+            }
         }
 
         public void Set(string key, byte[] value)

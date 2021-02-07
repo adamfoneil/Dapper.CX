@@ -24,7 +24,7 @@ namespace SampleApp.RazorPages.Services
 
         public override async Task<IdentityResult> CreateAsync(IdentityUser user, CancellationToken cancellationToken = default)
         {
-            var result = await base.CreateAsync(user, cancellationToken);            
+            var result = await base.CreateAsync(user, cancellationToken);
 
             if (result.Succeeded)
             {

@@ -17,7 +17,7 @@ namespace SampleApp.RazorPages.Pages
 
         [BindProperty(SupportsGet = true)]
         public int Id { get; set; }
-        
+
         public SelectList ItemSelect { get; set; }
 
         public Item Item { get; set; }
@@ -32,11 +32,11 @@ namespace SampleApp.RazorPages.Pages
             }, Id);
         }
 
-        public async Task<RedirectResult> OnPostSaveItemAsync(Item item) => 
-            await Data.SaveAndRedirectAsync(item, 
-                (model, exc) => (model.Id != 0) ? Redirect($"/Items/{model.Id}") : Redirect("/Items"), 
+        public async Task<RedirectResult> OnPostSaveItemAsync(Item item) =>
+            await Data.SaveAndRedirectAsync(item,
+                (model, exc) => (model.Id != 0) ? Redirect($"/Items/{model.Id}") : Redirect("/Items"),
                 beforeSave: (model) => model.WorkspaceId = Data.User.WorkspaceId ?? 0,
-                onSuccess: (model) => SaveSuccessMessage($"Item {model.Name} updated successfully."), 
+                onSuccess: (model) => SaveSuccessMessage($"Item {model.Name} updated successfully."),
                 onException: (model, exc) => SaveErrorMessage(exc));
 
         public async Task<RedirectResult> OnPostDeleteAsync(int id) =>

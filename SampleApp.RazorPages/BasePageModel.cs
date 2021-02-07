@@ -1,7 +1,6 @@
 ﻿using Dapper.CX.SqlServer.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SampleApp.Models;
-using SampleApp.RazorPages.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,7 +26,7 @@ namespace SampleApp.RazorPages
         protected void SaveErrorMessage(Exception exc)
         {
             TempData.Remove("error");
-            TempData.TryAdd("error", exc.Message);            
+            TempData.TryAdd("error", exc.Message);
         }
     }
 }

@@ -7,6 +7,6 @@ namespace SampleApp.RazorPages.Pages
     {
         public IndexModel(DapperCX<int, UserProfile> data) : base(data)
         {
-        }        
+        }
     }
 }
