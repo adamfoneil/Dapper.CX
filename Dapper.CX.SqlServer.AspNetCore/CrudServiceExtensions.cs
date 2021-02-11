@@ -136,13 +136,13 @@ namespace Dapper.CX.SqlServer.AspNetCore
             {
                 user.Roles = cn.Query<string>(
                     @"SELECT 
-			            [r].[Name]
-		            FROM 
-			            [dbo].[AspNetRoles] [r]
-			            INNER JOIN [dbo].[AspNetUserRoles] [ur] ON [r].[Id]=[ur].[RoleId]
-			            INNER JOIN [dbo].[AspNetUsers] [u] ON [ur].[UserId]=[u].[Id]
-		            WHERE
-			            [u].[UserName]=@userName", new { userName = user.Name }).ToHashSet();
+	                    [r].[Name]
+                    FROM 
+	                    [dbo].[AspNetRoles] [r]
+	                    INNER JOIN [dbo].[AspNetUserRoles] [ur] ON [r].[Id]=[ur].[RoleId]
+	                    INNER JOIN [dbo].[AspNetUsers] [u] ON [ur].[UserId]=[u].[Id]
+                    WHERE
+	                    [u].[UserName]=@userName", new { userName = user.Name }).ToHashSet();
             }, sessionKey);
         }
 
