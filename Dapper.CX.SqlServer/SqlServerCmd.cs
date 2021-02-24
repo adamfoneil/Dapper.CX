@@ -22,7 +22,7 @@ namespace Dapper.CX.SqlServer
         {
         }
 
-        public static async Task<SqlServerCmd> FromTableSchemaAsync(IDbConnection connection, string schemaName, string tableName, IEnumerable<string> keyColumns)
+        public static async Task<SqlServerCmd> FromTableSchemaAsync(IDbConnection connection, string schemaName, string tableName, IEnumerable<string> keyColumns, IDbTransaction txn = null)
         {
             string identityCol = await connection.QuerySingleOrDefaultAsync<string>(
                 @"SELECT [col].[name]
@@ -31,7 +31,7 @@ namespace Dapper.CX.SqlServer
                 WHERE 
 	                SCHEMA_NAME([t].[schema_id])=@schemaName AND
 	                [t].[name]=@tableName AND	                
-                    [col].[is_identity]=1", new { schemaName, tableName });
+                    [col].[is_identity]=1", new { schemaName, tableName }, txn);
 
             SqlServerCmd result = new SqlServerCmd($"{schemaName}.{tableName}", identityCol);
 
@@ -43,14 +43,14 @@ namespace Dapper.CX.SqlServer
 	                SCHEMA_NAME([t].[schema_id])=@schemaName AND
 	                [t].[name]=@tableName AND
 	                [col].[is_computed]=0 AND
-                    [col].[is_identity]=0", new { schemaName, tableName });
+                    [col].[is_identity]=0", new { schemaName, tableName }, txn);
 
             foreach (var col in keyColumns) result.Add(KeyColumnPrefix + col, null);
             foreach (var col in columns.Except(keyColumns)) result.Add(col, null);
             return result;
         }
 
-        public static async Task<SqlServerCmd> FromTableSchemaAsync(IDbConnection connection, string schemaName, string tableName)
+        public static async Task<SqlServerCmd> FromTableSchemaAsync(IDbConnection connection, string schemaName, string tableName, IDbTransaction txn = null)
         {
             var keyColumns = await connection.QueryAsync<string>(
                 @"SELECT [col].[name]
@@ -66,15 +66,15 @@ namespace Dapper.CX.SqlServer
 	                SCHEMA_NAME([t].[schema_id])=@schemaName AND
 	                [t].[name]=@tableName AND
 	                [ndx].[is_primary_key]=1 AND
-                    [col].[is_identity]=0", new { schemaName, tableName });
+                    [col].[is_identity]=0", new { schemaName, tableName }, txn);
 
-            return await FromTableSchemaAsync(connection, schemaName, tableName, keyColumns);
+            return await FromTableSchemaAsync(connection, schemaName, tableName, keyColumns, txn);
         }
 
-        public static async Task<SqlServerCmd> FromQueryAsync(IDbConnection connection, string sql, object parameters = null, string omitIdentityColumn = null)
+        public static async Task<SqlServerCmd> FromQueryAsync(IDbConnection connection, string sql, object parameters = null, string omitIdentityColumn = null, IDbTransaction txn = null)
         {
             // help from https://stackoverflow.com/a/26661203/2023653
-            var row = await connection.QuerySingleOrDefaultAsync(sql, parameters);
+            var row = await connection.QuerySingleOrDefaultAsync(sql, parameters, txn);
             var dictionary = row as IDictionary<string, object>;
             var result = new SqlServerCmd();
             foreach (var kp in dictionary)
