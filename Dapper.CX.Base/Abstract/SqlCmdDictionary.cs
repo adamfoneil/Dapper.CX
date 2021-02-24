@@ -102,22 +102,20 @@ namespace Dapper.CX.Abstract
             return dp;
         }
 
-        public async Task<TIdentity> InsertAsync<TIdentity>(IDbConnection connection)
-        {
-            return await ExecuteInsertAsync<TIdentity>(connection);
-        }
+        public async Task<TIdentity> InsertAsync<TIdentity>(IDbConnection connection, IDbTransaction txn = null) => 
+            await ExecuteInsertAsync<TIdentity>(connection, txn);
 
-        public async Task InsertAsync(IDbConnection connection)
+        public async Task InsertAsync(IDbConnection connection, IDbTransaction txn = null)
         {
             IdentityInsert = true;
-            await ExecuteInsertAsync<int>(connection);
+            await ExecuteInsertAsync<int>(connection, txn);
         }
 
         /// <summary>
         /// SQL Server Compact Edition seems to require an explicit transaction when doing an insert and returning the identity value.
         /// This is virtual so that SqlCe can override it with this special behavior.
         /// </summary>
-        protected virtual async Task<TIdentity> ExecuteInsertAsync<TIdentity>(IDbConnection connection)
+        protected virtual async Task<TIdentity> ExecuteInsertAsync<TIdentity>(IDbConnection connection, IDbTransaction txn = null)
         {
             string sql = (!IdentityInsert) ?
                 GetInsertStatement() :
@@ -125,49 +123,49 @@ namespace Dapper.CX.Abstract
 
             if (!IdentityInsert)
             {
-                return await connection.QuerySingleAsync<TIdentity>(sql, GetParameters());
+                return await connection.QuerySingleAsync<TIdentity>(sql, GetParameters(), txn);
             }
             else
             {
-                await connection.ExecuteAsync(sql, GetParameters());
+                await connection.ExecuteAsync(sql, GetParameters(), txn);
                 return default;
             }
         }
 
-        public async Task UpdateAsync<TIdentity>(IDbConnection connection, TIdentity identity)
+        public async Task UpdateAsync<TIdentity>(IDbConnection connection, TIdentity identity, IDbTransaction txn = null)
         {
             string sql = GetUpdateStatement();
             var dp = GetParameters();
             dp.Add(IdentityColumn, identity);
-            await connection.ExecuteAsync(sql, dp);
+            await connection.ExecuteAsync(sql, dp, txn);
         }
 
-        public async Task<TIdentity> MergeAsync<TIdentity>(IDbConnection connection, Action<SqlCmdDictionary, SaveAction> onSave = null)
+        public async Task<TIdentity> MergeAsync<TIdentity>(IDbConnection connection, Action<SqlCmdDictionary, SaveAction> onSave = null, IDbTransaction txn = null)
         {
             var keyColumns = GetKeyColumnNames();
             if (!keyColumns.Any()) throw new InvalidOperationException("MergeAsync method requires explicit key columns--one or more columns prefixed with '#'.");
 
-            TIdentity id = await FindIdentityFromKeyValuesAsync<TIdentity>(connection, keyColumns);
+            TIdentity id = await FindIdentityFromKeyValuesAsync<TIdentity>(connection, keyColumns, txn);
             if (id.Equals(default(TIdentity)))
             {
                 onSave?.Invoke(this, SaveAction.Insert);
-                id = await InsertAsync<TIdentity>(connection);
+                id = await InsertAsync<TIdentity>(connection, txn);
             }
             else
             {
                 onSave?.Invoke(this, SaveAction.Update);
-                await UpdateAsync(connection, id);
+                await UpdateAsync(connection, id, txn);
             }
 
             return id;
         }
 
-        private async Task<TIdentity> FindIdentityFromKeyValuesAsync<TIdentity>(IDbConnection connection, IEnumerable<string> keyColumns)
+        private async Task<TIdentity> FindIdentityFromKeyValuesAsync<TIdentity>(IDbConnection connection, IEnumerable<string> keyColumns, IDbTransaction txn = null)
         {
             string query = $"SELECT {ApplyDelimiter(IdentityColumn)} FROM {ApplyDelimiter(TableName)} WHERE {GetWhereClauseInner(keyColumns)}";
             var dp = new DynamicParameters();
             foreach (var col in keyColumns) dp.Add(col, this["#" + col]);
-            return await connection.QuerySingleOrDefaultAsync<TIdentity>(query, dp);
+            return await connection.QuerySingleOrDefaultAsync<TIdentity>(query, dp, txn);
         }
 
         public string GetUpdateStatement()
