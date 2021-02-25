@@ -10,6 +10,11 @@
 <h2>Typical Form CRUD</h2>
 <p>This page demonstrates typical GET and POST behavior for viewing and saving records.</p>
 
+@if (Model.Data.User.HasRole("Admin"))
+{
+    <p>I have the <code>Admin</code> role!</p>
+}
+
 <form method="get">
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">View Item:</label>
