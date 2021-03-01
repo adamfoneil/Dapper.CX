@@ -1,8 +1,10 @@
 ﻿using AO.Models.Enums;
 using AO.Models.Interfaces;
+using AO.Models.Static;
 using Dapper.CX.Classes;
 using Dapper.CX.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -242,6 +244,24 @@ namespace Dapper.CX.Abstract
                 await DeleteAsync<TModel>(cn, id, txnAction);
             }
         }
+
+        /// <summary>
+        /// query any table with an object-based WHERE clause.
+        /// This is meant for small tables to populate dropdowns
+        /// </summary>
+        public async Task<IEnumerable<TResult>> QueryAsync<TResult>(object criteria = null)
+        {
+            var sql = (criteria != null) ?
+                CrudProvider.GetQuerySingleWhereStatement(typeof(TResult), criteria) :
+                GetQueryStatement(typeof(TResult));
+
+            using (var cn = GetConnection())
+            {
+                return await cn.QueryAsync<TResult>(sql, criteria);
+            }
+
+            string GetQueryStatement(Type type) => $"SELECT * FROM {SqlBuilder.ApplyDelimiter(type.GetTableName(), '[', ']')}";
+        }        
 
         private async Task<TIdentity> ExecuteInnerAsync<TModel>(
             IDbConnection connection,

@@ -108,24 +108,6 @@ namespace Dapper.CX.SqlServer.AspNetCore.Extensions
             {
                 return await query.ExecuteSelectListAsync(cn, selectedValue);
             }
-        }
-
-        /// <summary>
-        /// query any table with an object-based WHERE clause.
-        /// This is meant for small tables to populate dropdowns
-        /// </summary>
-        public static async Task<IEnumerable<TResult>> QueryAsync<TResult, TIdentity, TUser>(this DapperCX<TIdentity, TUser> crudService, object criteria = null) where TUser : IUserBase
-        {
-            var sql = (criteria != null) ?
-                crudService.CrudProvider.GetQuerySingleWhereStatement(typeof(TResult), criteria) :
-                GetQueryStatement(typeof(TResult));
-
-            using (var cn = crudService.GetConnection())
-            {
-                return await cn.QueryAsync<TResult>(sql, criteria);
-            }
-        }
-
-        private static string GetQueryStatement(Type type) => $"SELECT * FROM {SqlBuilder.ApplyDelimiter(type.GetTableName(), '[', ']')}";
+        }      
     }
 }

@@ -2,6 +2,7 @@
 using AO.Models.Interfaces;
 using Dapper.CX.Classes;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -53,5 +54,6 @@ namespace Dapper.CX.Interfaces
         Task UpdateAsync<TModel>(IDbConnection connection, TModel model, ChangeTracker<TModel> changeTracker = null, Func<IDbConnection, IDbTransaction, Task> txnAction = null);
         Task UpdateAsync<TModel>(TModel model, ChangeTracker<TModel> changeTracker = null, Func<IDbConnection, IDbTransaction, Task> txnAction = null);
         Task UpdateUserAsync(params Expression<Func<TUser, object>>[] setColumns);
+        Task<IEnumerable<TResult>> QueryAsync<TResult>(object criteria = null);
     }
 }
