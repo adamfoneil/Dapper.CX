@@ -93,5 +93,19 @@ namespace Tests.SqlServer
                     @FirstName, @LastName, getdate()
                 ); SELECT SCOPE_IDENTITY();".ReplaceWhitespace()));
         }
+
+        [TestMethod]
+        public void SqlServerCmdKeyColumns()
+        {
+            var cmd = new SqlServerCmd("dbo.Table1", "Id")
+            {
+                ["#KeyValue"] = "hello",
+                ["AnotherValue"] = "whatever"
+            };
+
+            Assert.IsTrue(cmd["#KeyValue"].Equals(cmd["KeyValue"]));
+            Assert.IsTrue(cmd["KeyValue"].Equals("hello"));
+            Assert.IsTrue(cmd["#KeyValue"].Equals("hello"));
+        }
     }
 }
