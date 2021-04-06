@@ -9,7 +9,7 @@ Dapper.CX is a CRUD library for SQL Server made with Dapper. It works with POCO 
 
 Wiki links: [Why Dapper.CX?](https://github.com/adamosoftware/Dapper.CX/wiki), [Reference](https://github.com/adamosoftware/Dapper.CX/wiki/Crud-method-reference). Note that Dapper.CX doesn't create tables. Please see my [ModelSync](https://github.com/adamosoftware/ModelSync) project for info on that.
 
-Please see my [BlazorAO](https://github.com/adamfoneil/BlazorAO) project to see Dapper.CX in action. I also have a [PowerPoint](https://1drv.ms/v/s!AvguHRnyJtWMmugqfwkiWSa0ZWlqUg?e=8rSid8) that walks through this in some detail.
+Please see my [BlazorAO](https://github.com/adamfoneil/BlazorAO) project to see Dapper.CX in action. If you're not familiar with Dapper, I have a [PowerPoint](https://1drv.ms/v/s!AvguHRnyJtWMmugqfwkiWSa0ZWlqUg?e=8rSid8) **Why I Use Dapper for .NET Data Access** that's an intro to Dapper and also shows where Dapper.CX fits in that stack.
 
 ## In a Nutshell
 When using the injected service, you'd write CRUD code that looks like this. This example assumes a fictional `Employee` model class. There are several advantages of using the injected service. One, it integrates nicely with the authenticated user to check permissions or perform audit and change tracking. Two, you can omit the `using` block that you otherwise need when interacting with a connection. Three, there are some handy overloads that bundle exception handling and more. Here's [how to implement the injected service](https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection) along with a CRUD [method reference](https://github.com/adamfoneil/Dapper.CX/wiki/SqlCrudService-reference).
