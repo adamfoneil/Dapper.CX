@@ -2,6 +2,8 @@
 [![Nuget](https://img.shields.io/nuget/v/Dapper.CX.SqlServer?label=SqlServer)](https://www.nuget.org/packages/Dapper.CX.SqlServer/)
 [![Nuget](https://img.shields.io/nuget/v/Dapper.CX.SqlServer.AspNetCore?label=AspNetCore)](https://www.nuget.org/packages/Dapper.CX.SqlServer.AspNetCore/)
 
+**Note:** I'm no longer updating this. Please see [Dapper.Repository](https://github.com/adamfoneil/Dapper.Repository).
+
 Dapper.CX is a CRUD library for SQL Server made with Dapper. It works with POCO classes, where the only model class requirement is that they have a property called `Id` or an [Identity](https://github.com/adamosoftware/DbSchema.Attributes/blob/master/DbSchema.Attributes/Attributes/IdentityAttribute.cs) attribute on the class that indicates what its identity property is. `int` and `long` identity types are supported. You can use Dapper.CX in two ways:
 
 - as an injected service, [learn more](https://github.com/adamfoneil/Dapper.CX/wiki/Using-Dapper.CX-with-Dependency-Injection). This is intended for .NET Core apps to use dependency injection along with user profile integration.
